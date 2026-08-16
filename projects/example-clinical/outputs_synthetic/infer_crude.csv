@@ -1,0 +1,2 @@
+term,OR,CI_low,CI_high,p_value,model,covariates
+treatment[T.Phác đồ B],1.1,0.63,1.92,0.742,crude,None

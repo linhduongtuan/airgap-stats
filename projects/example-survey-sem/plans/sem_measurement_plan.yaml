@@ -1,0 +1,71 @@
+dr_step: D3_sem
+plan_version: 2
+
+# NOTE: backfilled from scripts/sem_measurement.R (see plans/sap.md provenance note).
+
+inputs:
+  analysis_plan: "plans/analysis_plan.yaml"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  dataset_pattern: "pattern/dataset_pattern.csv"
+  item_group_source: "inferred_from_script"
+
+constructs:
+  - construct_name: "jobsat"
+    items: ["js_q1", "js_q2", "js_q3", "js_q4", "js_q5"]
+    item_source: "inferred_from_script"
+    response_range: {min: 1, max: 5}
+    reverse_coded_items: []
+    reliability:
+      metric: "cronbach_alpha_base_r"
+      threshold_for_real_output: 0.70
+      status: "pending_rstudio_output"
+    scale_score:
+      new_variable: "jobsat_score_not_in_current_script"
+      method: "row_mean"
+      minimum_non_missing_proportion: 0.50
+
+  - construct_name: "burnout"
+    items: ["bo_q1", "bo_q2", "bo_q3", "bo_q4", "bo_q5"]
+    item_source: "inferred_from_script"
+    response_range: {min: 1, max: 5}
+    reverse_coded_items: []
+    reliability:
+      metric: "cronbach_alpha_base_r"
+      threshold_for_real_output: 0.70
+      status: "pending_rstudio_output"
+    scale_score:
+      new_variable: "burnout_score_not_in_current_script"
+      method: "row_mean"
+      minimum_non_missing_proportion: 0.50
+
+measurement_model:
+  estimator:
+    method: "DWLS"
+    rationale: "js_q*/bo_q* are 5-point Likert items (ordinal, not continuous); DWLS on the polychoric correlation matrix is semopy's WLSMV-equivalent estimator. scripts/sem_measurement.R still uses plain ML (R-side Phase 3 port not yet done -- see plans/sap.md Section K); scripts/sem_measurement.py and sem_structural.py now use DWLS via tools/sem_track, implemented as Phase 3 of the statistical-methods roadmap, directed and approved by the user across the Phase 0-3 rollout."
+    basis: "confirmed"
+  lavaan_syntax: |
+    jobsat  =~ js_q1 + js_q2 + js_q3 + js_q4 + js_q5
+    burnout =~ bo_q1 + bo_q2 + bo_q3 + bo_q4 + bo_q5
+  fit_indices_to_report: ["cfi", "tli", "rmsea", "srmr"]
+  fit_status: "pending_rstudio_output"
+
+script:
+  file: "scripts/sem_measurement.R"
+  verified_on_synthetic: true
+  note: "Synthetic fit values are meaningless by design; verification only proves the code runs."
+
+user_confirmation:
+  status: "needs_review"
+  notes: "Backfilled from existing code; the estimator choice was never presented to a user for confirmation."
+
+readiness:
+  status: "needs_review"
+  blocking_issues: []
+  review_issues:
+    - "estimator.basis is needs_review -- ask the user to confirm ML vs WLSMV/DWLS before treating this as pre-registered"
+  assumptions:
+    - "Items are treated as continuous (ML estimator) in the existing script"
+    - "No reverse coding needed (never explicitly checked against a questionnaire)"
+
+next_step:
+  skill: "dr-sem-02-structural-model"

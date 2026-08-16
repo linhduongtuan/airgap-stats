@@ -1,0 +1,17 @@
+variable,type,levels,n_distinct,missing_pct,note
+patient_id,id_like,,,0.0,high-cardinality; treated as identifier; levels not exported
+age,integer,,,0.0,
+sex,binary,Nữ|Nam,2.0,0.0,
+bmi,numeric,,,0.0,
+treatment,binary,Phác đồ A|Phác đồ B,2.0,0.0,
+sbp,integer,,,0.0,
+dbp,integer,,,0.0,
+diabetes,binary,0|1,2.0,0.0,
+hypertension,binary,0|1,2.0,0.0,
+smoking,binary,0|1,2.0,0.0,
+egfr,numeric,,,0.0,
+hba1c,numeric,,,0.0,
+crp,numeric,,,0.0,
+length_of_stay,integer,,,0.0,
+mortality_30day,binary,0|1,2.0,0.0,
+complication,binary,0|1,2.0,0.0,

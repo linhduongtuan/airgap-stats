@@ -1,0 +1,6 @@
+path,estimate,ci_low,ci_high
+a (JS -> Burnout),0.2998,-0.5672,4.9204
+b (Burnout -> TO | JS),1.6147,-20.2697,29.9542
+c' (JS -> TO direct),-0.1564,-27.1692,4.6888
+indirect (a*b),0.484,-17.2909,10.9698
+total (c'+a*b),0.3276,-15.5763,1.5948

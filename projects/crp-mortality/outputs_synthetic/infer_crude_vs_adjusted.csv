@@ -1,0 +1,3 @@
+model,or,ci_low,ci_high,p_value,covariates
+Crude,1.0034,0.9939,1.0129,0.485,None
+Adjusted,0.8098,0.4492,1.4597,0.4828,"age, sex, bmi, treatment, sbp, diabetes, hypertension, smoking, egfr, hba1c, complication"

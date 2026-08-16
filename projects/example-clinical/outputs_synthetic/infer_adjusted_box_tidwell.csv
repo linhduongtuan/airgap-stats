@@ -1,0 +1,6 @@
+variable,status,p_value,detail
+age,linear,0.2229,interaction term `age:np.log(age)` p=0.2229
+bmi,linear,0.238,interaction term `bmi:np.log(bmi)` p=0.2380
+egfr,linear,0.2381,interaction term `egfr:np.log(egfr)` p=0.2381
+hba1c,linear,0.6508,interaction term `hba1c:np.log(hba1c)` p=0.6508
+crp,linear,0.8035,interaction term `crp:np.log(crp)` p=0.8035

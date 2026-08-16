@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./projects/**/data_real/**)"
+    ]
+  }
+}

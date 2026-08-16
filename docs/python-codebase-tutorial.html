@@ -1,0 +1,1041 @@
+<title>AirGap Stats Python Guide</title>
+<style>
+  :root {
+    color-scheme: light;
+    --paper:        #f9f9f7;
+    --surface:      #fcfcfb;
+    --surface-2:    #f2f2ee;
+    --ink:          #0b0b0b;
+    --ink-2:        #52514e;
+    --muted:        #898781;
+    --line:         #e1e0d9;
+    --line-strong:  #c3c2b7;
+    --accent:       #2a78d6;
+    --accent-ink:   #ffffff;
+    --track-medical:#2a78d6;
+    --track-sem:    #eb6834;
+    --track-cross:  #1baf7a;
+    --pri-high:     #d03b3b;
+    --pri-med:      #c98500;
+    --pri-low:      #0ca30c;
+    --status-done:  #0ca30c;
+    --status-done-bg: #eaf7ea;
+    --focus:        #2a78d6;
+    /* code panel -- fixed dark, same in both page themes (like most editors) */
+    --code-bg:      #1c1e26;
+    --code-ink:     #e3e5ea;
+    --code-line:    #33363f;
+    --code-muted:   #8b8fa3;
+    --code-kw:      #6fa8dc;
+    --code-str:     #d9a566;
+    --code-num:     #9d7cd8;
+    --code-com:     #6f7385;
+    --code-fn:      #7fd0a0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper:        #0d0d0d;
+      --surface:      #1a1a19;
+      --surface-2:    #212120;
+      --ink:          #ffffff;
+      --ink-2:        #c3c2b7;
+      --muted:        #93918a;
+      --line:         #2c2c2a;
+      --line-strong:  #383835;
+      --accent:       #3987e5;
+      --accent-ink:   #06131f;
+      --track-medical:#3987e5;
+      --track-sem:    #d95926;
+      --track-cross:  #199e70;
+      --pri-high:     #e66767;
+      --pri-med:      #eda100;
+      --pri-low:      #2fbf2f;
+      --status-done:  #2fbf2f;
+      --status-done-bg: #16241a;
+      --focus:        #3987e5;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper:        #0d0d0d;
+    --surface:      #1a1a19;
+    --surface-2:    #212120;
+    --ink:          #ffffff;
+    --ink-2:        #c3c2b7;
+    --muted:        #93918a;
+    --line:         #2c2c2a;
+    --line-strong:  #383835;
+    --accent:       #3987e5;
+    --accent-ink:   #06131f;
+    --track-medical:#3987e5;
+    --track-sem:    #d95926;
+    --track-cross:  #199e70;
+    --pri-high:     #e66767;
+    --pri-med:      #eda100;
+    --pri-low:      #2fbf2f;
+    --status-done:  #2fbf2f;
+    --status-done-bg: #16241a;
+    --focus:        #3987e5;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 1rem/1.65 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  a { color: var(--accent); text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px;
+  }
+  h1, h2, h3, h4 {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    font-weight: 600; color: var(--ink); text-wrap: balance; margin: 0;
+  }
+  p { margin: 0 0 1em; max-width: 72ch; }
+  .eyebrow {
+    font: 700 .72rem/1.4 -apple-system, "Segoe UI", Roboto, sans-serif;
+    text-transform: uppercase; letter-spacing: .09em; color: var(--muted);
+  }
+  code, .mono, kbd {
+    font-family: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  p code, li code, td code {
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px;
+    padding: .05em .35em; font-size: .89em; color: var(--ink);
+  }
+
+  .page { max-width: 1240px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    display: flex; flex-direction: column; gap: 1rem;
+    padding-bottom: 2.2rem; margin-bottom: 2.4rem; border-bottom: 1px solid var(--line);
+  }
+  .masthead .eyebrow { display:flex; align-items:center; gap:.6em; }
+  .masthead .eyebrow .rule { flex:0 0 2.4rem; height:1px; background:var(--line-strong); }
+  .masthead h1 { font-size: clamp(2rem, 4vw, 2.6rem); letter-spacing: -0.01em; }
+  .dek { max-width: 68ch; font-size: 1.08rem; line-height: 1.55; color: var(--ink-2); }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: .5rem 1.6rem; margin-top: .2rem;
+    font-size: .82rem; color: var(--muted);
+  }
+  .meta-row strong { color: var(--ink-2); font-weight: 600; }
+  .usage-box {
+    margin-top: .4rem; padding: .9rem 1.2rem; background: var(--surface);
+    border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 4px;
+    font-size: .92rem; color: var(--ink-2); max-width: 72ch;
+  }
+  .usage-box strong { color: var(--ink); }
+
+  /* ---------- Layout ---------- */
+  .layout { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 3rem; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  nav.toc { position: sticky; top: 1.5rem; display: flex; flex-direction: column; font-size: .84rem; max-height: calc(100vh - 3rem); overflow-y: auto; }
+  nav.toc .toc-part { color: var(--ink); font-weight: 700; text-decoration: none; padding: .55rem 0 .3rem .8rem; border-left: 2px solid var(--line-strong); display: block; }
+  nav.toc .toc-part:first-child { padding-top: 0; }
+  nav.toc .toc-part:hover { color: var(--accent); }
+  nav.toc .toc-sub { display: block; color: var(--ink-2); text-decoration: none; padding: .22rem 0 .22rem 1.6rem; border-left: 2px solid var(--line); font-size: .92em; }
+  nav.toc .toc-sub:hover { color: var(--ink); border-left-color: var(--line-strong); }
+  nav.toc .num { color: var(--muted); font-family: ui-monospace, monospace; margin-right:.5em; }
+  @media (max-width: 900px) {
+    nav.toc { position: static; max-height: none; }
+  }
+
+  main { min-width: 0; }
+
+  section.part { margin-bottom: 4rem; scroll-margin-top: 1rem; padding-top: .5rem; }
+  .part-head { display: flex; align-items: baseline; gap: .9rem; padding-bottom: .9rem; margin-bottom: 1.6rem; border-bottom: 1px solid var(--line); }
+  .part-num {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif; font-variant-numeric: tabular-nums;
+    font-size: 1.9rem; font-weight: 600; color: var(--accent); line-height: 1; flex: none;
+  }
+  .part-head h2 { font-size: 1.55rem; }
+  .part-intro { max-width: 72ch; color: var(--ink-2); margin-bottom: 1.6rem; }
+
+  h3.sub { font-size: 1.18rem; margin: 2.4rem 0 .8rem; scroll-margin-top: 1rem; padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
+  h3.sub:first-of-type { margin-top: 1.2rem; }
+  h4.subsub { font-size: 1rem; margin: 1.6rem 0 .6rem; scroll-margin-top: 1rem; color: var(--ink); }
+
+  ul, ol { padding-left: 1.3rem; color: var(--ink-2); max-width: 72ch; }
+  li { margin-bottom: .35em; }
+  li > p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); }
+
+  /* ---------- Pills / chips (module category, reused from roadmap) ---------- */
+  .pill {
+    display: inline-flex; align-items: center; gap: .4em; padding: .16em .6em .18em;
+    border-radius: 999px; font: 600 .68rem/1.5 -apple-system, "Segoe UI", sans-serif;
+    text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+  }
+  .pill .dot { width: .5em; height: .5em; border-radius: 50%; flex: none; background: currentColor; }
+  .pill.track-medical { color: var(--track-medical); border-color: color-mix(in srgb, var(--track-medical) 35%, var(--line)); }
+  .pill.track-sem     { color: var(--track-sem);     border-color: color-mix(in srgb, var(--track-sem) 35%, var(--line)); }
+  .pill.track-cross   { color: var(--track-cross);   border-color: color-mix(in srgb, var(--track-cross) 35%, var(--line)); }
+
+  /* ---------- Code blocks ---------- */
+  .code-panel {
+    background: var(--code-bg); border: 1px solid var(--code-line); border-radius: 8px;
+    margin: 1rem 0 1.4rem; overflow: hidden; max-width: 100%;
+  }
+  .code-panel .code-caption {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .5rem .9rem; font: 600 .74rem/1.4 ui-monospace, monospace; letter-spacing: .02em;
+    color: var(--code-muted); background: color-mix(in srgb, var(--code-bg) 85%, black);
+    border-bottom: 1px solid var(--code-line);
+  }
+  .code-panel .code-caption .lang { text-transform: uppercase; color: var(--code-kw); font-weight: 700; }
+  .code-panel pre {
+    margin: 0; padding: 1rem 1.1rem; overflow-x: auto; font-size: .82rem; line-height: 1.6;
+    color: var(--code-ink); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  .code-panel code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+  .tok-kw  { color: var(--code-kw); }
+  .tok-str { color: var(--code-str); }
+  .tok-num { color: var(--code-num); }
+  .tok-com { color: var(--code-com); font-style: italic; }
+  .tok-fn  { color: var(--code-fn); }
+
+  /* ---------- Console output block ---------- */
+  .console-panel {
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
+    margin: 1rem 0 1.4rem; overflow: hidden;
+  }
+  .console-panel .console-caption {
+    padding: .45rem .9rem; font: 600 .72rem/1.4 -apple-system, sans-serif; text-transform: uppercase;
+    letter-spacing: .05em; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--line);
+  }
+  .console-panel pre { margin: 0; padding: .9rem 1.1rem; overflow-x: auto; font-size: .8rem; line-height: 1.6; color: var(--ink-2); }
+
+  /* ---------- Callouts ---------- */
+  .callout {
+    max-width: 72ch; margin: 1.2rem 0; padding: .85rem 1.1rem; border-radius: 6px;
+    border: 1px solid var(--line); background: var(--surface); font-size: .92rem; color: var(--ink-2);
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .callout-label { display: block; font: 700 .7rem/1.4 -apple-system, sans-serif; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .35em; }
+  .callout.tip { border-left: 3px solid var(--track-cross); }
+  .callout.tip .callout-label { color: var(--track-cross); }
+  .callout.warn { border-left: 3px solid var(--pri-med); }
+  .callout.warn .callout-label { color: var(--pri-med); }
+  .callout.info { border-left: 3px solid var(--accent); }
+  .callout.info .callout-label { color: var(--accent); }
+
+  /* ---------- File tree ---------- */
+  .file-tree {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 1rem 1.2rem; margin: 1rem 0 1.4rem; overflow-x: auto;
+    font-family: ui-monospace, monospace; font-size: .82rem; line-height: 1.75; color: var(--ink-2);
+    max-width: 100%; white-space: pre;
+  }
+  .file-tree .dir { color: var(--ink); font-weight: 600; }
+  .file-tree .comment { color: var(--muted); font-style: italic; }
+
+  /* ---------- Function reference card ---------- */
+  .fn-card {
+    border: 1px solid var(--line); border-radius: 8px; margin: 1.1rem 0; overflow: hidden; background: var(--surface);
+  }
+  .fn-card .fn-sig {
+    background: var(--code-bg); color: var(--code-ink); padding: .7rem 1rem; font-size: .82rem;
+    font-family: ui-monospace, monospace; overflow-x: auto;
+  }
+  .fn-card .fn-sig .tok-fn { font-weight: 700; }
+  .fn-card .fn-body { padding: .9rem 1.1rem; font-size: .92rem; color: var(--ink-2); }
+  .fn-card .fn-body p:last-child { margin-bottom: 0; }
+  .fn-card .fn-body p { max-width: none; }
+
+  /* ---------- Tables ---------- */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; margin: 1.1rem 0 1.4rem; }
+  table.ref { width: 100%; border-collapse: collapse; font-size: .86rem; min-width: 560px; }
+  table.ref thead th {
+    text-align: left; font: 700 .68rem/1.4 -apple-system, sans-serif; text-transform: uppercase;
+    letter-spacing: .05em; color: var(--muted); background: var(--surface-2); padding: .55rem .85rem;
+    border-bottom: 1px solid var(--line); white-space: nowrap;
+  }
+  table.ref td { padding: .65rem .85rem; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+  table.ref tbody tr:last-child td { border-bottom: none; }
+  table.ref tbody tr:hover td { background: var(--surface); }
+  table.ref td.name { color: var(--ink); font-weight: 600; font-family: ui-monospace, monospace; font-size: .84em; white-space: nowrap; }
+  table.ref td code { white-space: nowrap; }
+
+  /* ---------- Step list (tutorial) ---------- */
+  .steps { counter-reset: step; list-style: none; padding-left: 0; max-width: 74ch; }
+  .steps > li { counter-increment: step; position: relative; padding-left: 3rem; margin-bottom: 1.8rem; }
+  .steps > li::before {
+    content: counter(step); position: absolute; left: 0; top: 0; width: 2.1rem; height: 2.1rem;
+    border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line-strong);
+    display: flex; align-items: center; justify-content: center; font: 700 .95rem ui-monospace, monospace; color: var(--accent);
+  }
+  .steps h4 { margin-bottom: .4rem; }
+
+  footer.page-foot { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--line); font-size: .8rem; color: var(--muted); }
+  footer.page-foot a { color: var(--muted); }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow"><span class="rule"></span> AirGap Stats &middot; developer guide</div>
+    <h1>AirGap Stats Python Guide</h1>
+    <p class="dek">
+      A complete walkthrough of the Python side of AirGap Stats &mdash; the privacy-preserving research
+      data analysis toolkit &mdash; from the privacy model and the code that implements it, through every
+      statistical method in <code>tools/</code>, to how the four example projects wire it all together.
+    </p>
+    <div class="meta-row">
+      <span><strong>Scope</strong> &mdash; Python only (R mirror documented separately in each script's own header)</span>
+      <span><strong>Written</strong> &mdash; 2026&#8209;08&#8209;16</span>
+      <span><strong>Audience</strong> &mdash; anyone reading, extending, or maintaining this codebase</span>
+    </div>
+    <div class="usage-box">
+      <strong>How to use this document.</strong> Parts I&ndash;II are a linear tutorial &mdash; read them in order if
+      you're new here. Parts III&ndash;VI are reference material &mdash; jump to whatever module you're working on
+      via the sidebar. Every code excerpt is copied verbatim from the real files (paths are given so you can
+      open the original alongside this).
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc">
+      <a class="toc-part" href="#part-1"><span class="num">I</span>Orientation</a>
+      <a class="toc-sub" href="#what-is-this">What this codebase is</a>
+      <a class="toc-sub" href="#dr-stages">The DR workflow stages</a>
+      <a class="toc-sub" href="#privacy-model">The privacy model</a>
+      <a class="toc-sub" href="#architecture">Repository architecture</a>
+      <a class="toc-sub" href="#install">Installing &amp; running</a>
+
+      <a class="toc-part" href="#part-2"><span class="num">II</span>Tutorial walkthrough</a>
+      <a class="toc-sub" href="#tut-pattern">1. Pattern extraction</a>
+      <a class="toc-sub" href="#tut-synth">2. Synthesize data</a>
+      <a class="toc-sub" href="#tut-desc">3. Descriptive analysis</a>
+      <a class="toc-sub" href="#tut-infer">4. Inferential analysis</a>
+      <a class="toc-sub" href="#tut-survival">5. Survival &amp; PSM</a>
+
+      <a class="toc-part" href="#part-3"><span class="num">III</span><code>tools/</code> reference</a>
+      <a class="toc-sub" href="#tools-sap-gate">sap_gate</a>
+      <a class="toc-sub" href="#tools-diagnostics">diagnostics</a>
+      <a class="toc-sub" href="#tools-medical-track">medical_track</a>
+      <a class="toc-sub" href="#tools-sem-track">sem_track</a>
+      <a class="toc-sub" href="#tools-reporting">reporting</a>
+      <a class="toc-sub" href="#tools-repo-tooling">repo tooling</a>
+
+      <a class="toc-part" href="#part-4"><span class="num">IV</span><code>py-scripts/</code> templates</a>
+
+      <a class="toc-part" href="#part-5"><span class="num">V</span>Testing</a>
+
+      <a class="toc-part" href="#part-6"><span class="num">VI</span>Extending the codebase</a>
+
+      <a class="toc-part" href="#appendix"><span class="num">&middot;</span>Function index</a>
+    </nav>
+
+    <main>
+      <section class="part" id="part-1">
+        <div class="part-head"><span class="part-num">I</span><h2>Orientation</h2></div>
+        <p class="part-intro">What this codebase is, why it's built the way it is, and how the pieces fit together before you read any code.</p>
+
+        <h3 class="sub" id="what-is-this">What this codebase is</h3>
+        <p>
+          AirGap Stats is a toolkit for doing statistical analysis with an AI coding
+          agent (Claude, or any similar tool) <strong>without the real dataset ever reaching
+          the agent</strong>. The user keeps their real data on their own machine, outside the
+          repo; the agent only ever sees a structural description of it (variable names, types,
+          a handful of category labels) and a fully synthetic stand-in dataset it generates
+          itself. Every script the agent writes is developed and verified against that synthetic
+          file. Only the human ever runs the finished script against the real data, in their own
+          RStudio or Python session &mdash; the agent never touches real values, real row counts,
+          or real statistics at any point. The name is literal: the real dataset is
+          <strong>air-gapped</strong> from the AI at every stage, the same way a secure system is
+          air-gapped from a network.
+        </p>
+        <p>
+          A quick note on naming: skill and file names throughout this repo keep the
+          <code>dr-</code> prefix (<code>dr-00-privacy-gate</code>, <code>dr_workflow_state.yaml</code>,
+          and so on) &mdash; those are functional identifiers referenced by skill discovery,
+          mirror-sync tooling, and every skill doc's own cross-references, not the product's brand
+          name, so they stay as-is regardless of what the project is branded.
+        </p>
+        <div class="callout warn">
+          <span class="callout-label">This document is superseded</span>
+          <p>This Python-only guide predates the full bilingual rewrite. See
+          <code>docs/codebase-tutorial.html</code> for the current, maintained version covering
+          both Python and R &mdash; it supersedes everything here.</p>
+        </div>
+        <p>
+          Two analysis tracks are supported, each with its own set of statistical methods (Part
+          III covers both in depth):
+        </p>
+        <ul>
+          <li><span class="pill track-medical"><span class="dot"></span>Medical</span> &mdash; crude/adjusted logistic regression, confounder adjustment, survival analysis, propensity-score methods. Used by <code>crp-mortality</code> and <code>example-clinical</code>.</li>
+          <li><span class="pill track-sem"><span class="dot"></span>SEM</span> &mdash; confirmatory factor analysis, structural/mediation models on Likert-scale survey items. Used by <code>burnout-mediation</code> and <code>example-survey-sem</code>.</li>
+        </ul>
+
+        <h3 class="sub" id="dr-stages">The DR workflow stages</h3>
+        <p>Every project moves through the same five stages, labeled A through E. This is the mental model to hold onto before reading any script &mdash; almost every file in this repo exists to serve exactly one of these stages.</p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Stage</th><th>Who runs it</th><th>What happens</th><th>Output</th></tr></thead>
+            <tbody>
+              <tr><td class="name">A. Pattern extraction</td><td>You (RStudio/Python), locally</td><td>Reads your real dataset and extracts <em>only</em> variable names, types, category labels, and % missing &mdash; no values, no row counts, no statistics.</td><td><code>pattern/dataset_pattern.csv</code></td></tr>
+              <tr><td class="name">Review gate</td><td>You</td><td>You open the pattern file and confirm no label is identifying before the agent ever reads it.</td><td>&mdash;</td></tr>
+              <tr><td class="name">B. Synthesis</td><td>You, locally</td><td>Generates a fully synthetic dataset from the reviewed pattern &mdash; every value fabricated, no real row ever copied.</td><td><code>data_synthetic/synthetic_dataset.csv</code></td></tr>
+              <tr><td class="name">B2. Correlated synthesis <em>(optional)</em></td><td>You, locally</td><td>Same privacy contract as B, but preserves approximate pairwise correlation (Gaussian copula) so the agent's code can be checked for actual convergence, not just "does it run."</td><td><code>data_synthetic/synthetic_dataset_correlated.csv</code></td></tr>
+              <tr><td class="name">D. Analysis (synthetic)</td><td>Agent, verified with <code>Rscript</code> / <code>python</code></td><td>The agent writes and self-verifies every analysis script &mdash; descriptive, inferential/SEM, diagnostics &mdash; against the synthetic data.</td><td><code>scripts/*.py</code>, <code>outputs_synthetic/*.csv</code></td></tr>
+              <tr><td class="name">E. Real results</td><td>You run the scripts; agent formats results</td><td>You run the finished scripts on real data in your own session and paste back aggregate output (tables, estimates, never row-level data). The agent turns that into manuscript-ready tables and text &mdash; never inventing a number that wasn't in your paste.</td><td><code>results_real/*.md</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout info">
+          <span class="callout-label">Why this matters for reading the code</span>
+          <p>When you see a script's <code>USER SETTINGS</code> block default to <code>data_synthetic/synthetic_dataset.csv</code>, that's Stage D. When a script requires an <code>input()</code> prompt or a real file path with no default, that's Stage A/B/C &mdash; it structurally cannot run without a human supplying real data, by design.</p>
+        </div>
+
+        <h3 class="sub" id="privacy-model">The privacy model, in code</h3>
+        <p>The privacy guarantee isn't a policy statement &mdash; it's enforced by what the code physically does and does not read or write. Three mechanisms, from the actual source:</p>
+        <ol>
+          <li><strong>Real data never gets a persisted variable.</strong> Every generic template that touches real data (<code>py-scripts/pattern_extract.py</code>, <code>py-scripts/synthesize_data.py</code>, <code>py-scripts/synthesize_data_correlated.py</code>) takes it as an in-memory <code>data: pd.DataFrame</code> argument the caller supplies at runtime, computes only aggregate structure from it (a range, a correlation matrix, a set of category labels), and never writes that structure to any file &mdash; only the synthetic output gets written.</li>
+          <li><strong>The exported pattern file is a strict allowlist.</strong> <code>extract_pattern()</code> in <code>pattern_extract.py</code> only ever writes six columns: <code>variable, type, levels, n_distinct, missing_pct, note</code>. Rare category levels get masked to <code>"Other"</code> before export, and <code>n_distinct</code> itself is withheld (set to <code>None</code>) for any type where it would leak the real row count or bound it. There is no code path that writes a raw value, a row count, or a summary statistic into the pattern file.</li>
+          <li><strong>Formula-injection and magic-byte safety nets exist even for the synthetic/derived files</strong> the agent does handle, consistent with the same defense-in-depth posture &mdash; belt-and-suspenders even where the primary guarantee (real data never enters the process) already holds.</li>
+        </ol>
+
+        <h3 class="sub" id="architecture">Repository architecture</h3>
+        <p>Ignoring the R mirror (each Python piece below has a base-R equivalent, documented in that script's own header), the Python-relevant layout is:</p>
+        <div class="file-tree">py-scripts/              <span class="comment"># generic, per-track templates -- copied into a project and adapted</span>
+  pattern_extract.py    <span class="comment"># Stage A</span>
+  synthesize_data.py     <span class="comment"># Stage B</span>
+  synthesize_data_correlated.py  <span class="comment"># Stage B2 (opt-in)</span>
+  desc.py, plots.py       <span class="comment"># Stage D2 (descriptive)</span>
+  infer.py                <span class="comment"># Stage D3/D4 medical track</span>
+  sem_measurement.py, sem_structural.py, plots_sem.py  <span class="comment"># Stage D3/D4 SEM track</span>
+
+tools/                  <span class="comment"># the actual statistical-methods packages -- imported by project scripts</span>
+  sap_gate/               <span class="comment"># Phase 0: pre-registration QA gate</span>
+  diagnostics/            <span class="comment"># Phase 1: VIF, influence, bootstrap validation, group tests</span>
+  medical_track/          <span class="comment"># Phase 2: Firth regression, survival, PSM, multiplicity</span>
+  sem_track/               <span class="comment"># Phase 3: ordinal CFA, reliability, validity, mediation, invariance</span>
+  reporting/               <span class="comment"># Phase 5: auto-extraction for Stage E manuscript output</span>
+  smoke_test.py, parity_check.py, skills_sync_check.py  <span class="comment"># Phase 6: maintainer tooling</span>
+
+projects/                <span class="comment"># one folder per research question</span>
+  crp-mortality/          <span class="comment"># medical track: CRP -> 30-day mortality</span>
+  example-clinical/       <span class="comment"># medical track: treatment -> mortality</span>
+  burnout-mediation/       <span class="comment"># SEM track: job satisfaction -> burnout -> turnover (mediation)</span>
+  example-survey-sem/      <span class="comment"># SEM track: burnout/satisfaction -> turnover (parallel)</span>
+  _template/                <span class="comment"># empty starting point for a new project</span>
+    &lt;project&gt;/scripts/     <span class="comment"># the actual, adapted-per-project copies that get run</span>
+    &lt;project&gt;/pattern/, data_synthetic/, outputs_synthetic/, plans/, results_real/
+
+tests/                    <span class="comment"># one self-contained test_*.py per tools/ package, no pytest</span>
+
+skills/                    <span class="comment"># the agent-facing instructions that drive each DR stage (Markdown, not Python)</span></div>
+        <p>
+          The important relationship to internalize: <code>py-scripts/</code> holds
+          <em>generic</em> templates and <code>tools/</code> holds the actual statistical
+          logic as importable functions; a project's own <code>scripts/*.py</code> files are
+          <em>adapted copies</em> that hardcode that project's variable names and call into
+          <code>tools/</code> for anything non-trivial. When you fix a bug in a statistical
+          method, you fix it once in <code>tools/</code> &mdash; the project scripts that import
+          it pick up the fix automatically.
+        </p>
+        <p>
+          The generic templates in <code>py-scripts/</code> do <em>not</em> get the same
+          automatic benefit &mdash; copying a template into a project is a one-time snapshot, not
+          a living link. Part IV documents this precisely, including a gap that existed until
+          2026-08-16 (the templates had fallen behind the four example projects) and how it was closed.
+        </p>
+
+        <h3 class="sub" id="install">Installing &amp; running</h3>
+        <p>The whole Python side runs from one virtual environment at the repo root, managed with <a href="https://github.com/astral-sh/uv"><code>uv</code></a>:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal</span><span class="lang">bash</span></div>
+          <pre><code><span class="tok-com"># one-time setup, from the repo root</span>
+uv venv
+uv pip install -e .
+
+<span class="tok-com"># every project script is run FROM THE PROJECT FOLDER, not the repo root --</span>
+<span class="tok-com"># this is a hard convention throughout the codebase (relative paths assume it)</span>
+<span class="tok-fn">cd</span> projects/crp-mortality
+../../.venv/bin/python scripts/desc.py
+../../.venv/bin/python scripts/infer.py</code></pre>
+        </div>
+        <p><code>pyproject.toml</code> pins the dependency list: <code>pandas, numpy, matplotlib, statsmodels, semopy, pyyaml, scipy, patsy</code>. Nothing in <code>tools/</code> or <code>py-scripts/</code> needs anything beyond that list &mdash; no scikit-learn, no extra SEM packages.</p>
+        <div class="callout warn">
+          <span class="callout-label">Every project script assumes it's run from that project's folder</span>
+          <p>Paths like <code>"data_synthetic/synthetic_dataset.csv"</code> in a script's <code>USER SETTINGS</code> block are relative to the current working directory, which every script's own header comment states explicitly ("Run from the project folder"). Running a script from the repo root instead is the single most common way to hit a spurious <code>FileNotFoundError</code> when working in this codebase.</p>
+        </div>
+      </section>
+
+      <section class="part" id="part-2">
+        <div class="part-head"><span class="part-num">II</span><h2>Tutorial walkthrough</h2></div>
+        <p class="part-intro">
+          Follows <code>projects/crp-mortality</code> &mdash; a medical-track project asking whether
+          CRP (C-reactive protein) is associated with 30-day mortality &mdash; through every Python
+          script, in the order they actually run. Read this section top to bottom the first time;
+          come back to Part III for the full reference on any function mentioned along the way.
+        </p>
+
+        <ol class="steps">
+          <li id="tut-pattern">
+            <h4>Pattern extraction &mdash; <code>py-scripts/pattern_extract.py</code></h4>
+            <p>The only script in this whole codebase that ever sees a real value. Its single public function inspects each column's pandas dtype and value distribution to classify it, then writes out structure only:</p>
+            <div class="code-panel">
+              <div class="code-caption"><span>py-scripts/pattern_extract.py</span><span class="lang">python</span></div>
+              <pre><code><span class="tok-kw">def</span> <span class="tok-fn">extract_pattern</span>(
+    data,
+    output_csv=<span class="tok-str">"dataset_pattern.csv"</span>,
+    max_levels=<span class="tok-num">15</span>,
+    min_level_count=<span class="tok-num">5</span>,
+    id_unique_ratio=<span class="tok-num">0.9</span>,
+):
+    <span class="tok-com"># ... classifies every column into one of:</span>
+    <span class="tok-com">#   id_like | binary | integer_scale | integer | numeric | categorical | date</span>
+    <span class="tok-com"># high-cardinality string columns (n_distinct/n_rows >= 0.9) become id_like</span>
+    <span class="tok-com"># and their levels are never exported at all.</span>
+    <span class="tok-com"># rare category levels (fewer than min_level_count rows) collapse to "Other".</span></code></pre>
+            </div>
+            <p>Run once, by hand, against the real file:</p>
+            <div class="code-panel">
+              <div class="code-caption"><span>terminal</span><span class="lang">bash</span></div>
+              <pre><code>python py-scripts/pattern_extract.py /path/to/real_data.csv pattern/dataset_pattern.csv</code></pre>
+            </div>
+            <p>The result is reviewed by a human (the "review gate") before anything downstream touches it &mdash; every level label is checked for anything identifying. Only after that review does the pattern file below become fair game for the agent to read:</p>
+            <div class="console-panel">
+              <div class="console-caption">pattern/dataset_pattern.csv (excerpt)</div>
+              <pre>variable,type,levels,n_distinct,missing_pct,note
+patient_id,id_like,,,0.0,high-cardinality; treated as identifier; levels not exported
+age,integer,,,0.0,
+sex,binary,Nữ|Nam,2.0,0.0,
+treatment,binary,Phác đồ A|Phác đồ B,2.0,0.0,
+crp,numeric,,,0.0,
+mortality_30day,binary,0|1,2.0,0.0,</pre>
+            </div>
+          </li>
+
+          <li id="tut-synth">
+            <h4>Synthesize data &mdash; <code>py-scripts/synthesize_data.py</code></h4>
+            <p><code>synthesize_data()</code> reads the reviewed pattern file and, for every row, generates <code>n</code> fabricated values matching that column's <code>type</code>. It optionally accepts the real <code>data</code> too &mdash; used <em>only</em>, locally, at runtime, to pick a plausible numeric range (e.g. <code>age</code>'s min/max) so the synthetic column doesn't look absurd; that range is never written anywhere.</p>
+            <div class="code-panel">
+              <div class="code-caption"><span>py-scripts/synthesize_data.py</span><span class="lang">python</span></div>
+              <pre><code><span class="tok-kw">def</span> <span class="tok-fn">_gen_column</span>(col_type, levs, nm, n, rng, data):
+    <span class="tok-kw">if</span> col_type == <span class="tok-str">"binary"</span>:
+        vals = levs <span class="tok-kw">if</span> levs <span class="tok-kw">else</span> [<span class="tok-str">"0"</span>, <span class="tok-str">"1"</span>]
+        <span class="tok-kw">return</span> rng.choice(vals, size=n)
+    <span class="tok-kw">elif</span> col_type == <span class="tok-str">"numeric"</span>:
+        lo, hi = _local_range(data, nm, <span class="tok-num">0</span>, <span class="tok-num">100</span>)
+        <span class="tok-kw">return</span> np.round(rng.uniform(lo, hi, size=n), <span class="tok-num">2</span>)
+    <span class="tok-com"># ... integer, integer_scale, categorical, id_like, date follow the same pattern</span></code></pre>
+            </div>
+            <p>Every column is generated <strong>independently</strong> of every other column &mdash; that's a deliberate safety margin, not an oversight, so no real relationship between variables can leak into the file. The cost: a model fit on this file has nothing real to converge to, so Stage D scripts explicitly document that a degenerate fit on synthetic data is expected. If you need to check that a model actually converges under realistic correlation, <a href="#tut-b2">Stage B2</a> below is the opt-in alternative.</p>
+            <div id="tut-b2" class="callout tip">
+              <span class="callout-label">Stage B2: correlated synthesis (optional)</span>
+              <p><code>py-scripts/synthesize_data_correlated.py</code> is the same contract, extended: it computes the real data's pairwise Spearman correlation matrix locally, projects it to the nearest valid correlation matrix, and generates synthetic rows via a Gaussian copula (Cholesky decomposition &rarr; standard normal draws &rarr; inverse-transform through each variable's own empirical marginal) so the synthetic file preserves approximate real correlation &mdash; still with zero real rows copied. It requires <code>data</code> (raises if <code>None</code>) since there is nothing to correlate without it. See Part III's <a href="#tools-repo-tooling">repo tooling</a> section, or the file's own extensive docstring, for the full privacy design.</p>
+            </div>
+          </li>
+
+          <li id="tut-desc">
+            <h4>Descriptive analysis &mdash; <code>scripts/desc.py</code></h4>
+            <p>Builds a Table 1 (baseline characteristics by outcome group) with a formally chosen test per row &mdash; not just a mean and a p-value from whatever test happened to be habitual:</p>
+            <div class="code-panel">
+              <div class="code-caption"><span>projects/crp-mortality/scripts/desc.py</span><span class="lang">python</span></div>
+              <pre><code><span class="tok-kw">from</span> tools.diagnostics <span class="tok-kw">import</span> compare_categorical, compare_continuous
+
+group_var        = <span class="tok-str">"mortality_30day"</span>
+continuous_vars   = [<span class="tok-str">"age"</span>, <span class="tok-str">"bmi"</span>, <span class="tok-str">"sbp"</span>, <span class="tok-str">"egfr"</span>, <span class="tok-str">"hba1c"</span>, <span class="tok-str">"crp"</span>]
+categorical_vars  = [<span class="tok-str">"sex"</span>, <span class="tok-str">"treatment"</span>, <span class="tok-str">"diabetes"</span>, <span class="tok-str">"hypertension"</span>, <span class="tok-str">"smoking"</span>, <span class="tok-str">"complication"</span>]
+
+<span class="tok-kw">for</span> var <span class="tok-kw">in</span> continuous_vars:
+    result = <span class="tok-fn">compare_continuous</span>(dat, var, group_var)   <span class="tok-com"># picks Welch t / ANOVA / Mann-Whitney / Kruskal at runtime</span>
+    <span class="tok-com"># result.test_used, result.p_value, result.branch_reason all get logged</span></code></pre>
+            </div>
+            <p><code>compare_continuous</code> (from <code>tools.diagnostics.group_tests</code>, detailed in Part III) runs a Shapiro-Wilk normality check per group first, then branches: both groups normal &rarr; Welch's t-test (2 groups) or Welch's ANOVA (&gt;2); otherwise Mann-Whitney U or Kruskal-Wallis. The choice and its reason are recorded, never assumed in advance, because nobody &mdash; not the agent, not the SAP author &mdash; has seen the real data's distribution yet.</p>
+            <div class="console-panel">
+              <div class="console-caption">$ python scripts/desc.py (excerpt)</div>
+              <pre>Table 1 written to outputs_synthetic/table1.csv
+characteristic level Overall Group_0 Group_1  test         p_value
+N              -     200     105     95       -            NaN
+age            -     52.1 (28.4)  ...          welch_t_test  0.7332
+crp            -     50.9 (28.9)  ...          mann_whitney_u 0.1057
+
+Group comparison tests (auto-selected at runtime, by mortality_30day):
+  - age: both groups pass Shapiro-Wilk (p&gt;=0.05) -&gt; two-sample t-test (Welch)
+  - crp: at least one group fails Shapiro-Wilk (p&lt;0.05) -&gt; Mann-Whitney U</pre>
+            </div>
+          </li>
+
+          <li id="tut-infer">
+            <h4>Inferential analysis &mdash; <code>scripts/infer.py</code></h4>
+            <p>The core medical-track script, in four sections. Sections 1&ndash;2 are the primary analysis; Sections 3&ndash;4 are diagnostics and sensitivity checks that didn't exist before Phases 1&ndash;2 of the roadmap and are now standard:</p>
+            <div class="table-wrap">
+              <table class="ref">
+                <thead><tr><th>Section</th><th>What it does</th><th>Key calls</th></tr></thead>
+                <tbody>
+                  <tr><td class="name">1. Crude model</td><td>Unadjusted logistic regression, outcome ~ predictor</td><td><code>smf.logit(...).fit()</code></td></tr>
+                  <tr><td class="name">2. Adjusted model</td><td>Adds the confounder set from <code>plans/confounding_adjustment_plan.yaml</code></td><td><code>smf.logit(...).fit()</code></td></tr>
+                  <tr><td class="name">3. Diagnostics</td><td>VIF, Cook's distance, DFBETAs, Box-Tidwell linearity, bootstrap-optimism validation on the adjusted model</td><td><code>tools.diagnostics.*</code></td></tr>
+                  <tr><td class="name">4. Sensitivity</td><td>Firth penalized refit; log-transform-and-refit for any Box-Tidwell-flagged variable</td><td><code>tools.medical_track.firth_logistic_regression</code>, <code>log_transform_if_skewed</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="code-panel">
+              <div class="code-caption"><span>projects/crp-mortality/scripts/infer.py</span><span class="lang">python</span></div>
+              <pre><code><span class="tok-com"># === SECTION 4: SENSITIVITY ANALYSES (Phase 2) ===</span>
+firth_fit = <span class="tok-fn">firth_logistic_regression</span>(dat, adj_formula)
+<span class="tok-com"># compares the main predictor's OR under plain MLE vs. Firth's penalized</span>
+<span class="tok-com"># likelihood -- a large relative gap flags separation/instability the</span>
+<span class="tok-com"># plain adjusted model in Section 2 wouldn't otherwise reveal</span>
+
+flagged_vars = bt_table.loc[bt_table[<span class="tok-str">"status"</span>] == <span class="tok-str">"nonlinear_suspected"</span>, <span class="tok-str">"variable"</span>].tolist()
+<span class="tok-kw">for</span> var <span class="tok-kw">in</span> flagged_vars:
+    decision = <span class="tok-fn">log_transform_if_skewed</span>(dat[var])
+    <span class="tok-kw">if</span> decision.action == <span class="tok-str">"log_transform"</span>:
+        <span class="tok-com"># refit with log_&lt;var&gt; substituted in, report both models side by side</span></code></pre>
+            </div>
+            <div class="callout info">
+              <span class="callout-label">Why Firth's method is hand-implemented, not imported</span>
+              <p>No maintained Python package implements Firth's penalized logistic regression. <code>tools/medical_track/firth_logistic.py</code> hand-rolls the modified-score IRLS algorithm (Firth 1993; Heinze &amp; Schemper 2002) and was cross-validated against R's <code>logistf</code> package during development &mdash; agreement to 4+ decimal places on both a well-behaved dataset and a deliberately-separated one (see Part III).</p>
+            </div>
+          </li>
+
+          <li id="tut-survival">
+            <h4>Survival &amp; propensity-score sensitivity &mdash; <code>scripts/survival.py</code>, <code>scripts/psm.py</code></h4>
+            <p>Two extension scripts, both new in Phase 2, that exist because a single crude+adjusted logistic regression leaves real information and real robustness questions on the table:</p>
+            <ul>
+              <li><code>survival.py</code> &mdash; <code>length_of_stay</code> sits unused in the base analysis; dichotomizing the outcome at a fixed 30-day window throws away exactly when death occurred. Fits Kaplan-Meier curves (stratified, with a log-rank test) and a Cox proportional-hazards model via <code>tools.medical_track.kaplan_meier</code> / <code>cox_ph</code>. The script's own header carries an explicit, unmissable caveat: <code>length_of_stay</code> is a <em>plausible, not confirmed</em> time-to-event proxy, and that must be confirmed with the real-data owner before this is reported as a genuine survival analysis.</li>
+              <li><code>psm.py</code> &mdash; regression adjustment (Section 2 of <code>infer.py</code>) silently assumes the model's functional form is correct. Propensity-score matching and inverse-probability weighting are a differently-flawed comparison that doesn't extrapolate the same way; if both approaches tell a similar story, that's real evidence the finding isn't a modeling artifact. Ends with an <a href="#fn-e-value">E-value</a> quantifying how strong an unmeasured confounder would have to be to explain the finding away.</li>
+            </ul>
+            <p>Both scripts print an explicit note that, on the independently-generated synthetic dataset, their numbers are meaningless by design &mdash; there is no real exposure-outcome relationship or real time-to-event structure for the code to recover. Verifying these scripts only ever proves the code runs; the numbers are not interpreted until the real-data run.</p>
+          </li>
+        </ol>
+
+        <p>That's the whole medical-track loop for one project. <code>burnout-mediation</code> and <code>example-survey-sem</code> (SEM track) follow the same A&rarr;B&rarr;D shape, but Stage D calls into <code>tools/sem_track</code> instead of <code>tools/medical_track</code> &mdash; covered in full in Part III.</p>
+      </section>
+
+      <section class="part" id="part-3">
+        <div class="part-head"><span class="part-num">III</span><h2><code>tools/</code> reference</h2></div>
+        <p class="part-intro">
+          Every non-trivial statistical method in this codebase lives here as an importable,
+          independently-tested function &mdash; not copy-pasted into each project script. Project
+          scripts (Part II) are thin: they name the variables and call into these packages.
+        </p>
+
+        <h3 class="sub" id="tools-sap-gate">tools.sap_gate <span class="pill track-cross"><span class="dot"></span>Phase 0</span></h3>
+        <p>
+          A quality gate that checks whether a project's pre-registration decisions
+          (<code>plans/sap.md</code> and friends) are actually recorded before any analysis
+          script may be generated &mdash; missing-data strategy, multiplicity plan, confounder
+          selection rule, SEM ordinal-estimator decision. The point is to make these decisions
+          exist <em>before</em> a result has been seen, not to check them after the fact.
+        </p>
+        <div class="fn-card">
+          <div class="fn-sig">run_phase0_gate(project_dir: str | Path) -&gt; dict[str, Any]</div>
+          <div class="fn-body">
+            <p><code>tools/sap_gate/gate.py</code>. The single entry point &mdash; orchestrates four checks (missing-data, multiplicity, confounder-selection, ordinal-estimator) and returns a report dict with the exact shape the <code>dr-output-qa-gate</code> skill already expects: <code>qa_status</code> (<code>pass</code> / <code>needs_revision</code> / <code>blocked</code>), <code>required_artifacts</code>, <code>missing_artifacts</code>, <code>checks</code>, <code>issues</code>, <code>next_allowed_step</code>. Skips the confounder/estimator checks gracefully when the project's track (medical vs. SEM) makes them not-yet-applicable.</p>
+          </div>
+        </div>
+        <p>The four individual checks live in <code>schema.py</code> and <code>yaml_checks.py</code>, each returning a <code>CheckResult</code> (name, status, list of issue strings) that never raises on malformed input &mdash; a missing or malformed field is itself the finding, collected into <code>issues</code> rather than crashing the gate. <code>sap_parser.py</code> parses <code>plans/sap.md</code> deliberately loosely: it locates sections by heading <em>text</em> ("missing data", "multiplicity"), not by the letter in front of them, so a renumbered or hand-edited SAP still validates.</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal</span><span class="lang">bash</span></div>
+          <pre><code>python -m tools.sap_gate projects/crp-mortality
+<span class="tok-com"># exit 0 = pass, 1 = needs_revision, 2 = blocked -- scriptable in CI</span></code></pre>
+        </div>
+
+        <h3 class="sub" id="tools-diagnostics">tools.diagnostics <span class="pill track-cross"><span class="dot"></span>Phase 1</span></h3>
+        <p>The shared diagnostic layer both tracks' models call. Three sub-modules:</p>
+
+        <h4 class="subsub">group_tests.py &mdash; formal Table 1 comparisons</h4>
+        <div class="fn-card">
+          <div class="fn-sig">compare_continuous(data, var, group) -&gt; GroupTestResult
+compare_categorical(data, var, group, min_expected=5.0) -&gt; GroupTestResult</div>
+          <div class="fn-body">
+            <p>Neither test is fixed in advance &mdash; both branch at runtime and record why. <strong>Continuous:</strong> Shapiro-Wilk per group first; if every group passes (p&nbsp;&ge;&nbsp;0.05), Welch's t-test (2 groups) or Welch's one-way ANOVA (&gt;2, hand-derived below since <code>scipy.stats.f_oneway</code> assumes equal variances); otherwise Mann-Whitney U or Kruskal-Wallis. <strong>Categorical:</strong> chi-squared if every expected cell count clears 5, else Fisher's exact (via <code>scipy.stats.fisher_exact</code>, which handles r&times;c tables, not just 2&times;2).</p>
+          </div>
+        </div>
+        <div class="callout tip">
+          <span class="callout-label">Welch's ANOVA, hand-derived and cross-validated</span>
+          <p><code>_welch_anova()</code> implements Welch (1951)'s formula directly (weighted grand mean, adjusted F statistic and denominator df) because scipy has no built-in unequal-variance one-way ANOVA. Cross-checked against R's <code>oneway.test(var.equal = FALSE)</code> on identical data during development: exact match to 6 decimal places (F = 7.353164, p = 0.001550, both languages).</p>
+        </div>
+
+        <h4 class="subsub">regression_diagnostics.py &mdash; is the adjusted model trustworthy?</h4>
+        <div class="fn-card">
+          <div class="fn-sig">compute_vif(data, formula_rhs) -&gt; pd.DataFrame</div>
+          <div class="fn-body"><p>Variance inflation factor per term (patsy-encoded exactly as the model itself), flag threshold 5.0. Cross-validated against R's closed-form <code>1 / (1 - R&sup2;)</code> VIF to 6 decimal places.</p></div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-sig">compute_influence(fit_result) -&gt; (pd.DataFrame, threshold)
+compute_dfbetas(fit_result) -&gt; (pd.DataFrame, threshold)</div>
+          <div class="fn-body"><p>Cook's distance (threshold 4/n) and DFBETAs (threshold 2/&radic;n) from a fitted statsmodels GLM's own influence object. DFBETAs differ a few percent from R's <code>dfbetas()</code> &mdash; a documented, harmless rounding difference in the one-step Newton approximation both languages use, not a bug (fitted coefficients match to 6 decimals either way).</p></div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-sig">box_tidwell_test(data, outcome, base_formula_rhs, continuous_vars) -&gt; pd.DataFrame</div>
+          <div class="fn-body"><p>Refits <code>outcome ~ base_rhs + var:np.log(var)</code> for each continuous variable; a significant interaction term (p &lt; 0.05) means <code>var</code> is likely non-linear on the logit scale. Non-positive variables (log undefined) are reported as <code>skipped</code>, never silently dropped. Feeds Phase 2's <a href="#tools-medical-track">nonlinear handling</a>.</p></div>
+        </div>
+
+        <h4 class="subsub">bootstrap_validation.py &mdash; Harrell's optimism correction</h4>
+        <div class="fn-card">
+          <div class="fn-sig">bootstrap_optimism(data, formula, outcome, n_boot=200, seed=2026) -&gt; BootstrapValidationResult</div>
+          <div class="fn-body">
+            <p>For each of <code>n_boot</code> resamples: refit on the resample, evaluate on the resample itself ("apparent" performance) and on the original data ("test" performance). The average gap is the <em>optimism</em>; apparent minus optimism is the corrected estimate of real-world performance. Reports both AUC and calibration slope.</p>
+            <p>AUC is computed via the exact Mann-Whitney-U&harr;AUC identity (<code>U / (n_pos &times; n_neg)</code>), not an approximation &mdash; deliberately avoids adding scikit-learn as a dependency just for <code>roc_auc_score</code>.</p>
+          </div>
+        </div>
+
+        <h3 class="sub" id="tools-medical-track">tools.medical_track <span class="pill track-medical"><span class="dot"></span>Phase 2</span></h3>
+
+        <h4 class="subsub">firth_logistic.py &mdash; penalized logistic regression</h4>
+        <div class="fn-card">
+          <div class="fn-sig">firth_logistic_regression(data, formula, max_iter=50, tol=1e-6) -&gt; FirthResult</div>
+          <div class="fn-body">
+            <p>Firth's modified-score IRLS (Firth 1993; Heinze &amp; Schemper 2002), hand-implemented &mdash; no maintained Python package exists. The core loop, in full:</p>
+          </div>
+        </div>
+        <div class="code-panel">
+          <div class="code-caption"><span>tools/medical_track/firth_logistic.py</span><span class="lang">python</span></div>
+          <pre><code><span class="tok-kw">for</span> iteration <span class="tok-kw">in</span> range(<span class="tok-num">1</span>, max_iter + <span class="tok-num">1</span>):
+    eta = X @ beta
+    pi = <span class="tok-num">1.0</span> / (<span class="tok-num">1.0</span> + np.exp(-eta))
+    w = pi * (<span class="tok-num">1</span> - pi)
+    xtwx_inv = np.linalg.inv(X.T @ (X * w[:, <span class="tok-kw">None</span>]))
+
+    <span class="tok-com"># Hat-matrix diagonal h_i = w_i * x_i (X'WX)^-1 x_i'</span>
+    h = w * np.einsum(<span class="tok-str">"ij,jk,ik-&gt;i"</span>, X, xtwx_inv, X)
+
+    <span class="tok-com"># Firth's modified score: ordinary score + penalty h_i*(0.5 - pi_i)</span>
+    u_star = X.T @ (y - pi + h * (<span class="tok-num">0.5</span> - pi))
+    delta = xtwx_inv @ u_star
+    <span class="tok-com"># ... step-halving safety net, then convergence check on max|delta| &lt; tol</span></code></pre>
+        </div>
+        <div class="callout tip">
+          <span class="callout-label">Cross-validated against R's <code>logistf</code></span>
+          <p>Two fixtures, checked during development: a well-behaved dataset (R gives Intercept=0.1054584, x1=0.9989356, x2=&minus;0.2230824 &mdash; Python matched to 4+ decimals) and a deliberately-separated one where plain MLE's coefficient blows up to ~4.74 while Firth pulls it to a stable 2.1492432 (R and Python agreed on the corrected value too). The R port built later in this project re-verified the identical algorithm to ~1e-7 agreement against the same package.</p>
+        </div>
+
+        <h4 class="subsub">nonlinearity.py &mdash; what to do once Box-Tidwell flags a variable</h4>
+        <div class="fn-card">
+          <div class="fn-sig">log_transform_if_skewed(x, skew_threshold=1.0) -&gt; TransformDecision
+restricted_cubic_spline_basis(x, n_knots=4, knots=None) -&gt; pd.DataFrame</div>
+          <div class="fn-body"><p>First remedy: log-transform if the variable is strictly positive and its Fisher-Pearson skewness exceeds 1.0. Second remedy (implemented, available, not currently exercised by any example project's data): Harrell's restricted cubic spline basis &mdash; <code>n_knots&minus;2</code> smooth basis columns replacing a single linear term.</p></div>
+        </div>
+
+        <h4 class="subsub">survival.py &mdash; time-to-event</h4>
+        <div class="fn-card">
+          <div class="fn-sig">kaplan_meier(data, time_col, event_col, group_col=None) -&gt; KaplanMeierResult
+cox_ph(data, formula_rhs, time_col, event_col) -&gt; CoxPHResult</div>
+          <div class="fn-body"><p>Thin wrappers around <code>statsmodels.duration</code>'s <code>SurvfuncRight</code> (Kaplan-Meier, with <code>survdiff</code> for the log-rank test) and <code>PHReg</code> (Cox proportional hazards). <code>PHReg</code> defaults to Breslow tie-handling, which the R mirror's <code>coxph()</code> does not (R defaults to Efron) &mdash; a documented, expected small difference in fitted coefficients when there are tied event times, not a bug in either language.</p></div>
+        </div>
+
+        <h4 class="subsub">propensity.py &mdash; PSM, IPTW, E-value</h4>
+        <div class="fn-card">
+          <div class="fn-sig">propensity_scores(data, treatment_col, covariates_rhs) -&gt; pd.Series
+psm_match(data, treatment_col, propensity, caliper=None, seed=2026) -&gt; MatchResult
+iptw_weights(treatment, propensity, stabilized=True) -&gt; pd.Series
+e_value(estimate, ci_bound=None, measure="OR", rare_outcome=False) -&gt; dict</div>
+          <div class="fn-body">
+            <p><code>psm_match</code>: greedy 1:1 nearest-neighbor matching without replacement, on the <em>logit</em> of the propensity score (matching on the raw probability compresses distances near 0 and 1, distorting "nearest"). Default caliper is 0.2 SD of the logit-PS (Austin 2011); unmatched treated units beyond the caliper are dropped, never force-matched.</p>
+            <p id="fn-e-value"><code>e_value</code>: VanderWeele &amp; Ding (2017) &mdash; the minimum risk-ratio-scale association an unmeasured confounder would need with <em>both</em> exposure and outcome to fully explain away the observed estimate. An OR is converted to an approximate RR via &radic;OR by default (the standard approximation for a non-rare outcome); pass <code>measure="RR"</code> or <code>rare_outcome=True</code> to skip that conversion. Validated during development: RR=2 gives E-value 3.4142, matching VanderWeele &amp; Ding's own published worked example.</p>
+          </div>
+        </div>
+
+        <h4 class="subsub">multiplicity.py &mdash; FDR control</h4>
+        <div class="fn-card">
+          <div class="fn-sig">benjamini_hochberg(p_values, alpha=0.05) -&gt; pd.DataFrame</div>
+          <div class="fn-body"><p>Thin wrapper around <code>statsmodels.stats.multitest.multipletests</code>. Built and tested, but not currently called from any of the four example projects &mdash; each project's SAP declares exactly one planned comparison (<code>correction_method: none_single_comparison</code>), so there's no live multi-comparison case yet. Wire it in if a project's SAP ever declares more than one.</p></div>
+        </div>
+
+        <h3 class="sub" id="tools-sem-track">tools.sem_track <span class="pill track-sem"><span class="dot"></span>Phase 3</span></h3>
+
+        <h4 class="subsub">estimator.py &mdash; ordinal-aware CFA/SEM fitting</h4>
+        <div class="fn-card">
+          <div class="fn-sig">fit_measurement_model(data, constructs, estimator="DWLS", ordinal_items=None) -&gt; FitResult
+fit_structural_model(data, syntax, estimator="DWLS", ordinal_items=None) -&gt; FitResult
+factor_scores(fit, data) -&gt; pd.DataFrame</div>
+          <div class="fn-body">
+            <p>Fits via <a href="https://semopy.com/"><code>semopy</code></a>, declaring every Likert item <code>ordinal:</code> and using the DWLS objective (WLSMV in lavaan/R terms) on the polychoric correlation matrix &mdash; the methodologically correct estimator for ordinal indicators (Flora &amp; Curran 2004), not the plain-ML default that was flagged <code>needs_review</code> in every project's Phase 0 plan.</p>
+            <p><code>.converged</code> comes from the solver's own <code>SolverResult.success</code>, not from checking whether fit indices are non-NaN &mdash; semopy's SRMR is <em>always</em> NaN regardless of convergence, a semopy quirk that would otherwise misreport every successful fit as failed.</p>
+          </div>
+        </div>
+        <div class="callout warn">
+          <span class="callout-label">fit_structural_model's real limitation</span>
+          <p>With many ordinal indicators plus structural paths, semopy 2.3.11's WLS solver can stall at its starting values (chi2 comes back infinite) instead of raising an error. <code>.converged</code> will correctly read <code>False</code> here &mdash; treat that as "this model shape doesn't fit reliably with semopy's solver," not as evidence about the real structural relationship. This is exactly why <code>mediation.py</code> below exists as a separate, more robust path for structural models.</p>
+        </div>
+
+        <h4 class="subsub">reliability.py &amp; validity.py &mdash; beyond Cronbach's alpha</h4>
+        <div class="fn-card">
+          <div class="fn-sig">mcdonald_omega(loadings, error_vars) -&gt; float
+average_variance_extracted(std_loadings) -&gt; float
+composite_reliability(std_loadings) -&gt; float
+htmt(data, construct_a_items, construct_b_items) -&gt; float</div>
+          <div class="fn-body">
+            <p>All four are closed-form and computed from a fitted CFA's own standardized loadings &mdash; no additional model fit needed. <strong>Omega</strong> doesn't assume tau-equivalence (equal loadings) the way alpha does, which the CFA step usually contradicts. <strong>AVE</strong> is the mean squared standardized loading (&ge;&nbsp;0.50 is the Fornell &amp; Larcker 1981 threshold for convergent validity). <strong>Composite reliability</strong> is numerically the same formula as omega under the standardized model &mdash; reported separately by convention, not because they're independent evidence. <strong>HTMT</strong> is computed from raw-item Pearson correlations (not the CFA's polychoric matrix) &mdash; below 0.85 (strict) or 0.90 (lenient) supports discriminant validity between two constructs.</p>
+          </div>
+        </div>
+        <div class="callout warn">
+          <span class="callout-label">A real bug this caught: lval/rval orientation</span>
+          <p><code>reliability_from_cfa()</code>'s docstring flags this explicitly: semopy represents a loading "Construct =~ item" internally as the row <code>item(lval) ~ Construct(rval)</code> &mdash; the opposite of what the arrow notation suggests. Getting this backwards (filtering on <code>lval == construct</code> instead of <code>rval == construct</code>) silently returns an empty frame, not an error, and everything downstream quietly computes NaN. The same bug, in the opposite direction, was independently rediscovered while porting this logic to lavaan (R) &mdash; lavaan's own orientation is <code>lhs=construct, rhs=item</code>, the mirror image of semopy's.</p>
+        </div>
+
+        <h4 class="subsub">mediation.py &amp; model_comparison.py &mdash; structural models with real uncertainty</h4>
+        <div class="fn-card">
+          <div class="fn-sig">bootstrap_mediation(data, constructs, mediator, predictor, outcome, outcome_is_binary=True, covariates=None, estimator="DWLS", n_boot=200, seed=2026) -&gt; MediationBootstrapResult
+bootstrap_structural_regression(data, constructs, outcome, predictors, ...) -&gt; RegressionBootstrapResult
+compare_nested_regressions(fit_full, fit_restricted) -&gt; RegressionComparisonResult</div>
+          <div class="fn-body">
+            <p><code>bootstrap_mediation</code> is the two-step factor-score-regression approach (Skrondal &amp; Laake 2001) described above, refit inside a bootstrap loop so the reported percentile CI on the indirect effect (a&times;b, a product of two coefficients &mdash; not normally distributed) reflects uncertainty from <em>both</em> the factor-score stage and the structural-regression stage. <code>bootstrap_structural_regression</code> is the same machinery for a model with parallel predictors and no mediation path (used by <code>example-survey-sem</code>, which has no indirect-effect term to report).</p>
+            <p><code>compare_nested_regressions</code> is a plain likelihood-ratio test between two already-fitted statsmodels results, for "does this term earn its keep" questions (e.g. full vs. restricted mediation).</p>
+          </div>
+        </div>
+
+        <h4 class="subsub">invariance.py &mdash; measurement invariance across groups</h4>
+        <div class="fn-card">
+          <div class="fn-sig">configural_check(data, constructs, group_col, estimator="DWLS") -&gt; ConfiguralResult
+metric_invariance_bootstrap(data, constructs, group_col, estimator="DWLS", n_boot=30, seed=2026, alpha=0.05) -&gt; pd.DataFrame</div>
+          <div class="fn-body">
+            <p>semopy has no genuine multi-group SEM &mdash; its <code>groups=</code> fit parameter only mean-centers each group's data before pooling into one fit; it does not estimate or constrain per-group parameters (confirmed against its own docstring during development). The workaround: fit the measurement model <em>separately</em> in each group (<code>configural_check</code>, each fit individually robust), then bootstrap each group's loadings and test whether each item's loading differs significantly between groups (<code>metric_invariance_bootstrap</code>, exactly 2 groups). This is more granular than the textbook omnibus chi-square test &mdash; it names <em>which item</em> breaks invariance, which is what you actually act on. Scalar (intercept/threshold) invariance is not implemented.</p>
+          </div>
+        </div>
+        <div class="callout info">
+          <span class="callout-label">R does this natively</span>
+          <p>lavaan supports true multi-group SEM (<code>group=</code> + <code>group.equal=c("loadings")</code>, compared via a real chi-square difference test) &mdash; the semopy limitation above doesn't exist there. The R mirror of this file uses that directly rather than porting this bootstrap workaround; see <code>burnout-mediation/scripts/sem_invariance.R</code>'s header for the full account.</p>
+        </div>
+
+        <h3 class="sub" id="tools-reporting">tools.reporting <span class="pill track-cross"><span class="dot"></span>Phase 5</span></h3>
+        <p>Stage E (<code>dr-05-present-results</code>) turns real-run output into manuscript-ready tables and text. This package is the automation behind two pieces of that: pulling diagnostic numbers out of real-run CSVs, and pulling three limitation flags out of plan files &mdash; both were originally just prose instructions for an agent to follow by hand; this makes them actual, tested code.</p>
+        <div class="fn-card">
+          <div class="fn-sig">build_diagnostics_extracted(vif_csv_text=None, bootstrap_validation_csv_text=None, firth_csv_text=None, box_tidwell_csv_text=None, bootstrap_mediation_csv_text=None, bootstrap_mediation_n_boot=None) -&gt; dict</div>
+          <div class="fn-body"><p><code>diagnostics_extraction.py</code>. Every argument is real-run CSV <em>text</em>, never a path into the repo &mdash; real output lives in <code>results_real/</code>, outside the repo's own reach the same way real data always is. Parses VIF, bootstrap-validation, Firth/Box-Tidwell, and bootstrap-mediation output into one dict matching the Stage E traceability-YAML schema. The mediation sub-block derives a <code>none / partial / full</code> conclusion automatically from whether the indirect and direct effects' CIs exclude zero.</p></div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-sig">build_limitations_pulled_forward(sap_md_text=None, sem_plan_yaml_texts=None) -&gt; dict</div>
+          <div class="fn-body"><p><code>limitations_extraction.py</code>. Unlike diagnostics, these three flags come from <em>plan files</em> (safe to read before any real run happens): the missing-data strategy from <code>plans/sap.md</code> Section H (reusing <code>tools.sap_gate.sap_parser</code> rather than re-deriving a second parser for the same file), any construct with exactly one item from the SEM plan YAMLs, and an always-true note that the code was verified against synthetic data first &mdash; a transparency statement about the workflow itself, not something that varies by project.</p></div>
+        </div>
+
+        <h3 class="sub" id="tools-repo-tooling">Repo-maintenance tooling <span class="pill track-cross"><span class="dot"></span>Phase 6</span></h3>
+        <p>Not statistical methods &mdash; these three keep the codebase itself honest as it grows.</p>
+        <div class="fn-card">
+          <div class="fn-sig">tools.smoke_test.run_all(project_filter=None) -&gt; list[ScriptResult]</div>
+          <div class="fn-body"><p>Discovers every <code>projects/*/scripts/*.py</code> and runs each against a contract determined by its filename &mdash; not a blanket "exit 0 = pass." A Stage D script (<code>desc.py</code>, <code>infer.py</code>, ...) must exit 0. <code>pattern_extract.py</code> / <code>synthesize_data.py</code> must refuse cleanly (exit 1, a usage message, no traceback) when run with no real-data argument &mdash; that refusal <em>is</em> the pass condition, since these scripts must structurally never guess at real data. <code>synthesize_data_correlated.py</code>'s template must exit 0 printing its edit-me instructions. A script name this tool doesn't recognize is reported as <code>unknown_category</code>, never silently marked pass or fail.</p></div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-sig">tools.parity_check.check_all(project_filter=None) -&gt; list[ProjectParity]</div>
+          <div class="fn-body"><p>Flags any <code>scripts/</code> stem that exists in <code>.py</code> but not <code>.R</code>, or vice versa, per project. A flagged gap is informational, not automatically a bug &mdash; some are deliberate, scoped choices (documented per-project); this tool makes drift <em>visible</em>, it doesn't fix it.</p></div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-sig">tools.skills_sync_check.check_mirror(mirror, canonical=CANONICAL) -&gt; MirrorDrift
+fix_mirror(mirror, canonical=CANONICAL) -&gt; None</div>
+          <div class="fn-body"><p>Skill documentation is duplicated across <code>skills/</code> (canonical) and three per-agent-tool mirrors (<code>.claude/skills/</code>, <code>.opencode/skill/</code>, <code>.agents/skills/</code>). Unlike the R/Python asymmetry above, there's no legitimate reason for these to differ &mdash; <code>--fix</code> is safe to run unconditionally, it only ever re-syncs from canonical, never invents content. Both this and <code>parity_check</code> are wired into <code>.pre-commit-config.yaml</code> and <code>.github/workflows/ci.yml</code>, prepared but inert until the repo has a <code>.git/</code> directory.</p></div>
+        </div>
+      </section>
+
+      <section class="part" id="part-4">
+        <div class="part-head"><span class="part-num">IV</span><h2><code>py-scripts/</code> generic template reference</h2></div>
+        <p class="part-intro">
+          The starting point copied into a new project's <code>scripts/</code> folder and then hand-adapted.
+          Part II showed what a fully-adapted copy looks like (<code>crp-mortality</code>'s <code>infer.py</code>);
+          this section is about the originals themselves, which are now current with Phases 1&ndash;3
+          (updated 2026-08-16, after the gap described below was found and closed the same day).
+        </p>
+
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>File</th><th>Stage</th><th>What it does un-adapted</th></tr></thead>
+            <tbody>
+              <tr><td class="name">pattern_extract.py</td><td>A</td><td>Fully generic &mdash; works on any dataset unchanged, since it just classifies columns by dtype. No adaptation needed, ever.</td></tr>
+              <tr><td class="name">synthesize_data.py</td><td>B</td><td>Same &mdash; entirely pattern-file-driven, no project-specific code.</td></tr>
+              <tr><td class="name">synthesize_data_correlated.py</td><td>B2</td><td>Same &mdash; requires real <code>data</code> at call time, but the generation logic itself is fully generic.</td></tr>
+              <tr><td class="name">desc.py</td><td>D2</td><td><code>group_var</code>/<code>continuous_vars</code>/<code>categorical_vars</code> default to <code>None</code>, auto-detecting numeric vs. object columns and skipping the Phase 1 group-comparison tests. Set <code>group_var</code> to a real column name and <code>tools.diagnostics.compare_continuous</code>/<code>compare_categorical</code> switch on automatically &mdash; same runtime-branched test selection as every project's own copy, on any dataset shape.</td></tr>
+              <tr><td class="name">plots.py / plots_sem.py</td><td>D2b</td><td>Correlation heatmap + boxplot series; auto-detects numeric columns the same way <code>desc.py</code> does. No Phase 1&ndash;3 item touches visualization, so these two were never behind &mdash; still no <code>tools/</code> import, correctly.</td></tr>
+              <tr><td class="name">infer.py</td><td>D3/D4</td><td>Full Section 1&ndash;4 structure (crude, adjusted, Phase 1 diagnostics, Phase 2 Firth/nonlinearity), importing <code>tools.diagnostics</code> and <code>tools.medical_track</code>. <code>outcome_var</code>/<code>predictor_var</code>/<code>covariate_vars</code> still need filling in by hand &mdash; no sensible auto-detection exists for "which column is the outcome" &mdash; but the ships-with defaults match <code>crp-mortality</code>'s column names, so the template runs standalone out of the box before you touch it.</td></tr>
+              <tr><td class="name">sem_measurement.py / sem_structural.py</td><td>D3/D4</td><td>Full Phase 3 wiring &mdash; DWLS/ordinal estimator, McDonald's omega, AVE/CR, HTMT (measurement) and two-step bootstrap mediation with CI (structural), importing <code>tools.sem_track</code>. The construct-to-items mapping ships as <code>Construct_A</code>/<code>Construct_B</code> placeholders with generic <code>item_a1..3</code>/<code>item_b1..3</code> names &mdash; edit both the keys and the item lists to your real constructs before pointing this at a project.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout tip">
+          <span class="callout-label">Resolved: these templates used to predate Phases 1&ndash;3</span>
+          <p>
+            Until 2026-08-16, none of the six analysis templates imported anything from
+            <code>tools/</code>, and <code>infer.py</code>'s template had only Sections 1&ndash;2 (no
+            diagnostics, no Firth) while every project's own copy had all four sections &mdash;
+            a real gap between what a brand-new project would start from and what the four
+            existing examples actually had. That's now closed: <code>desc.py</code>, <code>infer.py</code>,
+            <code>sem_measurement.py</code>, and <code>sem_structural.py</code> all import their
+            matching <code>tools/</code> package and were verified (compiled, and re-run end to
+            end against a scratch fixture reproducing the 3-levels-deep
+            <code>projects/&lt;name&gt;/scripts/</code> path structure these templates' own
+            <code>sys.path.insert(0, ..., parents[3])</code> line depends on &mdash; they will
+            <code>ModuleNotFoundError</code> if run directly from <code>py-scripts/</code> itself,
+            by design, the same way every other script in this repo only runs from three levels
+            inside a project folder).
+          </p>
+        </div>
+
+        <p>
+          Practical guidance now: starting from <code>py-scripts/infer.py</code> or
+          <code>sem_measurement.py</code> directly is fine again &mdash; you'll get the full
+          Phase 1&ndash;3 feature set, just with placeholder variable/construct names to rename.
+          Copying the nearest existing project's scripts (as before) still works too and remains
+          a reasonable shortcut when your new project's shape closely matches an existing one.
+        </p>
+      </section>
+
+      <section class="part" id="part-5">
+        <div class="part-head"><span class="part-num">V</span><h2>Testing</h2></div>
+        <p class="part-intro">Every <code>tools/</code> package has a matching <code>tests/test_&lt;package&gt;.py</code>. All seven files follow the exact same self-contained pattern &mdash; no <code>pytest</code>, no fixtures framework, no test discovery magic.</p>
+
+        <div class="code-panel">
+          <div class="code-caption"><span>tests/test_*.py &mdash; the shared pattern</span><span class="lang">python</span></div>
+          <pre><code>_passed = <span class="tok-num">0</span>
+_failed: list[str] = []
+
+<span class="tok-kw">def</span> <span class="tok-fn">check</span>(name: str, condition: bool) -&gt; <span class="tok-kw">None</span>:
+    <span class="tok-kw">global</span> _passed
+    <span class="tok-kw">if</span> condition:
+        _passed += <span class="tok-num">1</span>
+    <span class="tok-kw">else</span>:
+        _failed.append(name)
+        <span class="tok-fn">print</span>(<span class="tok-str">f"FAIL: {name}"</span>)
+
+<span class="tok-com"># ... every assertion in the file is check("description of what should be true", condition) ...</span>
+
+<span class="tok-fn">print</span>(<span class="tok-str">f"\n{_passed} passed, {len(_failed)} failed"</span>)
+<span class="tok-kw">if</span> _failed:
+    sys.exit(<span class="tok-num">1</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">"ALL TESTS PASSED"</span>)</code></pre>
+        </div>
+        <p>Run any single file directly &mdash; there's no runner to invoke:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal</span><span class="lang">bash</span></div>
+          <pre><code>.venv/bin/python tests/test_medical_track.py
+.venv/bin/python tests/test_sem_track.py
+
+<span class="tok-com"># the whole suite, one file at a time:</span>
+<span class="tok-kw">for</span> f <span class="tok-kw">in</span> tests/test_*.py; <span class="tok-kw">do</span> .venv/bin/python <span class="tok-str">"$f"</span>; <span class="tok-kw">done</span></code></pre>
+        </div>
+
+        <h3 class="sub" id="test-conventions">What each test file actually checks</h3>
+        <p>Not just "does it run" &mdash; every test file that wraps a real statistical method cross-validates it against a known-correct source, hardcoded as an expected value in a comment explaining where it came from:</p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Test file</th><th>Cross-validated against</th></tr></thead>
+            <tbody>
+              <tr><td class="name">test_diagnostics.py</td><td>Welch's ANOVA vs. R's <code>oneway.test(var.equal=FALSE)</code> (exact match to 6dp); VIF and Box-Tidwell vs. closed-form R equivalents</td></tr>
+              <tr><td class="name">test_medical_track.py</td><td>Firth regression vs. R's <code>logistf</code> on a well-behaved and a deliberately-separated dataset; E-value vs. VanderWeele &amp; Ding's own published worked example (RR=2 &rarr; E-value 3.4142)</td></tr>
+              <tr><td class="name">test_sem_track.py</td><td>Reliability/validity formulas against hand-computed values on small fixed fixtures; the lval/rval orientation bug (Part III) has a dedicated regression check</td></tr>
+              <tr><td class="name">test_synthesize_correlated.py</td><td>A known-covariance multivariate-normal fixture &mdash; checks the synthesizer actually recovers approximately the right correlation, not just that it runs; also asserts zero exact-row overlap between real and synthetic data (the core privacy property)</td></tr>
+              <tr><td class="name">test_reporting.py</td><td><strong>Frozen snapshots</strong> of real project output, not live files &mdash; see the callout below</td></tr>
+              <tr><td class="name">test_sap_gate.py</td><td>Every branch of every check function (missing block, malformed value, valid value) &mdash; the gate's job is correctness of its own logic, not numerical agreement with anything external</td></tr>
+              <tr><td class="name">test_tooling.py</td><td>Contract-matching logic for <code>smoke_test</code>/<code>parity_check</code>/<code>skills_sync_check</code>, using small fixture directories built in a temp dir rather than the real repo</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="callout-label">A real trap: shared output directories between languages</span>
+          <p><code>test_reporting.py</code> originally read live files from <code>projects/*/outputs_synthetic/</code> as fixtures. Every project's <code>outputs_synthetic/</code> is shared between its <code>.R</code> and <code>.py</code> scripts by design &mdash; running the R version overwrites exactly the file the Python version just wrote, and vice versa. A test that reads the live file flakes depending on which language last ran, not on whether the extraction code is correct. Fixed by freezing a verbatim snapshot of real Python-generated output as an inline string constant in the test file itself. If you ever add a test that reads from <code>outputs_synthetic/</code>, freeze it instead.</p>
+        </div>
+      </section>
+
+      <section class="part" id="part-6">
+        <div class="part-head"><span class="part-num">VI</span><h2>Extending the codebase</h2></div>
+        <p class="part-intro">Conventions to follow so new code fits the existing shape.</p>
+
+        <h3 class="sub" id="ext-new-project">Starting a new project</h3>
+        <ol class="steps">
+          <li><h4>Copy the template</h4><p><code>cp -r projects/_template projects/my-new-project</code>. It has the standard sub-folders (<code>pattern/</code>, <code>data_synthetic/</code>, <code>outputs_synthetic/</code>, <code>plans/</code>, <code>results_real/</code>, <code>scripts/</code>) but no scripts yet.</p></li>
+          <li><h4>Run Stages A&ndash;C locally (real data, your own machine)</h4><p>Copy <code>py-scripts/pattern_extract.py</code> and <code>synthesize_data.py</code> into <code>scripts/</code>, run them against your real file, review the pattern output, generate the synthetic dataset.</p></li>
+          <li><h4>Copy Stage D from py-scripts/, or from the nearest existing project</h4><p>Both are current with Phases 1&ndash;3 (Part IV). <code>py-scripts/infer.py</code> or <code>sem_measurement.py</code> ship with placeholder variable/construct names to rename; a project's own scripts (e.g. <code>crp-mortality/scripts/infer.py</code>) come pre-filled with a real example's names, which can be a faster starting point when your new project's shape closely matches an existing one.</p></li>
+          <li><h4>Fill in Phase 0 pre-registration before running Stage D</h4><p><code>plans/sap.md</code> Section H (missing-data strategy) and Section I (multiplicity), plus <code>plans/confounding_adjustment_plan.yaml</code> or <code>plans/sem_measurement_plan.yaml</code> depending on track. Run <code>python -m tools.sap_gate projects/my-new-project</code> &mdash; it should report <code>pass</code> before you generate analysis code.</p></li>
+          <li><h4>Verify, then check parity</h4><p><code>python -m tools.smoke_test --project my-new-project</code> once your Python scripts exist. If you're maintaining an R mirror too, <code>python -m tools.parity_check</code> will flag any script that exists in one language but not the other.</p></li>
+        </ol>
+
+        <h3 class="sub" id="ext-new-diagnostic">Adding a new statistical method to <code>tools/</code></h3>
+        <p>Conventions observed consistently across every existing module &mdash; follow them so new code doesn't stand out:</p>
+        <ul>
+          <li><strong>A result is a <code>@dataclass</code>, not a raw dict or tuple.</strong> Every function that returns more than one related number returns a dataclass (<code>FirthResult</code>, <code>GroupTestResult</code>, <code>BootstrapValidationResult</code>, ...), usually with a <code>to_frame()</code> or <code>to_row()</code>/<code>to_dict()</code> method for the CSV-writing project scripts to call.</li>
+          <li><strong>Never raise on malformed or missing input inside a check function</strong> (the <code>tools.sap_gate</code> and <code>tools.reporting</code> convention). A missing field, an empty CSV, a <code>None</code> input is itself the finding &mdash; collect it into an <code>issues</code> list or set <code>available=False</code>, don't crash the caller's script over it. Reserve real exceptions for genuine programming errors (wrong type, contract violation), not for "the data doesn't have this yet."</li>
+          <li><strong>Document what you validated against, in the module docstring, not just in your head.</strong> Every non-trivial algorithm in this codebase (Firth, Welch's ANOVA, E-value, the lval/rval orientation) has a paragraph explaining what reference source it was checked against and what the result was. That paragraph is often the only thing standing between a subtle bug and a confident-looking wrong number.</li>
+          <li><strong>If a library has a known limitation, say so in the docstring, with a specific description of the failure mode</strong> &mdash; not a vague "may not always work." <code>tools/sem_track</code>'s modules are the clearest examples: semopy's SRMR-always-NaN, its fake multi-group support, its WLS solver stalling on large ordinal structural models are each described precisely enough that the next person doesn't have to rediscover them by debugging from scratch.</li>
+          <li><strong>Write the test file alongside the code, in the same self-contained <code>check()</code> pattern as Part V</strong>, and cross-validate against a real external source wherever one exists (R's base functions, a published worked example, a hand-computable small fixture) rather than only testing "the function returns something."</li>
+        </ul>
+
+        <h3 class="sub" id="ext-r-mirror">If you're also maintaining the R mirror</h3>
+        <p>Two rules, both enforced by tooling, not just convention:</p>
+        <ul>
+          <li><strong>Base R only, with two named exceptions:</strong> <code>lavaan</code> (SEM) and <code>survival</code> (Cox/Kaplan-Meier) &mdash; both "recommended"-tier packages that ship with every R installation and never need <code>install.packages()</code>. Anything else implementable in base R stays in base R, even when a package exists for it &mdash; Firth's algorithm is hand-implemented in both languages for exactly this reason, cross-validated against the package that <em>would</em> have provided it (<code>logistf</code>) rather than depending on it.</li>
+          <li><strong>Run <code>python -m tools.parity_check</code> after adding or renaming any script.</strong> It flags a <code>.py</code> file with no <code>.R</code> counterpart (or vice versa) per project &mdash; a flag is a prompt to either port it or note in the file's own header why it's deliberately one-language-only (matching how <code>burnout-mediation/scripts/sem_invariance.py</code>'s header explains the semopy limitation that makes its R counterpart methodologically <em>different</em>, not just translated).</li>
+        </ul>
+      </section>
+
+
+      <section class="part" id="appendix">
+        <div class="part-head"><span class="part-num">&middot;</span><h2>Function index</h2></div>
+        <p class="part-intro">Every public function mentioned in this guide, alphabetically within its module. Use your browser's find-in-page (<kbd>Ctrl/Cmd+F</kbd>) &mdash; that's what this table is for.</p>
+
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Function</th><th>Module</th><th>One line</th></tr></thead>
+            <tbody>
+              <tr><td class="name">run_phase0_gate</td><td><a href="#tools-sap-gate">sap_gate.gate</a></td><td>Orchestrates all four Phase 0 pre-registration checks for one project</td></tr>
+              <tr><td class="name">parse_sap</td><td><a href="#tools-sap-gate">sap_gate.sap_parser</a></td><td>Loosely parses plans/sap.md by heading text, not letter</td></tr>
+
+              <tr><td class="name">compare_continuous</td><td><a href="#tools-diagnostics">diagnostics.group_tests</a></td><td>Runtime-branched t-test/ANOVA/Mann-Whitney/Kruskal-Wallis</td></tr>
+              <tr><td class="name">compare_categorical</td><td><a href="#tools-diagnostics">diagnostics.group_tests</a></td><td>Runtime-branched chi-squared/Fisher's exact</td></tr>
+              <tr><td class="name">compute_vif</td><td><a href="#tools-diagnostics">diagnostics.regression_diagnostics</a></td><td>Variance inflation factor per term, threshold 5.0</td></tr>
+              <tr><td class="name">compute_influence</td><td><a href="#tools-diagnostics">diagnostics.regression_diagnostics</a></td><td>Cook's distance, threshold 4/n</td></tr>
+              <tr><td class="name">compute_dfbetas</td><td><a href="#tools-diagnostics">diagnostics.regression_diagnostics</a></td><td>DFBETAs per observation per coefficient, threshold 2/&radic;n</td></tr>
+              <tr><td class="name">box_tidwell_test</td><td><a href="#tools-diagnostics">diagnostics.regression_diagnostics</a></td><td>Linearity-in-the-logit check via var:log(var) interaction</td></tr>
+              <tr><td class="name">bootstrap_optimism</td><td><a href="#tools-diagnostics">diagnostics.bootstrap_validation</a></td><td>Harrell's optimism-corrected AUC + calibration slope</td></tr>
+
+              <tr><td class="name">firth_logistic_regression</td><td><a href="#tools-medical-track">medical_track.firth_logistic</a></td><td>Hand-implemented Firth penalized logistic regression</td></tr>
+              <tr><td class="name">log_transform_if_skewed</td><td><a href="#tools-medical-track">medical_track.nonlinearity</a></td><td>Decides log-transform based on Fisher-Pearson skewness</td></tr>
+              <tr><td class="name">restricted_cubic_spline_basis</td><td><a href="#tools-medical-track">medical_track.nonlinearity</a></td><td>Harrell's RCS basis columns</td></tr>
+              <tr><td class="name">kaplan_meier</td><td><a href="#tools-medical-track">medical_track.survival</a></td><td>KM curves + log-rank test</td></tr>
+              <tr><td class="name">cox_ph</td><td><a href="#tools-medical-track">medical_track.survival</a></td><td>Cox proportional hazards</td></tr>
+              <tr><td class="name">propensity_scores</td><td><a href="#tools-medical-track">medical_track.propensity</a></td><td>Logistic P(treatment | covariates)</td></tr>
+              <tr><td class="name">psm_match</td><td><a href="#tools-medical-track">medical_track.propensity</a></td><td>Greedy 1:1 nearest-neighbor matching on logit-PS</td></tr>
+              <tr><td class="name">iptw_weights</td><td><a href="#tools-medical-track">medical_track.propensity</a></td><td>Stabilized inverse-probability-of-treatment weights</td></tr>
+              <tr><td class="name">e_value</td><td><a href="#fn-e-value">medical_track.propensity</a></td><td>VanderWeele &amp; Ding unmeasured-confounding robustness value</td></tr>
+              <tr><td class="name">benjamini_hochberg</td><td><a href="#tools-medical-track">medical_track.multiplicity</a></td><td>FDR control (built, not yet wired into any project)</td></tr>
+
+              <tr><td class="name">build_cfa_syntax</td><td><a href="#tools-sem-track">sem_track.estimator</a></td><td>Builds semopy/lavaan measurement-model syntax</td></tr>
+              <tr><td class="name">fit_measurement_model</td><td><a href="#tools-sem-track">sem_track.estimator</a></td><td>Ordinal-aware CFA fit (DWLS on polychoric correlations)</td></tr>
+              <tr><td class="name">fit_structural_model</td><td><a href="#tools-sem-track">sem_track.estimator</a></td><td>Joint measurement+structural fit; unstable on large ordinal models</td></tr>
+              <tr><td class="name">factor_scores</td><td><a href="#tools-sem-track">sem_track.estimator</a></td><td>Regression factor scores from a fitted measurement model</td></tr>
+              <tr><td class="name">mcdonald_omega</td><td><a href="#tools-sem-track">sem_track.reliability</a></td><td>Reliability without the tau-equivalence assumption alpha makes</td></tr>
+              <tr><td class="name">average_variance_extracted</td><td><a href="#tools-sem-track">sem_track.validity</a></td><td>AVE &mdash; mean squared standardized loading</td></tr>
+              <tr><td class="name">composite_reliability</td><td><a href="#tools-sem-track">sem_track.validity</a></td><td>CR &mdash; same formula family as omega, reported separately</td></tr>
+              <tr><td class="name">htmt / htmt_matrix</td><td><a href="#tools-sem-track">sem_track.validity</a></td><td>Discriminant-validity ratio from raw-item correlations</td></tr>
+              <tr><td class="name">bootstrap_mediation</td><td><a href="#tools-sem-track">sem_track.mediation</a></td><td>Two-step factor-score-regression mediation with bootstrap CI</td></tr>
+              <tr><td class="name">bootstrap_structural_regression</td><td><a href="#tools-sem-track">sem_track.mediation</a></td><td>Same, for parallel-predictor (non-mediation) models</td></tr>
+              <tr><td class="name">compare_nested_regressions</td><td><a href="#tools-sem-track">sem_track.model_comparison</a></td><td>LR test between two fitted statsmodels results</td></tr>
+              <tr><td class="name">configural_check</td><td><a href="#tools-sem-track">sem_track.invariance</a></td><td>Per-group separate CFA fits (Step 1 of invariance testing)</td></tr>
+              <tr><td class="name">metric_invariance_bootstrap</td><td><a href="#tools-sem-track">sem_track.invariance</a></td><td>Per-item bootstrap loading-equality test across exactly 2 groups</td></tr>
+
+              <tr><td class="name">build_diagnostics_extracted</td><td><a href="#tools-reporting">reporting.diagnostics_extraction</a></td><td>Parses real-run VIF/bootstrap/Firth/mediation CSVs for Stage E</td></tr>
+              <tr><td class="name">build_limitations_pulled_forward</td><td><a href="#tools-reporting">reporting.limitations_extraction</a></td><td>Auto-pulls 3 limitation flags from plan files, not real-run output</td></tr>
+
+              <tr><td class="name">run_all / discover_scripts / classify / run_one</td><td><a href="#tools-repo-tooling">smoke_test</a></td><td>Contract-aware Python script runner across every project</td></tr>
+              <tr><td class="name">check_all / check_project</td><td><a href="#tools-repo-tooling">parity_check</a></td><td>Flags .R/.py stem asymmetry per project</td></tr>
+              <tr><td class="name">check_mirror / fix_mirror</td><td><a href="#tools-repo-tooling">skills_sync_check</a></td><td>Flags/fixes skill-doc mirror drift</td></tr>
+
+              <tr><td class="name">extract_pattern</td><td><a href="#tut-pattern">py-scripts.pattern_extract</a></td><td>The only function that ever sees a real value</td></tr>
+              <tr><td class="name">synthesize_data</td><td><a href="#tut-synth">py-scripts.synthesize_data</a></td><td>Independent-column synthetic dataset generation</td></tr>
+              <tr><td class="name">synthesize_data_correlated</td><td><a href="#tut-b2">py-scripts.synthesize_data_correlated</a></td><td>Gaussian-copula correlated synthetic dataset generation</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="page-foot">
+    Covers the Python side of AirGap Stats as of 2026-08-16 (Phases 0&ndash;6 of the statistical-methods
+    roadmap, all shipped). See <a href="#">docs/statistical-methods-roadmap.html</a> for the phase-by-phase
+    implementation status, and each script's own header comment for R-vs-Python parity notes.
+  </footer>
+
+</div>

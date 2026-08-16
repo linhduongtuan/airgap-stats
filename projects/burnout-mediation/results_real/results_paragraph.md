@@ -1,0 +1,7 @@
+## Results
+
+A total of 350 participants were included in the analysis. The measurement model demonstrated good psychometric properties: Cronbach's alpha was 0.890 for Job Satisfaction and 0.921 for Burnout. Confirmatory factor analysis supported the two-factor structure with excellent fit (CFI = 0.998, TLI = 0.998, RMSEA = 0.018, SRMR = 0.035), and all standardized factor loadings exceeded 0.74 (all p < 0.001).
+
+To examine whether Burnout mediates the relationship between Job Satisfaction and Turnover Intention, we fitted a structural equation model with age, gender, education, and tenure years as covariates. The structural model also showed good fit (CFI = 0.996, TLI = 0.995, RMSEA = 0.016, SRMR = 0.029; χ²(96) = 104.565, p = 0.258).
+
+In the mediation analysis, the path from Job Satisfaction to Burnout was not statistically significant (β = −0.054, 95% CI: −0.170 to 0.062, p = 0.359). Burnout was positively associated with Turnover Intention (β = 0.171, 95% CI: 0.129 to 0.214, p < 0.001), and Job Satisfaction had a direct negative association with Turnover Intention (β = −0.188, 95% CI: −0.231 to −0.144, p < 0.001). The indirect effect of Job Satisfaction on Turnover Intention through Burnout was not significant (β = −0.009, 95% CI: −0.029 to 0.011, p = 0.358), indicating no mediation. The total effect of Job Satisfaction on Turnover Intention was significant (β = −0.197, 95% CI: −0.244 to −0.150, p < 0.001). The model explained 34.9% of the variance in Turnover Intention (R² = 0.349).

@@ -1,0 +1,18 @@
+[project]
+name = "airgap-stats"
+version = "0.1.0"
+requires-python = ">=3.9"
+dependencies = [
+    "pandas",
+    "numpy",
+    "matplotlib",
+    "statsmodels",
+    "semopy",
+    "pyyaml>=6.0.3",
+    "scipy>=1.13.1",
+    "patsy>=1.0.2",
+]
+
+[tool.pyright]
+reportUnnecessaryComparison = "none"
+reportUnnecessaryIsInstance = "none"

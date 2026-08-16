@@ -1,0 +1,13 @@
+term,vif,flagged
+"Q(""complication"")",1.136454672621503,False
+"Q(""sbp"")",1.0947515831282337,False
+"Q(""age"")",1.0791146703175813,False
+"Q(""sex"")[T.Nam]",1.0768468694176423,False
+crp,1.0727336069473141,False
+"Q(""bmi"")",1.0625553412171844,False
+"Q(""smoking"")",1.0552558232595575,False
+"Q(""treatment"")[T.Phác đồ B]",1.0449668126207428,False
+"Q(""hba1c"")",1.0330287726570513,False
+"Q(""hypertension"")",1.031760425220946,False
+"Q(""diabetes"")",1.0314148955292177,False
+"Q(""egfr"")",1.0285042354064362,False

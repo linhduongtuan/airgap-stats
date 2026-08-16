@@ -1,0 +1,71 @@
+dr_step: D3
+plan_version: 2
+
+inputs:
+  analysis_plan: "plans/analysis_plan.yaml"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  dataset_pattern: "pattern/dataset_pattern.csv"
+
+research_question:
+  user_input: "Nồng độ CRP lúc nhập viện có liên quan đến tử vong 30 ngày không, sau khi hiệu chỉnh các yếu tố nguy cơ?"
+  confirmed_question: "Association between admission CRP concentration and 30-day mortality"
+  question_type:
+    value: "associative"
+    source: "analysis_plan"
+    confidence: "high"
+
+variables:
+  outcome:
+    name: "mortality_30day"
+    type: "binary"
+    source: "analysis_plan"
+    confidence: "high"
+  main_predictor:
+    name: "crp"
+    type: "numeric"
+    source: "analysis_plan"
+    confidence: "high"
+
+analysis_decision:
+  scope: "crude_unadjusted"
+  primary_method:
+    value: "logistic_regression"
+    reason: "Binary outcome (mortality_30day) with continuous predictor (crp)"
+  effect_measure:
+    value: "odds_ratio"
+    reason: "Standard effect measure for logistic regression"
+  model_or_test:
+    value: "glm(family = binomial)"
+    formula: "mortality_30day ~ crp"
+    reason: "Binary outcome, continuous predictor, association question"
+
+assumptions_to_check:
+  - "Both outcome classes (0/1) present in data"
+  - "CRP has non-zero variance"
+  - "No complete separation in crude model"
+
+reporting:
+  estimate: "OR (odds ratio)"
+  uncertainty: "95% CI (Wald, confint.default)"
+  p_value: true
+  plain_language_interpretation: true
+  causal_language_allowed: false
+
+script:
+  file: "scripts/infer.R"
+  section: "crude"
+  verified_on_synthetic: false
+
+user_confirmation:
+  status: "confirmed"
+  notes: "User confirmed crude logistic regression with CRP predicting mortality_30day"
+
+readiness:
+  status: "ready"
+  blocking_issues: []
+  review_issues: []
+  assumptions: []
+
+next_step:
+  skill: "dr-04-confounding-adjustment"
+  note: "Adjusted analysis and covariate control are handled in Stage D4."

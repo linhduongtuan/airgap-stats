@@ -1,0 +1,11 @@
+construct,item,group_a,group_b,loading_a,loading_b,difference,ci_low,ci_high,flagged_noninvariant,n_boot,n_failed
+Job_Satisfaction,js_q1,Nam,Nữ,0.3472,0.1752,0.172,-0.6408,0.8204,False,20,0
+Job_Satisfaction,js_q2,Nam,Nữ,-0.3397,0.05,-0.3897,-0.8128,0.3395,False,20,0
+Job_Satisfaction,js_q3,Nam,Nữ,0.1375,-0.1504,0.2879,-0.3956,0.6301,False,20,0
+Job_Satisfaction,js_q4,Nam,Nữ,-0.5163,0.6616,-1.1779,-1.3908,0.2221,False,20,0
+Job_Satisfaction,js_q5,Nam,Nữ,0.0991,0.2671,-0.168,-0.5644,0.5346,False,20,0
+Burnout,bo_q1,Nam,Nữ,0.141,1.0,-0.859,-0.9272,0.2152,False,20,0
+Burnout,bo_q2,Nam,Nữ,-0.1415,0.1058,-0.2473,-0.5528,0.5919,False,20,0
+Burnout,bo_q3,Nam,Nữ,0.6378,-0.1277,0.7654,-0.4364,0.999,False,20,0
+Burnout,bo_q4,Nam,Nữ,-0.2217,-0.1131,-0.1086,-0.6503,0.6825,False,20,0
+Burnout,bo_q5,Nam,Nữ,-0.3073,0.1292,-0.4365,-1.1721,0.6637,False,20,0

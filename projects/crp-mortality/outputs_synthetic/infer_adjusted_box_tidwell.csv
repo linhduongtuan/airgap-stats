@@ -1,0 +1,7 @@
+variable,status,p_value,detail
+crp,linear,0.6994,interaction term `crp:np.log(crp)` p=0.6994
+age,skipped,,age has non-positive values; Box-Tidwell requires x > 0
+bmi,linear,0.7621,interaction term `bmi:np.log(bmi)` p=0.7621
+sbp,linear,0.065,interaction term `sbp:np.log(sbp)` p=0.0650
+egfr,linear,0.1409,interaction term `egfr:np.log(egfr)` p=0.1409
+hba1c,linear,0.2736,interaction term `hba1c:np.log(hba1c)` p=0.2736

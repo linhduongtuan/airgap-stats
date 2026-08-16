@@ -1,0 +1,2 @@
+n_boot,n_failed_fits,apparent_auc,optimism_auc,corrected_auc,apparent_calibration_slope,optimism_calibration_slope,corrected_calibration_slope
+200,0,0.6073,0.1061,0.5012,1.0,0.6214,0.3786

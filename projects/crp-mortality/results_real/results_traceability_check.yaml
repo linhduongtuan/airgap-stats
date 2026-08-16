@@ -1,0 +1,55 @@
+dr_step: 5
+plan_version: 1
+
+inputs:
+  analysis_plan: "plans/analysis_plan.yaml"
+  inferential_analysis_plan: "plans/inferential_analysis_plan.yaml"
+  confounding_adjustment_plan: "plans/confounding_adjustment_plan.yaml"
+  rstudio_output_source: "results_real/infer_crude.csv, infer_adjusted.csv, infer_crude_vs_adjusted.csv, table1.csv"
+
+traceability_check:
+  research_question_from_step1: "Nồng độ CRP lúc nhập viện có liên quan đến tử vong 30 ngày không, sau khi hiệu chỉnh các yếu tố nguy cơ?"
+  crude_model_from_step3:
+    formula: "mortality_30day ~ crp"
+    model_family: "binomial (logistic regression)"
+    effect_measure: "odds ratio (OR)"
+  adjusted_model_from_step4:
+    formula: "mortality_30day ~ crp + age + sex + bmi + treatment + sbp + diabetes + hypertension + smoking + egfr + hba1c + complication"
+    model_family: "binomial (logistic regression)"
+    effect_measure: "odds ratio (OR)"
+    covariates:
+      - "age"
+      - "sex"
+      - "bmi"
+      - "treatment"
+      - "sbp"
+      - "diabetes"
+      - "hypertension"
+      - "smoking"
+      - "egfr"
+      - "hba1c"
+      - "complication"
+  rstudio_output_available: true
+  all_required_numbers_found: true
+  mismatches: []
+  status: "ready"
+
+numbers_extracted:
+  crude:
+    estimate: 1.008
+    ci_lower: 0.969
+    ci_upper: 1.047
+    p_value: 0.703
+  adjusted:
+    estimate: 1.003
+    ci_lower: 0.956
+    ci_upper: 1.051
+    p_value: 0.915
+
+reporting_decisions:
+  table_type: "crude_and_adjusted"
+  decimal_places:
+    estimate: 2
+    ci: 2
+    p_value: 3
+  causal_language_allowed: false

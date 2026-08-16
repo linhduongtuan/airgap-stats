@@ -1,0 +1,44 @@
+# Phase 6 of the statistical-methods roadmap, item 2 ("R/Python parity
+# check"). This repo has no git history yet (no `.git/` directory as of
+# this writing) -- this file is prepared, not active. It starts working
+# the moment `git init` + `pre-commit install` are run; nothing here
+# requires any other change.
+#
+# Only the fast check runs on every commit. tools/smoke_test.py actually
+# executes every Stage D script (several minutes, including a ~4-minute
+# bootstrap in sem_invariance.py) -- that belongs in CI on push, not in a
+# pre-commit hook a human is sitting in front of. See
+# .github/workflows/ci.yml for where it runs instead.
+
+# Non-blocking by design: as of this writing, real (deliberate) drift
+# already exists -- e.g. sem_invariance.py is Python-only per Phase 3's own
+# scoping decision -- so a hook that fails the commit on any asymmetry
+# would immediately block every future commit until that's resolved one
+# way or the other. This surfaces the report without stopping anyone; make
+# it blocking (drop the `|| true`) once the current drift has been
+# triaged and either ported or explicitly accepted.
+
+repos:
+  - repo: local
+    hooks:
+      - id: dr-parity-check
+        name: R/Python script parity check (tools/parity_check.py) [informational]
+        entry: bash -c '.venv/bin/python -m tools.parity_check || true'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      # Blocking, unlike the parity check above: skills/ is documented in
+      # CLAUDE.md / AGENTS.md as the canonical copy of .claude/skills/,
+      # .opencode/skill/, and .agents/skills/, and there is no legitimate
+      # reason for a mirror to differ (no "deliberate, scoped" exception
+      # like the R/Python case). --fix re-syncs the mirrors automatically;
+      # this still fails the commit when it had to (standard
+      # black/isort-style auto-fixer convention) so the re-synced files
+      # get staged and committed deliberately, not silently.
+      - id: dr-skills-sync-check
+        name: Skill mirror sync check (tools/skills_sync_check.py)
+        entry: bash -c '.venv/bin/python -m tools.skills_sync_check --fix'
+        language: system
+        pass_filenames: false
+        always_run: true

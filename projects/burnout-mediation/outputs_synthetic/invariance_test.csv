@@ -1,0 +1,2 @@
+"comparison","chisq_diff","df_diff","p_value","conclusion"
+"configural_vs_metric",0.1467,8,1,"metric invariance supported -- constraining loadings equal across groups did not significantly worsen fit"

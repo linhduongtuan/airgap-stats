@@ -1,0 +1,66 @@
+workflow: dr
+state_version: 2
+project_name: ""
+workflow_track: "unknown"   # medical / sem / unknown
+research_question: ""
+
+# Set by dr-01b-analysis-sap. Both modes require an approved SAP first.
+#   step_by_step: one script at a time; user runs each locally on synthetic
+#   all_steps:    every script generated in one pass after SAP approval
+analysis_mode: null         # step_by_step / all_steps / null
+sap_approved: false
+
+# Stage map:
+#   A: pattern_extract.R written and run locally -> pattern/dataset_pattern.csv (user-reviewed)
+#   B: scripts/synthesize_data.R written by the agent
+#   C: user runs it locally -> data_synthetic/synthetic_dataset.csv
+#   D1: analysis_plan.yaml            (dr-01)
+#   D1b: plans/sap.md + mode choice   (dr-01b) REQUIRED in both modes
+#   D2: scripts/desc.R                (dr-02)
+#   D2b: scripts/plots.R              (dr-02b) OPTIONAL, non-blocking
+#   D3: scripts/infer.R crude         (dr-03)  | sem track: scripts/sem_measurement.R (dr-sem-01)
+#   D4: scripts/infer.R adjusted      (dr-04)  | sem track: scripts/sem_structural.R  (dr-sem-02)
+#   E: user runs scripts on real data in RStudio, pastes output -> dr-05 writes final results
+current_stage: "A"
+
+stage_status:
+  A_pattern_extracted: "not_started"    # not_started / in_progress / needs_revision / complete / blocked
+  B_synthesis_code_written: "not_started"
+  C_synthetic_created: "not_started"
+  D1_analysis_plan: "not_started"
+  D1b_sap: "not_started"
+  D2_descriptive_code: "not_started"
+  D2b_visual_exploration: "not_started"   # optional; "skipped" is a valid final value
+  D3_main_analysis_code: "not_started"
+  D4_full_model_code: "not_started"
+  E_real_results: "not_started"
+
+artifacts:
+  dataset_pattern: null                 # pattern/dataset_pattern.csv
+  pattern_reviewed_by_user: false
+  synthesize_script: null               # scripts/synthesize_data.R
+  synthetic_dataset: null               # data_synthetic/synthetic_dataset.csv
+  analysis_plan: null                   # plans/analysis_plan.yaml
+  sap: null                             # plans/sap.md
+  desc_script: null                     # scripts/desc.R
+  plots_script: null                    # scripts/plots.R (optional, both tracks)
+  infer_script: null                    # scripts/infer.R (medical track)
+  sem_measurement_script: null          # scripts/sem_measurement.R (sem track)
+  sem_structural_script: null           # scripts/sem_structural.R (sem track)
+  rstudio_output_received: false
+  present_results: null                 # results_real/present_results.md
+
+# Who actually ran each script on the synthetic dataset: agent / user / null.
+# The agent is not the runtime; a user-reported clean run counts as verified.
+# Never record a value here for a run that did not happen.
+verified_by:
+  desc_script: null
+  plots_script: null
+  infer_script: null
+  sem_measurement_script: null
+  sem_structural_script: null
+
+next_action:
+  skill: "dr-00-privacy-gate"
+  reason: "New project: start at Stage A."
+  user_prompt: ""

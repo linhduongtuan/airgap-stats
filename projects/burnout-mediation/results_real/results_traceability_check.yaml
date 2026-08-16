@@ -1,0 +1,82 @@
+dr_step: 5
+plan_version: 1
+
+inputs:
+  analysis_plan: "plans/analysis_plan.yaml"
+  sem_measurement_plan: "plans/sem_measurement_plan.yaml"
+  sem_structural_plan: "plans/sem_structural_plan.yaml"
+  rstudio_output_source: "pasted_output"
+
+traceability_check:
+  research_question_from_step1: "Burnout có làm trung gian mối quan hệ giữa job satisfaction và ý định nghỉ việc không?"
+  sem_measurement:
+    constructs:
+      - "Job_Satisfaction (js_q1-js_q5)"
+      - "Burnout (bo_q1-bo_q5)"
+    alpha: "JS=0.890, BO=0.921 — both >= 0.70"
+    cfa_fit: "CFI=0.998, TLI=0.998, RMSEA=0.018, SRMR=0.035 — all acceptable"
+  sem_structural:
+    model: "JS ~ Burnout ~ turnover_intent, covariates: age, gender, education, tenure_years"
+    estimator: "ML"
+    fit: "CFI=0.996, TLI=0.995, RMSEA=0.016, SRMR=0.029"
+  rstudio_output_available: true
+  all_required_numbers_found: true
+  mismatches: []
+  status: "ready"
+
+numbers_extracted:
+  measurement_alpha:
+    js: 0.890
+    bo: 0.921
+  measurement_cfa_fit:
+    cfi: 0.998
+    tli: 0.998
+    rmsea: 0.018
+    srmr: 0.035
+  structural_fit:
+    cfi: 0.996
+    tli: 0.995
+    rmsea: 0.016
+    srmr: 0.029
+    chisq: 104.565
+    df: 96
+    pvalue: 0.258
+  structural_paths:
+    a_JS_to_BO:
+      est: -0.054
+      ci_lower: -0.170
+      ci_upper: 0.062
+      p: 0.359
+      std_all: -0.054
+    b_BO_to_TI:
+      est: 0.171
+      ci_lower: 0.129
+      ci_upper: 0.214
+      p: "<0.001"
+      std_all: 0.381
+    c_prime_JS_to_TI:
+      est: -0.188
+      ci_lower: -0.231
+      ci_upper: -0.144
+      p: "<0.001"
+      std_all: -0.415
+    indirect:
+      est: -0.009
+      ci_lower: -0.029
+      ci_upper: 0.011
+      p: 0.358
+      std_all: -0.021
+    total:
+      est: -0.197
+      ci_lower: -0.244
+      ci_upper: -0.150
+      p: "<0.001"
+      std_all: -0.436
+
+reporting_decisions:
+  table_type: "sem_mediation"
+  decimal_places:
+    estimate: 3
+    ci: 3
+    p_value: 3
+  causal_language_allowed: false

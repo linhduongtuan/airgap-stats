@@ -1,0 +1,90 @@
+dr_step: D4
+plan_version: 2
+
+inputs:
+  analysis_plan: "plans/analysis_plan.yaml"
+  inferential_analysis_plan: "plans/inferential_analysis_plan.yaml"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+
+link_to_d3:
+  same_outcome_as_d3: true
+  same_predictor_as_d3: true
+  same_model_family_as_d3: true
+  same_effect_measure_as_d3: true
+  crude_model:
+    formula: "mortality_30day ~ crp"
+    model_family: "binomial (logistic regression)"
+    effect_measure: "odds ratio (OR)"
+
+variables:
+  outcome:
+    name: "mortality_30day"
+    type: "binary"
+  main_predictor:
+    name: "crp"
+    type: "numeric"
+  covariates:
+    included:
+      - "age"
+      - "sex"
+      - "bmi"
+      - "treatment"
+      - "sbp"
+      - "diabetes"
+      - "hypertension"
+      - "smoking"
+      - "egfr"
+      - "hba1c"
+      - "complication"
+    excluded:
+      - "dbp"
+      - "length_of_stay"
+      - "patient_id"
+    source: "user_confirmation"
+    rationale: "Clinically relevant risk factors for mortality; confirmed by user in Stage D1 and D4"
+    confounder_selection:
+      method: "literature_fixed_list"
+      criteria: "Clinically established risk factors for 30-day mortality and/or CRP, confirmed by user in Stage D1/D4 (see plans/sap.md Section C1)."
+      change_in_estimate_threshold_pct: null
+      basis: "confirmed"
+
+adjusted_model:
+  formula: "mortality_30day ~ crp + age + sex + bmi + treatment + sbp + diabetes + hypertension + smoking + egfr + hba1c + complication"
+  model_family: "binomial (logistic regression)"
+  effect_measure: "odds ratio (OR)"
+  reason: "Same model family as crude; added all user-confirmed covariates for adjusted estimate"
+
+comparison:
+  compare_crude_vs_adjusted: true
+  main_question: "Does the OR for CRP change materially after adjusting for risk factors?"
+  compare:
+    - "estimate magnitude"
+    - "estimate direction"
+    - "95% CI"
+    - "p-value as secondary information"
+
+script:
+  file: "scripts/infer.R"
+  section: "adjusted"
+  verified_on_synthetic: false
+
+user_confirmation:
+  status: "confirmed"
+  notes: "User confirmed covariate list (same as D1) in D4 prompt"
+
+readiness:
+  status: "ready"
+  blocking_issues: []
+  review_issues: []
+  assumptions:
+    - "Covariates are measured at baseline/admission"
+    - "No strong multicollinearity"
+    - "No mediators among covariates (complication could be post-exposure but included per user request)"
+
+reporting:
+  table_title: "Crude and adjusted association between CRP concentration and 30-day mortality"
+  footnote: "Adjusted for age, sex, bmi, treatment, sbp, diabetes, hypertension, smoking, egfr, hba1c, complication."
+  causal_language_allowed: false
+
+next_step:
+  skill: "dr-05-present-results"

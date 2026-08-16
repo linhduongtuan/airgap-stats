@@ -1,0 +1,91 @@
+# Phase 6 of the statistical-methods roadmap ("Tooling & verification").
+#
+# This repo has no git history yet (no `.git/` directory as of this
+# writing), so this workflow is prepared, not active -- GitHub only runs a
+# workflow once the repo is pushed there with a `.github/workflows/` file
+# on its default branch. Nothing here requires any other change once that
+# happens.
+#
+# Jobs:
+#   - parity: fast, blocking. Fails the run on any .R/.py asymmetry --
+#     unlike the local pre-commit hook (informational only, so a developer
+#     mid-commit isn't blocked by drift someone else introduced), CI is the
+#     right place for this to actually gate a merge.
+#   - skills-sync: fast, blocking. Fails the run if .claude/skills/,
+#     .opencode/skill/, or .agents/skills/ don't byte-match skills/ (the
+#     canonical copy per CLAUDE.md / AGENTS.md). The local pre-commit hook
+#     for this one already auto-fixes and blocks the commit until the fix
+#     is staged, so in the normal flow this job is a backstop, not the
+#     first line of defense -- but it still needs to gate a merge in case
+#     someone commits with --no-verify or pre-commit isn't installed.
+#   - smoke-test: slow (several minutes, including sem_invariance.py's
+#     ~4-minute bootstrap), non-blocking (continue-on-error) for now --
+#     flip that once the run time and Python-vs-real-environment
+#     differences (matplotlib's Agg backend, etc.) have been confirmed
+#     stable in an actual CI run, which hasn't happened yet in this sandbox.
+
+name: DR workflow pack CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  parity:
+    name: R/Python parity check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e .
+      - name: Run tools.parity_check
+        run: python -m tools.parity_check
+
+  skills-sync:
+    name: Skill mirror sync check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e .
+      - name: Run tools.skills_sync_check
+        run: python -m tools.skills_sync_check
+
+  smoke-test:
+    name: Smoke-test every Stage D script
+    runs-on: ubuntu-latest
+    continue-on-error: true  # see header note -- not yet confirmed stable in real CI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e .
+      - name: Run tools.smoke_test
+        run: python -m tools.smoke_test
+
+  unit-tests:
+    name: Python test suite (tests/test_*.py)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -e .
+      - name: Run every self-contained test file
+        run: |
+          for f in tests/test_*.py; do
+            echo "=== $f ==="
+            python "$f"
+          done

@@ -1,0 +1,54 @@
+workflow: dr
+state_version: 2
+project_name: "crp-mortality"
+workflow_track: "medical"
+research_question: "Nồng độ CRP lúc nhập viện có liên quan đến tử vong 30 ngày không, sau khi hiệu chỉnh các yếu tố nguy cơ?"
+
+# This worked example was completed before Stage D1b existed. plans/sap.md was
+# backfilled from the already-confirmed D1/D3/D4 decisions as part of rolling out
+# the Phase 0 pre-registration gate (tools/sap_gate) -- it still needs the user's
+# explicit read-through and approval before sap_approved flips to true; a
+# backfilled document is not the same guarantee as a blind prospective SAP.
+analysis_mode: "all_steps"
+sap_approved: false
+
+current_stage: "E"
+
+stage_status:
+  A_pattern_extracted: "complete"
+  B_synthesis_code_written: "complete"
+  C_synthetic_created: "complete"
+  D1_analysis_plan: "complete"
+  D1b_sap: "backfilled_pending_user_review"   # plans/sap.md exists; awaits user approval
+  D2_descriptive_code: "complete"
+  D2b_visual_exploration: "complete"
+  D3_main_analysis_code: "complete"
+  D4_full_model_code: "complete"
+  E_real_results: "complete"
+
+artifacts:
+  dataset_pattern: null
+  pattern_reviewed_by_user: true
+  sap: "plans/sap.md"
+  synthesize_script: null
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  analysis_plan: "plans/analysis_plan.yaml"
+  desc_script: "scripts/desc.R"
+  plots_script: "scripts/plots.R"
+  infer_script: "scripts/infer.R"
+  sem_measurement_script: null
+  sem_structural_script: null
+  rstudio_output_received: true
+  present_results: "results_real/present_results.md"
+
+verified_by:
+  desc_script: "agent"           # Rscript, exit 0, synthetic
+  plots_script: "agent"          # Rscript, exit 0, figures visually checked
+  infer_script: "agent"          # Rscript, exit 0, synthetic
+  sem_measurement_script: null
+  sem_structural_script: null
+
+next_action:
+  skill: "none"
+  reason: "All stages A through E are complete. plans/sap.md was backfilled and needs the user's review/approval (sap_approved: false); run `python -m tools.sap_gate projects/crp-mortality` to check it mechanically first."
+  user_prompt: "Please review plans/sap.md, especially Section C1's `complication` flag and Section K, then confirm to set sap_approved: true."

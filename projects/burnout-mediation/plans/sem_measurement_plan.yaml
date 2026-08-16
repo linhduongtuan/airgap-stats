@@ -1,0 +1,82 @@
+dr_step: D3_sem
+plan_version: 2
+
+inputs:
+  analysis_plan: "plans/analysis_plan.yaml"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  dataset_pattern: "pattern/dataset_pattern.csv"
+  item_group_source: "user_confirmation"
+
+constructs:
+  - construct_name: "Job_Satisfaction"
+    items:
+      - "js_q1"
+      - "js_q2"
+      - "js_q3"
+      - "js_q4"
+      - "js_q5"
+    item_source: "user_confirmation"
+    response_range:
+      min: 1
+      max: 5
+    reverse_coded_items: []
+    reliability:
+      metric: "cronbach_alpha_base_r"
+      threshold_for_real_output: 0.70
+      status: "pending_rstudio_output"
+    scale_score:
+      new_variable: "js_score"
+      method: "row_mean"
+      minimum_non_missing_proportion: 0.50
+
+  - construct_name: "Burnout"
+    items:
+      - "bo_q1"
+      - "bo_q2"
+      - "bo_q3"
+      - "bo_q4"
+      - "bo_q5"
+    item_source: "user_confirmation"
+    response_range:
+      min: 1
+      max: 5
+    reverse_coded_items: []
+    reliability:
+      metric: "cronbach_alpha_base_r"
+      threshold_for_real_output: 0.70
+      status: "pending_rstudio_output"
+    scale_score:
+      new_variable: "bo_score"
+      method: "row_mean"
+      minimum_non_missing_proportion: 0.50
+
+measurement_model:
+  estimator:
+    method: "DWLS"
+    rationale: "js_q*/bo_q* are 5-point Likert items (ordinal, not continuous); DWLS on the polychoric correlation matrix is semopy's WLSMV-equivalent estimator. Resolves the needs_review flag from Phase 0 (data_readiness_summary.md's Stage D1 note, 'SEM needs DWLS estimator in lavaan') -- implemented in scripts/sem_measurement.py and scripts/sem_structural.py as Phase 3 of the statistical-methods roadmap (tools/sem_track), directed and approved by the user across the Phase 0-3 rollout."
+    basis: "confirmed"
+  lavaan_syntax: |
+    Job_Satisfaction =~ js_q1 + js_q2 + js_q3 + js_q4 + js_q5
+    Burnout =~ bo_q1 + bo_q2 + bo_q3 + bo_q4 + bo_q5
+  fit_indices_to_report: ["cfi", "tli", "rmsea", "srmr"]
+  fit_status: "pending_rstudio_output"
+
+script:
+  file: "scripts/sem_measurement.R"
+  verified_on_synthetic: false
+  note: "Synthetic fit values are meaningless by design; verification only proves the code runs."
+
+user_confirmation:
+  status: "confirmed"
+  notes: "User confirmed no reverse coding; lavaan needs installation."
+
+readiness:
+  status: "ready"
+  blocking_issues: []
+  review_issues: []
+  assumptions:
+    - "Items are treated as continuous (ML estimator) for the core demo"
+    - "No reverse coding needed"
+
+next_step:
+  skill: "dr-sem-02-structural-model"

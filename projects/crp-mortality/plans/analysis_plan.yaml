@@ -1,0 +1,238 @@
+dr_step: D1
+plan_version: 2
+
+inputs:
+  dataset_pattern: "pattern/dataset_pattern.csv"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  research_question_user_input: "Nồng độ CRP lúc nhập viện có liên quan đến tử vong 30 ngày không, sau khi hiệu chỉnh các yếu tố nguy cơ?"
+
+workflow_track:
+  value: "medical"
+  source: "user_question"
+  confidence: "high"
+
+dataset:
+  unit_of_analysis:
+    value: "patient"
+    source: "user_question"
+    confidence: "high"
+  synthetic_n_rows: 200
+
+research_question:
+  plain_language: "Association between admission CRP concentration and 30-day mortality, adjusted for potential risk factors."
+  question_type:
+    value: "associative"
+    options_considered:
+      - "descriptive"
+      - "comparative"
+      - "associative"
+      - "predictive"
+    source: "user_question"
+    confidence: "high"
+
+variables:
+  outcome:
+    name: "mortality_30day"
+    type: "binary"
+    source: "user_question"
+    confidence: "high"
+    notes: "30-day mortality (0 = alive, 1 = deceased)"
+  main_predictor:
+    name: "crp"
+    type: "numeric"
+    source: "user_question"
+    confidence: "high"
+    notes: "C-reactive protein concentration at admission"
+  covariates:
+    - name: "age"
+      type: "integer"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "sex"
+      type: "binary"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "bmi"
+      type: "numeric"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "treatment"
+      type: "binary"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "sbp"
+      type: "integer"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "diabetes"
+      type: "binary"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "hypertension"
+      type: "binary"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "smoking"
+      type: "binary"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "egfr"
+      type: "numeric"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "hba1c"
+      type: "numeric"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+    - name: "complication"
+      type: "binary"
+      role: "potential_confounder"
+      source: "user_confirmation"
+      confidence: "high"
+  group_variable:
+    name: null
+    source: "not_available"
+    confidence: "low"
+  excluded_variables:
+    - "patient_id"
+    - "dbp"
+    - "length_of_stay"
+
+constructs: []
+
+variable_inventory:
+  - name: "patient_id"
+    type: "id_like"
+    roles: ["excluded"]
+    missing_pct: 0
+    action: "exclude"
+    notes: "identifier"
+  - name: "age"
+    type: "integer"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "sex"
+    type: "binary"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Nữ|Nam"
+  - name: "bmi"
+    type: "numeric"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "treatment"
+    type: "binary"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Phác đồ A|Phác đồ B"
+  - name: "sbp"
+    type: "integer"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: "systolic blood pressure"
+  - name: "dbp"
+    type: "integer"
+    roles: ["excluded"]
+    missing_pct: 0
+    action: "exclude"
+    notes: "user excluded from adjustment"
+  - name: "diabetes"
+    type: "binary"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "hypertension"
+    type: "binary"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "smoking"
+    type: "binary"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "egfr"
+    type: "numeric"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: "estimated GFR"
+  - name: "hba1c"
+    type: "numeric"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "crp"
+    type: "numeric"
+    roles: ["main_predictor"]
+    missing_pct: 0
+    action: "keep"
+    notes: "C-reactive protein at admission"
+  - name: "length_of_stay"
+    type: "integer"
+    roles: ["excluded"]
+    missing_pct: 0
+    action: "exclude"
+    notes: "not a confounder for CRP-mortality relationship"
+  - name: "mortality_30day"
+    type: "binary"
+    roles: ["outcome"]
+    missing_pct: 0
+    action: "keep"
+    notes: "0 = alive, 1 = deceased within 30 days"
+  - name: "complication"
+    type: "binary"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: "in-hospital complication"
+
+recommended_analysis:
+  descriptive_grouping:
+    variable: "mortality_30day"
+    reason: "Compare baseline characteristics by outcome status"
+  primary_model:
+    value: "logistic_regression"
+    reason: "Binary outcome (mortality_30day) with continuous predictor (crp) and multiple covariates"
+  effect_measure:
+    value: "odds_ratio"
+    reason: "Standard effect measure for logistic regression"
+
+readiness:
+  status: "ready"
+  blocking_issues: []
+  review_issues: []
+  assumptions:
+    - "CRP is measured at admission (single time point)"
+    - "mortality_30day is binary and correctly coded"
+    - "Covariates are measured at baseline or admission"
+    - "No significant multicollinearity among covariates"
+
+next_step:
+  skill: "dr-02-descriptive-analysis"
+  needs_user_confirmation:
+    - "confirm workflow track"
+    - "confirm outcome"
+    - "confirm main predictor"
+    - "confirm covariates"

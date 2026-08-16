@@ -1,0 +1,4 @@
+{
+  "reportUnnecessaryComparison": "none",
+  "reportUnnecessaryIsInstance": "none"
+}

@@ -1,0 +1,965 @@
+<title>Cẩm Nang AirGap Stats</title>
+<meta name="description" content="Hướng dẫn sử dụng chi tiết bằng tiếng Việt cho AirGap Stats — bộ công cụ phân tích dữ liệu nghiên cứu bằng AI mà dữ liệu thật không bao giờ rời khỏi máy bạn.">
+<style>
+  /* ============================================================
+     AIRGAP STATS — CẨM NANG SỬ DỤNG
+     Design: "vault meets lab notebook" — warm paper ground, deep
+     teal ink (the air-gap/security motif), terracotta warm accent
+     for anything the user must actively DO (prompts, actions),
+     dedicated danger/safe tokens matching the Vietnamese guide's
+     own "Quy Tắc Vàng" / "An Toàn" vocabulary.
+     Fonts are system-stack only, deliberately NOT a custom inlined
+     webfont: this document is Vietnamese-first, and every modern
+     OS's default UI/serif stack has full Vietnamese diacritic
+     coverage (all precomposed Unicode) whereas a subsetted custom
+     webfont risks silently dropping combining marks. Correctness
+     of the Vietnamese text outweighs a bespoke typeface here.
+     ============================================================ */
+
+  :root {
+    --paper: #f6f1e6;
+    --surface: #fffdf8;
+    --surface-2: #efe6d2;
+    --ink: #1b2420;
+    --ink-2: #4a5850;
+    --muted: #7c8a80;
+    --border: #ddd0ae;
+    --border-soft: #e8dec2;
+
+    --accent: #0e7c6b;
+    --accent-ink: #ffffff;
+    --accent-soft: #e2f1ec;
+    --accent-strong: #095e51;
+
+    --warm: #bb5c33;
+    --warm-ink: #ffffff;
+    --warm-soft: #f8e5d7;
+    --warm-strong: #98461f;
+
+    --track-medical: #ac4d2c;
+    --track-medical-bg: #f6e0d3;
+    --track-sem: #55529c;
+    --track-sem-bg: #e6e5f5;
+    --track-cross: #7c8a80;
+    --track-cross-bg: #ebe6d8;
+
+    --danger: #a3271f;
+    --danger-bg: #f8e1dd;
+    --safe: #2f7a4f;
+    --safe-bg: #e0f0e5;
+
+    --focus: #0e7c6b;
+
+    --code-bg: #171e1f;
+    --code-ink: #e7ece8;
+    --code-line: #2b3634;
+    --code-muted: #8a978f;
+    --code-kw: #74b9d6;
+    --code-str: #dba86a;
+    --code-num: #a687dd;
+    --code-com: #718178;
+    --code-fn: #7fd0a3;
+
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "Noto Serif", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #101615;
+      --surface: #161f1d;
+      --surface-2: #1e2b27;
+      --ink: #edf2ee;
+      --ink-2: #b6c4bd;
+      --muted: #869289;
+      --border: #2c3a35;
+      --border-soft: #23302b;
+
+      --accent: #3fcbb0;
+      --accent-ink: #05201a;
+      --accent-soft: #17332c;
+      --accent-strong: #6fdcc6;
+
+      --warm: #e2a26a;
+      --warm-ink: #2a1608;
+      --warm-soft: #3a2a1a;
+      --warm-strong: #f0bd8c;
+
+      --track-medical: #e28a68;
+      --track-medical-bg: #3a2419;
+      --track-sem: #9fa1e2;
+      --track-sem-bg: #292a48;
+      --track-cross: #9aa79e;
+      --track-cross-bg: #232b26;
+
+      --danger: #f08a80;
+      --danger-bg: #3a201d;
+      --safe: #85d69d;
+      --safe-bg: #1b3224;
+
+      --focus: #3fcbb0;
+
+      --code-bg: #0f1514;
+      --code-ink: #e7ece8;
+      --code-line: #263130;
+      --code-muted: #7e8c85;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #101615;
+    --surface: #161f1d;
+    --surface-2: #1e2b27;
+    --ink: #edf2ee;
+    --ink-2: #b6c4bd;
+    --muted: #869289;
+    --border: #2c3a35;
+    --border-soft: #23302b;
+
+    --accent: #3fcbb0;
+    --accent-ink: #05201a;
+    --accent-soft: #17332c;
+    --accent-strong: #6fdcc6;
+
+    --warm: #e2a26a;
+    --warm-ink: #2a1608;
+    --warm-soft: #3a2a1a;
+    --warm-strong: #f0bd8c;
+
+    --track-medical: #e28a68;
+    --track-medical-bg: #3a2419;
+    --track-sem: #9fa1e2;
+    --track-sem-bg: #292a48;
+    --track-cross: #9aa79e;
+    --track-cross-bg: #232b26;
+
+    --danger: #f08a80;
+    --danger-bg: #3a201d;
+    --safe: #85d69d;
+    --safe-bg: #1b3224;
+
+    --focus: #3fcbb0;
+
+    --code-bg: #0f1514;
+    --code-ink: #e7ece8;
+    --code-line: #263130;
+    --code-muted: #7e8c85;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-strong); }
+  :root[data-theme="dark"] a, :root:not([data-theme="light"]) a { color: var(--accent-strong); }
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--focus); outline-offset: 2px;
+  }
+  code { font-family: var(--font-mono); font-size: 0.92em; }
+  :not(pre) > code {
+    background: var(--surface-2); border: 1px solid var(--border-soft);
+    border-radius: 4px; padding: 0.05em 0.35em;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; text-wrap: balance; color: var(--ink); }
+  p { margin: 0.9em 0; }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: 0.4em 0; }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ---------- Masthead ---------- */
+  .masthead { max-width: 880px; margin: 0 auto; padding: 64px 0 32px; text-align: left; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 10px; font-family: var(--font-mono);
+    font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-strong);
+    margin-bottom: 18px;
+  }
+  .eyebrow .rule { width: 28px; height: 2px; background: var(--accent); display: inline-block; }
+  h1.title { font-size: clamp(2.1rem, 4.5vw, 3rem); line-height: 1.12; margin: 0 0 18px; }
+  .dek { font-size: 1.15rem; color: var(--ink-2); max-width: 68ch; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 24px 0 8px;
+    font-size: 0.88rem; color: var(--muted); font-family: var(--font-mono);
+  }
+  .meta-row strong { color: var(--ink-2); font-family: var(--font-body); }
+  .usage-box {
+    margin-top: 26px; background: var(--surface); border: 1px solid var(--border);
+    border-left: 4px solid var(--accent); border-radius: 8px; padding: 16px 20px; font-size: 0.95rem;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; max-width: 1280px; margin: 0 auto; }
+  nav.toc {
+    position: sticky; top: 20px; align-self: start; max-height: calc(100vh - 40px); overflow-y: auto;
+    padding: 18px 14px; font-size: 0.86rem;
+  }
+  nav.toc a { display: block; text-decoration: none; color: var(--ink-2); padding: 5px 8px; border-radius: 6px; }
+  nav.toc a:hover { background: var(--surface-2); color: var(--ink); }
+  nav.toc .toc-part {
+    font-family: var(--font-display); font-weight: 700; color: var(--ink); margin-top: 14px;
+    display: flex; gap: 8px; align-items: baseline;
+  }
+  nav.toc .toc-part:first-child { margin-top: 0; }
+  nav.toc .toc-part .num {
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-strong); min-width: 1.4em;
+  }
+  nav.toc .toc-sub { padding-left: 28px; font-size: 0.82rem; }
+
+  main { min-width: 0; padding-top: 8px; }
+  section.part { padding: 56px 0; border-top: 1px solid var(--border-soft); }
+  section.part:first-child { border-top: none; padding-top: 8px; }
+  .part-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; }
+  .part-num {
+    font-family: var(--font-display); font-size: 2.6rem; color: var(--accent); opacity: 0.55; line-height: 1;
+  }
+  .part-head h2 { font-size: 1.9rem; margin: 0; }
+  .part-intro { font-size: 1.06rem; color: var(--ink-2); max-width: 72ch; margin-top: 10px; }
+
+  h3.sub { font-size: 1.32rem; margin: 40px 0 12px; scroll-margin-top: 16px; }
+  h4.subsub { font-size: 1.08rem; margin: 28px 0 10px; color: var(--ink); scroll-margin-top: 16px; }
+  section.part [id] { scroll-margin-top: 16px; }
+
+  /* ---------- Pills / badges ---------- */
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600;
+    padding: 3px 10px 3px 8px; border-radius: 999px; font-family: var(--font-body);
+  }
+  .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .pill.track-medical { background: var(--track-medical-bg); color: var(--track-medical); }
+  .pill.track-sem { background: var(--track-sem-bg); color: var(--track-sem); }
+  .pill.track-cross { background: var(--track-cross-bg); color: var(--track-cross); }
+
+  .who {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700;
+    padding: 4px 12px; border-radius: 999px; margin: 0 0 10px;
+  }
+  .who.who-ai { background: var(--accent-soft); color: var(--accent-strong); }
+  .who.who-user { background: var(--warm-soft); color: var(--warm-strong); }
+
+  .stage-badge {
+    display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono);
+    font-weight: 700; font-size: 0.85rem; width: 28px; height: 28px; border-radius: 8px;
+    background: var(--accent-soft); color: var(--accent-strong); margin-right: 10px; flex: none;
+  }
+
+  /* ---------- Callouts ---------- */
+  .callout { border-radius: 10px; padding: 16px 20px; margin: 20px 0; border: 1px solid var(--border); }
+  .callout-label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; }
+  .callout p:first-of-type { margin-top: 0; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout.info { background: var(--surface); border-left: 4px solid var(--accent); }
+  .callout.info .callout-label { color: var(--accent-strong); }
+  .callout.tip { background: var(--accent-soft); border-left: 4px solid var(--accent); }
+  .callout.tip .callout-label { color: var(--accent-strong); }
+  .callout.warn { background: var(--warm-soft); border-left: 4px solid var(--warm); }
+  .callout.warn .callout-label { color: var(--warm-strong); }
+  .callout.danger { background: var(--danger-bg); border-left: 4px solid var(--danger); }
+  .callout.danger .callout-label { color: var(--danger); }
+  .callout.safe { background: var(--safe-bg); border-left: 4px solid var(--safe); }
+  .callout.safe .callout-label { color: var(--safe); }
+
+  /* ---------- Prompt box (text to paste to the AI) ---------- */
+  .prompt-box {
+    background: var(--warm-soft); border: 1px solid var(--warm); border-radius: 10px;
+    margin: 18px 0; overflow: hidden;
+  }
+  .prompt-caption {
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 0.78rem;
+    font-weight: 700; color: var(--warm-strong); background: color-mix(in srgb, var(--warm) 14%, transparent);
+    border-bottom: 1px solid var(--warm);
+  }
+  .prompt-box pre {
+    margin: 0; padding: 14px 18px; font-family: var(--font-mono); font-size: 0.9rem;
+    white-space: pre-wrap; word-break: break-word; color: var(--ink); line-height: 1.6;
+  }
+
+  /* ---------- Code / console panels (RStudio) ---------- */
+  .code-panel { background: var(--code-bg); border-radius: 10px; margin: 18px 0; overflow: hidden; border: 1px solid var(--code-line); }
+  .code-caption {
+    display: flex; justify-content: space-between; align-items: center; padding: 8px 16px;
+    font-family: var(--font-mono); font-size: 0.76rem; color: var(--code-muted);
+    background: color-mix(in srgb, var(--code-bg) 60%, black 10%); border-bottom: 1px solid var(--code-line);
+  }
+  .code-caption .lang { text-transform: uppercase; letter-spacing: 0.06em; }
+  .code-panel pre { margin: 0; padding: 16px 18px; overflow-x: auto; }
+  .code-panel code { font-family: var(--font-mono); font-size: 0.88rem; line-height: 1.65; color: var(--code-ink); background: none; border: none; padding: 0; }
+  .tok-kw { color: var(--code-kw); }
+  .tok-str { color: var(--code-str); }
+  .tok-num { color: var(--code-num); }
+  .tok-com { color: var(--code-com); font-style: italic; }
+  .tok-fn { color: var(--code-fn); }
+
+  .console-panel { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; margin: 18px 0; overflow: hidden; }
+  .console-caption { padding: 8px 16px; font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .console-panel pre { margin: 0; padding: 14px 18px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-2); }
+
+  /* ---------- File tree ---------- */
+  .file-tree {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.7;
+    white-space: pre; overflow-x: auto; margin: 18px 0; color: var(--ink-2);
+  }
+  .file-tree .dir { color: var(--ink); font-weight: 600; }
+  .file-tree .comment { color: var(--muted); font-style: italic; }
+
+  /* ---------- Steps ---------- */
+  ol.steps { list-style: none; padding: 0; counter-reset: step; margin: 24px 0; }
+  ol.steps > li {
+    counter-increment: step; position: relative; padding: 4px 0 4px 46px; margin: 0 0 26px;
+  }
+  ol.steps > li::before {
+    content: counter(step); position: absolute; left: 0; top: 2px; width: 32px; height: 32px;
+    border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-family: var(--font-display);
+    font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+  }
+  ol.steps > li > h4 { margin: 0 0 8px; font-size: 1.12rem; }
+
+  /* ---------- Tables ---------- */
+  .table-wrap { overflow-x: auto; margin: 18px 0; border: 1px solid var(--border); border-radius: 10px; }
+  table.ref { border-collapse: collapse; width: 100%; font-size: 0.9rem; background: var(--surface); }
+  table.ref th, table.ref td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+  table.ref th { background: var(--surface-2); font-family: var(--font-body); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-2); }
+  table.ref tr:last-child td { border-bottom: none; }
+  table.ref td.name { font-family: var(--font-mono); font-weight: 600; color: var(--ink); white-space: nowrap; }
+
+  /* ---------- FAQ ---------- */
+  .faq-item { border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin: 14px 0; background: var(--surface); }
+  .faq-q { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin: 0 0 8px; }
+  .faq-a { margin: 0; color: var(--ink-2); }
+
+  footer.page-foot {
+    max-width: 880px; margin: 40px auto 0; padding: 24px 0; border-top: 1px solid var(--border);
+    font-size: 0.85rem; color: var(--muted);
+  }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { position: static; max-height: none; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow"><span class="rule"></span> AirGap Stats &middot; cẩm nang sử dụng</div>
+    <h1 class="title">Cẩm Nang AirGap Stats</h1>
+    <p class="dek">
+      Hướng dẫn chi tiết, từng bước, cho người mới bắt đầu: cách cài đặt, cách chạy một dự án phân
+      tích nghiên cứu từ đầu đến cuối, và vì sao dữ liệu thật của bạn không bao giờ chạm tới AI —
+      kể cả khi bạn nhờ AI viết toàn bộ code phân tích.
+    </p>
+    <div class="meta-row">
+      <span><strong>Đối tượng</strong> &mdash; nhà nghiên cứu, bác sĩ, sinh viên &mdash; không cần biết lập trình</span>
+      <span><strong>Cập nhật</strong> &mdash; 2026&#8209;08&#8209;16</span>
+      <span><strong>Ngôn ngữ</strong> &mdash; Tiếng Việt</span>
+    </div>
+    <div class="usage-box">
+      <strong>Cách dùng tài liệu này.</strong> Đọc Phần I&ndash;III theo thứ tự nếu bạn mới dùng lần đầu.
+      Phần IV là ví dụ mẫu đầy đủ, làm theo được ngay. Phần V trở đi là tài liệu tra cứu — dùng
+      mục lục bên trái để nhảy tới phần cần thiết. Có hai loại hộp lệnh xuyên suốt tài liệu:
+      <span class="who who-user" style="margin:0 4px;">🧑‍🔬 Bạn làm</span> là câu bạn gõ/dán cho AI agent,
+      còn khối lệnh màu tối là lệnh bạn dán vào <strong>Console của RStudio</strong> — hai nơi khác nhau, đừng nhầm.
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc">
+      <a class="toc-part" href="#phan-1"><span class="num">I</span>Giới thiệu &amp; Bảo mật</a>
+      <a class="toc-sub" href="#gioi-thieu">AirGap Stats là gì</a>
+      <a class="toc-sub" href="#doi-tuong">Dành cho ai / hai track</a>
+      <a class="toc-sub" href="#kien-truc-5-giai-doan">Kiến trúc 5 giai đoạn</a>
+      <a class="toc-sub" href="#lop-bao-ve">Bốn lớp bảo vệ</a>
+
+      <a class="toc-part" href="#phan-2"><span class="num">II</span>Cài đặt</a>
+      <a class="toc-sub" href="#yeu-cau-moi-truong">Yêu cầu môi trường</a>
+      <a class="toc-sub" href="#cac-buoc-cai-dat">Các bước cài đặt</a>
+      <a class="toc-sub" href="#kiem-tra-hoat-dong">Kiểm tra hoạt động</a>
+
+      <a class="toc-part" href="#phan-3"><span class="num">III</span>Dữ liệu thật để ở đâu</a>
+      <a class="toc-sub" href="#tung-buoc-file-choose">5 bước file.choose()</a>
+      <a class="toc-sub" href="#vi-sao-an-toan">Vì sao an toàn tuyệt đối</a>
+      <a class="toc-sub" href="#luu-y-paste">Lưu ý khi paste kết quả</a>
+
+      <a class="toc-part" href="#phan-4"><span class="num">IV</span>Ví dụ: Track Medical</a>
+      <a class="toc-sub" href="#vd-giai-doan-a-c">A&ndash;C: Cổng bảo mật</a>
+      <a class="toc-sub" href="#vd-giai-doan-d1">D1: Kế hoạch &amp; SAP</a>
+      <a class="toc-sub" href="#vd-giai-doan-d2">D2: Table 1</a>
+      <a class="toc-sub" href="#vd-giai-doan-d3-d4">D3&ndash;D4: Suy luận &amp; hiệu chỉnh</a>
+      <a class="toc-sub" href="#vd-giai-doan-e">E: Kết quả thật</a>
+
+      <a class="toc-part" href="#phan-5"><span class="num">V</span>Ví dụ: Track SEM</a>
+      <a class="toc-sub" href="#sem-d3">D3: Mô hình đo lường</a>
+      <a class="toc-sub" href="#sem-d4">D4: Mô hình cấu trúc</a>
+
+      <a class="toc-part" href="#phan-6"><span class="num">VI</span>Hai Track: So Sánh</a>
+
+      <a class="toc-part" href="#phan-7"><span class="num">VII</span>Xử Lý Sự Cố</a>
+      <a class="toc-sub" href="#loi-dang-o-dau">Không nhớ đang ở đâu</a>
+      <a class="toc-sub" href="#loi-lavaan">Thiếu lavaan</a>
+      <a class="toc-sub" href="#loi-rscript-path">Rscript PATH</a>
+
+      <a class="toc-part" href="#phan-8"><span class="num">VIII</span>Câu Hỏi Thường Gặp</a>
+
+      <a class="toc-part" href="#phu-luc"><span class="num">&middot;</span>Bảng Lệnh Nhanh</a>
+    </nav>
+
+    <main>
+      <section class="part" id="phan-1">
+        <div class="part-head"><span class="part-num">I</span><h2>Giới thiệu &amp; Mô hình bảo mật</h2></div>
+        <p class="part-intro">AirGap Stats là gì, dành cho ai, và vì sao kiến trúc 5 giai đoạn của nó khiến việc rò rỉ dữ liệu thật gần như không thể xảy ra &mdash; kể cả khi bạn dùng AI để viết toàn bộ code phân tích.</p>
+
+        <h3 class="sub" id="gioi-thieu">AirGap Stats là gì?</h3>
+        <p>
+          AirGap Stats là bộ công cụ giúp bạn dùng AI coding agent (Claude Code, Codex, hoặc OpenCode)
+          để <strong>viết code phân tích thống kê</strong> cho câu hỏi nghiên cứu của bạn &mdash; mà
+          <strong>dữ liệu thật không bao giờ rời khỏi máy của bạn, và AI không bao giờ nhìn thấy nó</strong>.
+        </p>
+        <p>
+          Tên gọi lấy từ thuật ngữ bảo mật <strong>&ldquo;air-gapped&rdquo;</strong> &mdash; chỉ một hệ
+          thống bị cách ly vật lý khỏi mạng, không thể bị truy cập từ xa dù có cố ý hay không. Ở đây,
+          dữ liệu thật của bạn được &ldquo;air-gapped&rdquo; khỏi AI theo đúng nghĩa đen: AI hoạt động
+          bên trong folder pack, dữ liệu thật của bạn nằm ở một nơi hoàn toàn khác trên máy &mdash; AI
+          không có đường nào chạm tới, kể cả khi bạn quên không nói cho nó biết dữ liệu ở đâu.
+        </p>
+        <p>
+          Bạn không cần biết lập trình R hay Python để dùng AirGap Stats. Việc của bạn chỉ là:
+          <strong>mở RStudio, dán vài dòng lệnh agent đưa cho, chọn file khi được hỏi, và dán kết quả
+          quay lại cho agent</strong>. AI lo phần viết code; bạn lo phần chạy code trên dữ liệu thật.
+        </p>
+
+        <h3 class="sub" id="doi-tuong">Dành cho ai? Hai hướng phân tích</h3>
+        <p>
+          AirGap Stats phục vụ hai loại câu hỏi nghiên cứu khác nhau, mỗi loại có một &ldquo;track&rdquo;
+          (hướng phân tích) riêng với phương pháp thống kê riêng (Phần VI so sánh chi tiết cả hai):
+        </p>
+        <ul>
+          <li><span class="pill track-medical"><span class="dot"></span>Medical</span> &mdash; nghiên cứu có outcome quan sát được (sống/chết, biến chứng có/không...), dùng hồi quy logistic thô + hiệu chỉnh nhiễu (confounding adjustment). Phù hợp cho nghiên cứu lâm sàng, y sinh, dịch tễ.</li>
+          <li><span class="pill track-sem"><span class="dot"></span>SEM</span> &mdash; nghiên cứu dùng thang đo Likert (bảng khảo sát nhiều câu hỏi đo một khái niệm trừu tượng, ví dụ &ldquo;mức độ hài lòng công việc&rdquo;), dùng phân tích nhân tố khẳng định (CFA) + mô hình cấu trúc (structural model) bằng gói <code>lavaan</code>. Phù hợp cho y tế công cộng, khoa học xã hội, khảo sát tổ chức.</li>
+        </ul>
+        <p>Agent sẽ hỏi bạn xác nhận track ngay ở bước D1 &mdash; bạn không cần tự quyết định trước, chỉ cần biết mình đang nghiên cứu cái gì.</p>
+
+        <h3 class="sub" id="kien-truc-5-giai-doan">Kiến trúc 5 giai đoạn: vì sao an toàn tuyệt đối</h3>
+        <p>Mọi dự án đi qua đúng 5 giai đoạn, gọi tắt A&ndash;E. Đây là mô hình quan trọng nhất cần nắm trước khi làm bất cứ điều gì &mdash; gần như mọi quy tắc trong tài liệu này chỉ nhằm bảo vệ giai đoạn A và giai đoạn E.</p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Giai đoạn</th><th>Ai làm</th><th>Chuyện gì xảy ra</th><th>Kết quả</th></tr></thead>
+            <tbody>
+              <tr><td class="name">A. Trích xuất pattern</td><td>🧑‍🔬 Bạn, tại RStudio</td><td>Đọc dữ liệu thật, chỉ lấy ra: tên biến, kiểu biến, các levels của biến phân loại, % thiếu dữ liệu &mdash; <strong>không</strong> giá trị thật, <strong>không</strong> thống kê, <strong>không</strong> số dòng.</td><td><code>pattern/dataset_pattern.csv</code></td></tr>
+              <tr><td class="name">Cổng duyệt (review gate)</td><td>🧑‍🔬 Bạn</td><td>Bạn mở file pattern, đọc từng dòng, xác nhận không có nhãn nào nhạy cảm/định danh &mdash; <em>trước khi</em> AI được phép đọc file này.</td><td>&mdash;</td></tr>
+              <tr><td class="name">B. Sinh dữ liệu giả</td><td>🧑‍🔬 Bạn, tại RStudio</td><td>Chạy script AI viết sẵn, sinh ra bộ dữ liệu <strong>hoàn toàn giả</strong> &mdash; cùng cấu trúc với dữ liệu thật nhưng không copy một dòng nào.</td><td><code>data_synthetic/synthetic_dataset.csv</code></td></tr>
+              <tr><td class="name">B2. Dữ liệu giả có tương quan <em>(tuỳ chọn)</em></td><td>🧑‍🔬 Bạn, tại RStudio</td><td>Giống B nhưng giữ lại tương quan gần đúng giữa các biến (Gaussian copula) &mdash; để kiểm tra code AI viết có thực sự hội tụ, không chỉ &ldquo;chạy không lỗi&rdquo;.</td><td><code>data_synthetic/synthetic_dataset_correlated.csv</code></td></tr>
+              <tr><td class="name">D. Phân tích (trên dữ liệu giả)</td><td>🤖 AI, tự kiểm tra bằng <code>Rscript</code></td><td>AI viết và tự chạy thử mọi script phân tích &mdash; mô tả, suy luận/SEM, chẩn đoán mô hình &mdash; trên dữ liệu giả cho đến khi chạy sạch.</td><td><code>scripts/*.R</code>, <code>outputs_synthetic/*.csv</code></td></tr>
+              <tr><td class="name">E. Kết quả thật</td><td>🧑‍🔬 Bạn chạy, 🤖 AI trình bày</td><td>Bạn chạy các file <code>.R</code> đã hoàn thiện trên dữ liệu thật tại máy mình, dán output (bảng số, không phải hình ảnh) cho agent. AI trình bày thành bảng kết quả chuẩn công bố &mdash; không bao giờ tự bịa số.</td><td><code>results_real/*.md</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout tip">
+          <span class="callout-label">Cách đọc bảng này khi bạn thấy code AI đưa ra</span>
+          <p>Nếu một script mặc định đọc từ <code>data_synthetic/synthetic_dataset.csv</code> &mdash; đó là giai đoạn D, an toàn để chạy ngay. Nếu một script bắt bạn chọn file qua cửa sổ (<code>file.choose()</code>) hoặc không có đường dẫn mặc định &mdash; đó là giai đoạn A/B/C/E, nó cần dữ liệu thật và sẽ luôn hỏi bạn chọn file, không bao giờ tự đoán.</p>
+        </div>
+
+        <h3 class="sub" id="lop-bao-ve">Bốn lớp bảo vệ</h3>
+        <ol>
+          <li><strong>Dữ liệu thật nằm ngoài folder pack.</strong> Đây là lớp quan trọng nhất, áp dụng cho mọi agent (Claude Code, Codex, OpenCode). AI chỉ hoạt động bên trong folder AirGap Stats &mdash; dữ liệu nằm ngoài folder đó nghĩa là nằm ngoài tầm với của AI, vô điều kiện.</li>
+          <li><strong>Lưới an toàn ở tầng công cụ.</strong> Nếu bạn lỡ copy dữ liệu vào một folder như <code>data_real/</code> bên trong pack, cấu hình của Claude Code có <strong>deny rule chặn việc đọc folder đó</strong> ở tầng công cụ &mdash; không phải chỉ là một lời nhắc AI tự giác tuân theo. Mọi skill cũng có lệnh cấm rõ ràng kèm cảnh báo bạn chuyển file ra ngoài nếu phát hiện.</li>
+          <li><strong><code>.gitignore</code> chặn commit dữ liệu.</strong> Các đuôi file dữ liệu phổ biến (<code>data_real/</code>, <code>.sav</code>, <code>.dta</code>, <code>.xlsx</code>) bị chặn khỏi git ngay từ đầu &mdash; phòng trường hợp bạn dùng git để backup/chia sẻ project.</li>
+          <li><strong>Cổng QA (<code>dr-output-qa-gate</code>) kiểm tra từng giai đoạn.</strong> Trước khi cho phép sang giai đoạn tiếp theo, cổng này xác nhận: file pattern không chứa thống kê/đường dẫn thật, bạn đã xác nhận đã duyệt pattern, và không có dữ liệu thật nào lọt vào repo.</li>
+        </ol>
+        <div class="callout danger">
+          <span class="callout-label">Quy tắc vàng, nhắc lại vì nó quan trọng nhất</span>
+          <p><strong>KHÔNG BAO GIỜ copy file dữ liệu thật vào folder AirGap Stats.</strong> Cứ để nó ở nơi bạn vẫn lưu &mdash; ví dụ <code>Documents\du-lieu-nghien-cuu\</code> hay USB. Không bao giờ dán dữ liệu thật (kể cả &ldquo;chỉ vài dòng đầu&rdquo;) trực tiếp vào khung chat với AI. Phần III giải thích chính xác cách dữ liệu thật của bạn được sử dụng mà không cần rời khỏi RStudio.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phan-2">
+        <div class="part-head"><span class="part-num">II</span><h2>Cài đặt</h2></div>
+        <p class="part-intro">Chuẩn bị môi trường mất khoảng 10&ndash;15 phút, phần lớn là cài R + RStudio nếu máy bạn chưa có. Không cần biết dòng lệnh, không cần biết Git.</p>
+
+        <h3 class="sub" id="yeu-cau-moi-truong">Yêu cầu môi trường</h3>
+        <ul>
+          <li><strong>R + RStudio</strong> (bản R 4.x bất kỳ, tải miễn phí tại <a href="https://posit.co/download/rstudio-desktop/">posit.co/download/rstudio-desktop</a>). Track Medical chạy 100% base R &mdash; không cần cài thêm package nào.</li>
+          <li>Track SEM cần đúng <strong>1 package</strong>: chạy <code>install.packages("lavaan")</code> một lần trong RStudio. Nếu dự án của bạn dùng phân tích sống còn (survival analysis), cần thêm package <code>survival</code> &mdash; cũng chỉ một lệnh <code>install.packages("survival")</code>.</li>
+          <li>Một <strong>AI coding agent</strong> chạy tại máy, trỏ vào folder này: <strong>Claude Code</strong> (khuyến nghị), <strong>Codex</strong>, hoặc <strong>OpenCode</strong>.</li>
+        </ul>
+        <div class="callout info">
+          <span class="callout-label">Không dùng RStudio? Có bản mirror bằng Python</span>
+          <p>Mọi script trong AirGap Stats đều có bản song song viết bằng Python thuần (<code>pandas</code>/<code>numpy</code>/<code>scipy</code>/<code>statsmodels</code>, cộng <code>semopy</code> cho track SEM) &mdash; cùng hợp đồng bảo mật, cùng tên hàm. Tài liệu này đi theo nhánh R vì đó là trải nghiệm được thiết kế cho người không rành lập trình (RStudio có cửa sổ chọn file sẵn có); nếu bạn quen Python hơn, cứ nói với agent &ldquo;dùng bản Python mirror&rdquo; và mọi bước dưới đây vẫn áp dụng, chỉ đổi <code>Rscript</code> thành <code>python</code> và <code>file.choose()</code> thành đường dẫn bạn tự nhập (không có cửa sổ chọn file kiểu RStudio trong Python thuần).</p>
+        </div>
+
+        <h3 class="sub" id="cac-buoc-cai-dat">Các bước cài đặt</h3>
+        <ol class="steps">
+          <li><h4>Giải nén vào một folder cố định</h4><p>Ví dụ <code>D:\projects\airgap-stats\</code> (Windows) hoặc <code>~/airgap-stats/</code> (macOS). Đây sẽ là &ldquo;nhà&rdquo; của AI agent &mdash; nó chỉ hoạt động bên trong folder này.</p></li>
+          <li><h4>Khởi động agent, trỏ vào folder trên</h4><p>Mở Claude Code (hoặc Codex/OpenCode), chọn folder AirGap Stats làm project folder của agent.</p></li>
+          <li><h4>Không cần làm gì thêm &mdash; skills đã nằm sẵn trong repo</h4><p>Claude Code tự nhận <code>.claude/skills/</code> và đọc <code>CLAUDE.md</code>. Codex đọc <code>AGENTS.md</code> (trỏ đến <code>skills/</code>). OpenCode tự nhận <code>.opencode/skill/</code>. Không cần cấu hình gì thủ công.</p></li>
+        </ol>
+
+        <h3 class="sub" id="kiem-tra-hoat-dong">Kiểm tra cài đặt đã đúng chưa</h3>
+        <p>Gõ câu hỏi sau cho agent:</p>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-workflow-orchestrator. Tôi muốn bắt đầu một dự án phân tích mới. Quy trình gồm những bước nào?</pre>
+        </div>
+        <p>Nếu agent trả lời mô tả đúng 5 giai đoạn A&ndash;E ở Phần I &mdash; cài đặt đã hoàn tất, bạn có thể bắt đầu dự án thật của mình (Phần IV có ví dụ đầy đủ để làm theo trước khi dùng dữ liệu của chính bạn).</p>
+        <div class="callout warn">
+          <span class="callout-label">Nếu agent &ldquo;không thấy skill&rdquo;</span>
+          <p>Hỏi thẳng: <code>Đọc skills/dr-workflow-orchestrator/SKILL.md và làm theo</code> &mdash; mọi agent đều đọc được file văn bản thường, kể cả khi cơ chế tự nhận skill của nó không hoạt động vì lý do gì đó.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phan-3">
+        <div class="part-head"><span class="part-num">III</span><h2>Dữ liệu thật của bạn để ở đâu?</h2></div>
+        <p class="part-intro">Phần quan trọng nhất của toàn bộ tài liệu này. Đọc kỹ trước khi chạy bất kỳ lệnh nào trên dữ liệu thật.</p>
+
+        <div class="callout danger">
+          <span class="callout-label">Quy tắc vàng</span>
+          <p><strong>KHÔNG BAO GIỜ copy file dữ liệu thật vào folder AirGap Stats này.</strong> Cứ để nó ở nơi bạn vẫn lưu &mdash; ví dụ <code>Documents\du-lieu-nghien-cuu\</code> hay USB. AI agent chỉ hoạt động bên trong folder pack, nên dữ liệu nằm ngoài folder = nằm ngoài tầm với của AI.</p>
+        </div>
+
+        <p>
+          Vậy khi script cần đọc dữ liệu thật thì sao? Mỗi khi cần, script sẽ dùng lệnh
+          <code>file.choose()</code> &mdash; R sẽ <strong>mở một cửa sổ chọn file giống hệt khi bạn mở
+          file Word/Excel</strong>. Bạn chỉ việc trỏ tới file dữ liệu của mình và bấm Open. Không cần
+          gõ đường dẫn, không cần biết lập trình.
+        </p>
+
+        <h3 class="sub" id="tung-buoc-file-choose">Từng bước cụ thể (làm đúng 5 bước này mỗi lần chạy trên dữ liệu thật)</h3>
+        <ol class="steps">
+          <li><h4>Mở RStudio</h4><p>Không cần mở project AirGap Stats trong RStudio &mdash; chỉ cần RStudio đang chạy.</p></li>
+          <li><h4>Trỏ working directory vào folder project của bạn</h4><p>Vào menu <strong>Session &rarr; Set Working Directory &rarr; Choose Directory...</strong> rồi chọn folder project của bạn (ví dụ <code>...\projects\diabetes</code>). Bước này để R biết &ldquo;nhà&rdquo; của project ở đâu &mdash; mọi đường dẫn tương đối trong script (như <code>"pattern/dataset_pattern.csv"</code>) đều tính từ đây.</p></li>
+          <li><h4>Copy nguyên khối lệnh agent đưa, dán vào Console</h4><p>Dán vào ô Console (ô có dấu <code>&gt;</code> ở góc dưới bên trái RStudio), nhấn <strong>Enter</strong>. Không sửa gì trong khối lệnh trừ khi agent nói rõ cần sửa dòng nào.</p></li>
+          <li><h4>Chờ cửa sổ chọn file xuất hiện</h4><p>Khi thấy R như &ldquo;đứng im&rdquo; &mdash; đó là lúc <strong>cửa sổ chọn file đã mở</strong> (đôi khi nó nấp sau cửa sổ RStudio, hãy nhìn thanh taskbar dưới màn hình). Tìm đến file dữ liệu thật của bạn &rarr; bấm <strong>Open</strong>.</p></li>
+          <li><h4>Chờ chạy xong, đọc kết quả</h4><p>Chờ chữ chạy xong trong Console, rồi quay lại làm theo hướng dẫn tiếp theo của agent &mdash; thường là báo lại &ldquo;đã chạy xong, không có lỗi&rdquo; hoặc dán phần output nếu agent yêu cầu.</p></li>
+        </ol>
+
+        <h3 class="sub" id="vi-sao-an-toan">Vì sao cách này an toàn tuyệt đối?</h3>
+        <div class="callout safe">
+          <span class="callout-label">An toàn theo thiết kế, không phải theo lời hứa</span>
+          <ul>
+            <li>Đường dẫn tới file thật <strong>chỉ tồn tại trong phiên RStudio của bạn</strong> &mdash; không được ghi vào bất kỳ file nào trong folder pack. AI thậm chí không biết dữ liệu thật nằm ở đâu, tên là gì.</li>
+            <li>Nhờ vậy, <strong>toàn bộ folder project của bạn an toàn để zip gửi cho người khác</strong> (nhờ giảng viên xem giúp, backup, sync cloud) &mdash; trong đó không hề có dữ liệu thật.</li>
+          </ul>
+        </div>
+
+        <h3 class="sub" id="luu-y-paste">Một lưu ý khi paste kết quả cho AI (giai đoạn E)</h3>
+        <p>
+          Nếu trong phần kết quả bạn copy từ Console có hiện <strong>đường dẫn hoặc tên file dữ liệu
+          thật</strong> (ví dụ <code>D:\benh-vien\HIV_2024.csv</code>), hãy <strong>xoá dòng đó trước
+          khi paste</strong> &mdash; vì đôi khi chính tên file cũng là thông tin nhạy cảm (ví dụ tên
+          file chứa tên bệnh viện, tên khoa, hoặc năm + mã bệnh).
+        </p>
+        <div class="callout danger">
+          <span class="callout-label">Không bao giờ dán hình ảnh từ dữ liệu thật</span>
+          <p>Một biểu đồ boxplot hay scatter vẽ từ dữ liệu thật là dữ liệu từng dòng được vẽ thành pixel &mdash; một điểm ngoại lai (outlier) trên biểu đồ có thể chính là một bệnh nhân/người tham gia cụ thể, nhận diện được. Bảng số liệu tổng hợp (bảng, ước lượng, khoảng tin cậy, chỉ số fit) thì dán được; <strong>hình ảnh vẽ từ dữ liệu thật thì không bao giờ</strong>. Các script luôn ghi hình từ dữ liệu thật ra một folder <em>ngoài</em> pack &mdash; hình trong <code>outputs_synthetic/figures/</code> là hình từ dữ liệu giả, mở xem thoải mái.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phan-4">
+        <div class="part-head"><span class="part-num">IV</span><h2>Ví dụ đầy đủ: Track Medical</h2></div>
+        <p class="part-intro">
+          Đi từng bước, từ đầu đến cuối, dùng dự án mẫu <code>projects/example-clinical/</code> có sẵn
+          trong pack &mdash; dữ liệu lâm sàng <strong>giả lập</strong> (không phải dữ liệu thật của ai
+          cả) về phác đồ điều trị và tử vong 30 ngày. Làm theo được ngay, không cần dữ liệu của riêng
+          bạn &mdash; đây là cách tốt nhất để hiểu quy trình trước khi chạy trên dữ liệu thật.
+        </p>
+
+        <h3 class="sub" id="cau-hoi-nghien-cuu-vd">Câu hỏi nghiên cứu của ví dụ</h3>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Câu hỏi nghiên cứu (chỉ để bạn hình dung, chưa cần gõ)</div>
+          <pre>Trong nhóm bệnh nhân của clinical dataset, phác đồ điều trị có liên quan tới tử vong 30 ngày không?
+Outcome: mortality_30day. Main predictor: treatment.
+Candidate covariates: age, sex, bmi, diabetes, hypertension, smoking, egfr, hba1c, crp.</pre>
+        </div>
+
+        <h3 class="sub" id="vd-giai-doan-a-c"><span class="stage-badge">A&ndash;C</span>Cổng bảo mật: pattern &rarr; duyệt &rarr; dữ liệu giả</h3>
+
+        <span class="who who-user">🧑‍🔬 Bạn gõ cho agent</span>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-workflow-orchestrator. Project: example-clinical.
+Câu hỏi nghiên cứu: Trong nhóm bệnh nhân của clinical dataset, phác đồ điều trị có liên quan tới tử vong 30 ngày không?
+Outcome: mortality_30day. Main predictor: treatment.
+Candidate covariates: age, sex, bmi, diabetes, hypertension, smoking, egfr, hba1c, crp.
+Bắt đầu từ privacy gate.</pre>
+        </div>
+        <p>Agent sẽ viết <code>scripts/pattern_extract.R</code> (copy từ <code>r-scripts/pattern_extract.R</code>, không sửa gì) và đưa bạn đúng khối lệnh sau.</p>
+
+        <span class="who who-user">🧑‍🔬 Bạn chạy trong RStudio</span>
+        <p>Working directory = <code>projects/example-clinical/</code> (xem 5 bước ở Phần III nếu chưa quen):</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>Console trong RStudio</span><span class="lang">r</span></div>
+          <pre><code><span class="tok-fn">source</span>(<span class="tok-str">"scripts/pattern_extract.R"</span>)
+original &lt;- <span class="tok-fn">read.csv</span>(<span class="tok-fn">file.choose</span>())   <span class="tok-com"># cửa sổ chọn file mở ra: chọn file dữ liệu thật của bạn</span>
+<span class="tok-fn">extract_pattern</span>(original, output_csv = <span class="tok-str">"pattern/dataset_pattern.csv"</span>)</code></pre>
+        </div>
+        <p>
+          <em>(Trong ví dụ này, file <code>clinical.csv</code> ở gốc pack đóng vai &ldquo;dữ liệu thật
+          nằm ngoài project&rdquo; để bạn thực hành &mdash; với dữ liệu thật của chính bạn, file sẽ nằm
+          ở bất kỳ đâu trên máy, ngoài folder pack.)</em>
+        </p>
+
+        <div class="callout tip">
+          <span class="callout-label">Điểm quan trọng nhất của cả quy trình</span>
+          <p>Mở <code>pattern/dataset_pattern.csv</code> ra xem. Bạn sẽ thấy: không có số dòng, không có mean/min/max, chỉ có tên biến + kiểu + levels + % thiếu dữ liệu. <strong>Đây là toàn bộ những gì AI được biết về dữ liệu thật của bạn.</strong></p>
+        </div>
+        <div class="console-panel">
+          <div class="console-caption">pattern/dataset_pattern.csv (trích đoạn)</div>
+          <pre>variable,type,levels,n_distinct,missing_pct,note
+patient_id,id_like,,,0.0,high-cardinality; treated as identifier; levels not exported
+age,integer,,,0.0,
+treatment,binary,Phác đồ A|Phác đồ B,2.0,0.0,
+crp,numeric,,,0.0,
+mortality_30day,binary,0|1,2.0,0.0,</pre>
+        </div>
+
+        <span class="who who-user">🧑‍🔬 Bạn xác nhận với agent</span>
+        <p>Đọc kỹ từng dòng ở cột <code>levels</code>, rồi trả lời agent khi được hỏi: <em>&ldquo;Tôi đã duyệt <code>dataset_pattern.csv</code> và xác nhận không có nhãn nào nhạy cảm hoặc định danh.&rdquo;</em> Chỉ sau câu xác nhận này, agent mới được đọc file &mdash; đây chính là &ldquo;cổng duyệt&rdquo; (review gate) nhắc ở Phần I.</p>
+
+        <p>Sau khi bạn xác nhận, agent viết <code>scripts/synthesize_data.R</code> và đưa bạn khối lệnh tiếp theo:</p>
+        <span class="who who-user">🧑‍🔬 Bạn chạy trong RStudio</span>
+        <div class="code-panel">
+          <div class="code-caption"><span>Console trong RStudio</span><span class="lang">r</span></div>
+          <pre><code><span class="tok-fn">source</span>(<span class="tok-str">"scripts/synthesize_data.R"</span>)
+original &lt;- <span class="tok-fn">read.csv</span>(<span class="tok-fn">file.choose</span>())   <span class="tok-com"># chọn lại file dữ liệu thật</span>
+<span class="tok-fn">synthesize_data</span>(
+  pattern_csv = <span class="tok-str">"pattern/dataset_pattern.csv"</span>,
+  data = original,
+  output_csv = <span class="tok-str">"data_synthetic/synthetic_dataset.csv"</span>,
+  n = <span class="tok-num">200</span>,
+  seed = <span class="tok-num">2026</span>
+)</code></pre>
+        </div>
+        <div class="callout tip">
+          <span class="callout-label">Điểm giảng</span>
+          <p>Mở <code>synthetic_dataset.csv</code> cạnh dữ liệu thật &mdash; cùng cấu trúc (cùng tên cột, cùng kiểu, cùng nhãn), khác toàn bộ giá trị, và 200 dòng thay vì số dòng thật của bạn. Từ đây trở đi, AI được phép đọc file này &mdash; không phải vì nó &ldquo;ít nhạy cảm hơn&rdquo; mà vì nó <strong>không chứa một giá trị thật nào</strong>.</p>
+        </div>
+
+        <h3 class="sub" id="vd-giai-doan-d1"><span class="stage-badge">D1</span>Kế hoạch phân tích &amp; SAP</h3>
+        <span class="who who-user">🧑‍🔬 Bạn gõ cho agent</span>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-01-understand-dataset. Create the analysis plan and confirm the track.</pre>
+        </div>
+        <p>Agent đọc file pattern + dữ liệu giả, đề xuất vai trò từng biến (outcome / predictor chính / confounder / không dùng), và xác nhận track là <strong>medical</strong>. Kết quả: <code>plans/analysis_plan.yaml</code>.</p>
+
+        <p>Tiếp theo, giai đoạn <strong>D1b &mdash; bắt buộc ở cả hai chế độ chạy</strong>, dù ví dụ demo trong <code>docs/dr-demo-runbook.md</code> có thể lược bớt bước gọi tường minh này:</p>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-01b-analysis-sap. Draft the SAP and ask me to confirm.</pre>
+        </div>
+        <p>Agent sẽ hỏi bạn xác nhận: chiến lược xử lý dữ liệu thiếu (<em>complete case</em> hay <em>multiple imputation</em>), kế hoạch so sánh bội (multiplicity &mdash; ví dụ &ldquo;chỉ 1 so sánh chính, không cần hiệu chỉnh&rdquo;), biến nào phân nhóm cho Table 1, và bạn muốn chạy theo chế độ nào:</p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Chế độ</th><th>Cách hoạt động</th><th>Phù hợp với ai</th></tr></thead>
+            <tbody>
+              <tr><td class="name">step_by_step</td><td>Agent viết từng script một, bạn chạy thử trên dữ liệu giả và xác nhận &ldquo;ổn&rdquo; rồi mới sang script tiếp theo.</td><td>Người mới, hoặc kế hoạch còn nhiều điểm &ldquo;assumed&rdquo; (agent tự suy đoán) cần kiểm lại từng bước.</td></tr>
+              <tr><td class="name">all_steps</td><td>Agent viết toàn bộ script của track trong một lượt, tự verify từng cái bằng <code>Rscript</code>.</td><td>Người đã quen quy trình, tự tin với SAP đã duyệt.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Cả hai chế độ tạo ra <strong>cùng những file script, nội dung giống hệt nhau</strong> &mdash; chỉ khác nhịp độ bạn xác nhận. Ví dụ dưới đây đi theo <code>step_by_step</code> để bạn thấy rõ từng giai đoạn.</p>
+
+        <h3 class="sub" id="vd-giai-doan-d2"><span class="stage-badge">D2</span>Mô tả dữ liệu (Table 1)</h3>
+        <span class="who who-user">🧑‍🔬 Bạn gõ cho agent</span>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-02-descriptive-analysis. Propose Table 1 variables and grouping first.
+Default grouping: treatment. No p-values.</pre>
+        </div>
+        <span class="who who-ai">🤖 AI tự làm</span>
+        <p>Agent viết <code>scripts/desc.R</code> và <strong>tự chạy thử</strong> bằng <code>Rscript scripts/desc.R</code> trên dữ liệu giả cho đến khi chạy sạch &mdash; bạn không cần làm gì ở bước này trừ khi agent báo không có R để tự chạy, khi đó bạn chạy giúp (xem Phần VII).</p>
+        <div class="console-panel">
+          <div class="console-caption">outputs_synthetic/table1.csv (trích đoạn, số liệu là GIẢ)</div>
+          <pre>characteristic level Overall Group_0 Group_1  test         p_value
+N              -     200     105     95       -            NaN
+age            -     52.1 (28.4)  ...          welch_t_test  0.7332
+crp            -     50.9 (28.9)  ...          mann_whitney_u 0.1057</pre>
+        </div>
+        <div class="callout warn">
+          <span class="callout-label">Điểm giảng</span>
+          <p>Descriptive analysis trả lời câu &ldquo;tôi đã nghiên cứu trên ai?&rdquo;. Số trong bảng này là số <strong>GIẢ</strong> &mdash; chỉ để chứng minh code chạy đúng, không phản ánh gì về dữ liệu thật của bạn.</p>
+        </div>
+
+        <h3 class="sub" id="vd-giai-doan-d2b"><span class="stage-badge">D2b</span>Biểu đồ khám phá <em>(tuỳ chọn)</em></h3>
+        <p>Agent sẽ đề nghị một lần &mdash; nếu bạn không cần, cứ nói &ldquo;bỏ qua bước này&rdquo; và tiếp tục sang D3, bước này không bao giờ chặn tiến độ:</p>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent (nếu muốn dùng)</div>
+          <pre>Use dr-02b-visual-exploration. Correlation heatmap and boxplots by treatment.</pre>
+        </div>
+        <p>Kết quả là <code>scripts/plots.R</code>, ảnh xuất ra <code>outputs_synthetic/figures/</code> &mdash; toàn bộ vẽ từ dữ liệu giả nên mở xem thoải mái.</p>
+
+        <h3 class="sub" id="vd-giai-doan-d3-d4"><span class="stage-badge">D3&ndash;D4</span>Phân tích suy luận &amp; hiệu chỉnh nhiễu</h3>
+        <span class="who who-user">🧑‍🔬 Bạn gõ cho agent</span>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-03-inferential-analysis. Confirm the crude plan before writing code.
+Expected: mortality_30day ~ treatment, crude logistic regression, OR + 95% CI + p-value.</pre>
+        </div>
+        <p>Sau khi mô hình thô (crude) chạy xong và bạn xác nhận, tiếp tục:</p>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-04-confounding-adjustment. Keep the D3 model. Proposed covariates:
+age, sex, bmi, diabetes, hypertension, smoking, egfr, hba1c, crp.
+Ask me to confirm before coding.</pre>
+        </div>
+        <span class="who who-ai">🤖 AI tự làm</span>
+        <p>Cả hai bước ghi vào cùng một file <code>scripts/infer.R</code> (phần thô + phần hiệu chỉnh), agent tự verify bằng <code>Rscript</code>. Nếu dự án của bạn cần thêm chẩn đoán mô hình (VIF, Cook&rsquo;s distance, kiểm tra tuyến tính) hoặc phân tích độ nhạy (hồi quy Firth khi các nhóm quá lệch), agent sẽ thêm các phần này vào cùng file, cũng tự verify trước khi báo xong.</p>
+        <div class="callout warn">
+          <span class="callout-label">Điểm giảng</span>
+          <p>Phân tích (analyze) là để trả lời câu hỏi nghiên cứu, không phải để &ldquo;săn&rdquo; p-value đẹp. Hiệu chỉnh (adjust) là để so sánh công bằng hơn giữa hai nhóm điều trị (loại trừ ảnh hưởng của các yếu tố nhiễu), không phải để làm p nhỏ hơn.</p>
+        </div>
+
+        <h3 class="sub" id="vd-giai-doan-e"><span class="stage-badge">E</span>Kết quả thật</h3>
+        <span class="who who-user">🧑‍🔬 Bạn chạy trong RStudio</span>
+        <p>Mở <code>scripts/desc.R</code> và <code>scripts/infer.R</code>, sửa đúng 2 dòng settings đầu file:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>trong scripts/desc.R và scripts/infer.R</span><span class="lang">r</span></div>
+          <pre><code>input_csv  &lt;- <span class="tok-fn">file.choose</span>()   <span class="tok-com"># cửa sổ mở ra: chọn file dữ liệu THẬT</span>
+output_dir &lt;- <span class="tok-str">"results_real"</span></code></pre>
+        </div>
+        <p>Chạy cả hai file (Source, hoặc bôi đen hết rồi Ctrl/Cmd+Enter), rồi copy phần output trong Console (hoặc mở <code>results_real/infer_crude_vs_adjusted.csv</code>) &mdash; nhớ kiểm tra không còn đường dẫn/tên file thật nào trong đó (Phần III).</p>
+        <span class="who who-user">🧑‍🔬 Bạn dán kết quả cho agent</span>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-05-present-results. Đây là output thật từ RStudio:
+[dán output ở đây]
+Create traceable manuscript-ready outputs. Do not invent numbers.</pre>
+        </div>
+        <div class="callout safe">
+          <span class="callout-label">Điểm giảng cuối cùng</span>
+          <p>Cùng một file code &mdash; chỉ đổi 2 dòng &mdash; chạy trên dữ liệu thật. &ldquo;Sẵn sàng công bố&rdquo; (publication-ready) nghĩa là mọi con số trong bảng kết quả đều truy ngược được về đúng dòng output bạn đã dán, không có con số nào do AI tự suy diễn hay làm tròn kiểu &ldquo;ước chừng cho đẹp&rdquo;.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phan-5">
+        <div class="part-head"><span class="part-num">V</span><h2>Ví dụ đầy đủ: Track SEM</h2></div>
+        <p class="part-intro">
+          Cùng quy trình A&ndash;E ở Phần IV, nhưng dùng dự án mẫu <code>projects/example-survey-sem/</code>
+          (dữ liệu khảo sát giả lập: burnout, job satisfaction, turnover intent). Phần này chỉ nêu những
+          gì <strong>khác</strong> so với track Medical &mdash; giai đoạn A&ndash;C và D1&ndash;D2 giống hệt
+          Phần IV, chỉ đổi tên project.
+        </p>
+
+        <h3 class="sub" id="sem-cau-hoi">Câu hỏi nghiên cứu &amp; giai đoạn A&ndash;D2</h3>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Câu hỏi nghiên cứu (chỉ để bạn hình dung)</div>
+          <pre>Burnout và job satisfaction có liên quan tới turnover intent không?
+Outcome: turnover_intent.
+Constructs: Job satisfaction (js_q1..js_q5), Burnout (bo_q1..bo_q5).
+Observed covariates: work_mode, age, gender, income, work_hours, tenure_years, wlb.</pre>
+        </div>
+        <p>
+          Trình tự giống hệt Phần IV cho giai đoạn A&ndash;C và D1&ndash;D2 (đổi project thành
+          <code>example-survey-sem</code>). Một khác biệt nhỏ: khi sinh dữ liệu giả ở giai đoạn B, dùng
+          <code>n&nbsp;=&nbsp;300</code> thay vì 200 &mdash; để gói <code>lavaan</code> có đủ dữ liệu ước
+          lượng mô hình thoải mái hơn.
+        </p>
+
+        <h3 class="sub" id="sem-d3"><span class="stage-badge">D3</span>Mô hình đo lường (measurement model)</h3>
+        <span class="who who-user">🧑‍🔬 Bạn gõ cho agent</span>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-sem-01-measurement-model.
+Constructs: Job satisfaction: js_q1..js_q5; Burnout: bo_q1..bo_q5. Response range 1-5, no reverse coding.</pre>
+        </div>
+        <span class="who who-ai">🤖 AI tự làm</span>
+        <p>
+          Agent viết <code>scripts/sem_measurement.R</code> &mdash; Cronbach&rsquo;s alpha bằng base R,
+          CFA (phân tích nhân tố khẳng định) bằng <code>lavaan</code> &mdash; và tự verify. Track SEM có
+          thêm một tầng mà track Medical không có: <strong>mô hình đo lường</strong> (measurement model),
+          kiểm tra xem các câu hỏi khảo sát có thực sự đo đúng khái niệm trừu tượng bạn định đo hay không
+          (qua chỉ số fit như CFI, RMSEA, và độ tin cậy alpha/omega), <em>trước khi</em> đi vào mô hình cấu trúc.
+        </p>
+        <div class="callout warn">
+          <span class="callout-label">Điểm giảng quan trọng nhất của track SEM</span>
+          <p>Chỉ số fit chạy trên dữ liệu giả là <strong>VÔ NGHĨA</strong> (các câu hỏi khảo sát được sinh độc lập với nhau trong dữ liệu giả, nên không có cấu trúc nhân tố thật nào để CFA &ldquo;tìm thấy&rdquo;). Chỉ khi chạy trên dữ liệu thật mới đọc được alpha/CFI/RMSEA có ý nghĩa. Đây là minh hoạ sống động nhất cho nguyên tắc &ldquo;dữ liệu giả chỉ để test code, không phải để đọc kết quả&rdquo;.</p>
+        </div>
+
+        <h3 class="sub" id="sem-d4"><span class="stage-badge">D4</span>Mô hình cấu trúc (structural model)</h3>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Use dr-sem-02-structural-model.
+Proposed paths: turnover_intent ~ burnout + jobsat + work_mode.
+Show me the full lavaan syntax and ask me to confirm every path.</pre>
+        </div>
+        <p>
+          Agent viết <code>scripts/sem_structural.R</code>, và &mdash; khác với track Medical &mdash;
+          <strong>luôn cho bạn xem trước cú pháp <code>lavaan</code> đầy đủ để xác nhận từng đường dẫn
+          (path)</strong> trước khi viết file. Mỗi path là một giả thuyết có hướng bạn đang đặt ra, nên
+          cần được xác nhận rõ ràng, không phải điều agent tự quyết.
+        </p>
+
+        <h3 class="sub" id="sem-e"><span class="stage-badge">E</span>Kết quả thật</h3>
+        <p>
+          Chạy <code>sem_measurement.R</code> rồi <code>sem_structural.R</code> trên dữ liệu thật trong
+          RStudio (đổi 2 dòng settings y hệt Phần IV), dán output, gọi <code>dr-05-present-results</code>.
+        </p>
+        <div class="callout safe">
+          <span class="callout-label">Điểm giảng</span>
+          <p>Bảng kết quả SEM luôn báo <strong>chỉ số fit trước, hệ số đường dẫn (path estimate) sau</strong> &mdash; nếu mô hình không fit tốt, việc diễn giải từng path gần như vô nghĩa, nên thứ tự trình bày phản ánh đúng thứ tự logic cần đọc. Và luôn nhớ: một path có ý nghĩa thống kê là một <strong>giả thuyết có hướng được dữ liệu ủng hộ</strong>, không phải bằng chứng nhân quả.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phan-6">
+        <div class="part-head"><span class="part-num">VI</span><h2>Hai Track: Khi Nào Dùng Cái Nào?</h2></div>
+        <p class="part-intro">So sánh trực tiếp để bạn chọn đúng track ngay từ đầu &mdash; dù agent cũng sẽ hỏi xác nhận ở bước D1 nên chọn sai ban đầu không phải thảm hoạ.</p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th></th><th><span class="pill track-medical"><span class="dot"></span>Medical</span></th><th><span class="pill track-sem"><span class="dot"></span>SEM</span></th></tr></thead>
+            <tbody>
+              <tr><td class="name">Outcome</td><td>Quan sát được trực tiếp: sống/chết, biến chứng có/không, tái nhập viện có/không</td><td>Không quan sát trực tiếp &mdash; đo gián tiếp qua nhiều câu hỏi thang Likert (construct trừu tượng: hài lòng, kiệt sức, ý định nghỉ việc...)</td></tr>
+              <tr><td class="name">Phương pháp chính</td><td>Hồi quy logistic thô + hiệu chỉnh nhiễu (confounding adjustment)</td><td>CFA (mô hình đo lường) + mô hình cấu trúc (structural/mediation model)</td></tr>
+              <tr><td class="name">Package R cần cài</td><td>0 &mdash; 100% base R</td><td>1 &mdash; <code>lavaan</code> (<code>install.packages("lavaan")</code> một lần)</td></tr>
+              <tr><td class="name">Giai đoạn D3&ndash;D4</td><td><code>dr-03-inferential-analysis</code>, <code>dr-04-confounding-adjustment</code> &rarr; cùng file <code>scripts/infer.R</code></td><td><code>dr-sem-01-measurement-model</code>, <code>dr-sem-02-structural-model</code> &rarr; hai file riêng <code>sem_measurement.R</code>, <code>sem_structural.R</code></td></tr>
+              <tr><td class="name">Kết quả trên dữ liệu giả</td><td>OR/p-value chạy được nhưng vô nghĩa (không phản ánh quan hệ thật)</td><td>Chỉ số fit + path estimate chạy được nhưng <strong>vô nghĩa gấp đôi</strong> &mdash; items được sinh độc lập nên không có cấu trúc nhân tố nào để tìm</td></tr>
+              <tr><td class="name">Ví dụ dùng thử</td><td><code>projects/example-clinical/</code> (Phần IV)</td><td><code>projects/example-survey-sem/</code> (Phần V)</td></tr>
+              <tr><td class="name">Phù hợp cho</td><td>Nghiên cứu lâm sàng, y sinh, dịch tễ</td><td>Y tế công cộng, khoa học xã hội, khảo sát tổ chức</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout info">
+          <span class="callout-label">Không chắc project của mình thuộc track nào?</span>
+          <p>Câu hỏi nhanh: outcome của bạn có phải là một cột dữ liệu <em>đã có sẵn</em> trong file (sống/chết, có/không) hay không? Nếu có &mdash; Medical. Nếu outcome của bạn cần <em>tính ra</em> từ trung bình/tổng nhiều câu hỏi khảo sát &mdash; SEM. Không chắc thì cứ hỏi thẳng agent ở bước D1, nó sẽ hỏi lại đủ để xác nhận trước khi viết bất kỳ code nào.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phan-7">
+        <div class="part-head"><span class="part-num">VII</span><h2>Xử Lý Sự Cố</h2></div>
+        <p class="part-intro">Những vấn đề thường gặp nhất, theo thứ tự khả năng bạn sẽ gặp phải.</p>
+
+        <h3 class="sub" id="loi-agent-khong-thay-skill">Agent &ldquo;không thấy&rdquo; skill</h3>
+        <p>Hỏi thẳng:</p>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Đọc skills/dr-workflow-orchestrator/SKILL.md và làm theo</pre>
+        </div>
+        <p>Mọi agent đọc được file văn bản thường, kể cả khi cơ chế tự nhận skill (auto-discovery) của nó không hoạt động vì lý do gì đó trên máy bạn.</p>
+
+        <h3 class="sub" id="loi-dang-o-dau">Không nhớ mình đang ở giai đoạn nào</h3>
+        <p>Mỗi project có một file trạng thái tự động cập nhật &mdash; hỏi thẳng agent bất cứ lúc nào:</p>
+        <div class="prompt-box">
+          <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
+          <pre>Tôi đang ở bước nào của project [tên project]? Đọc dr_workflow_state.yaml và cho tôi biết.</pre>
+        </div>
+        <p>Agent sẽ trả lời theo đúng khuôn: project nào, giai đoạn hiện tại, trạng thái QA (pass / needs_revision / blocked), bước tiếp theo, và cần gì từ bạn. Bạn có thể đóng máy giữa chừng bất kỳ lúc nào &mdash; lần sau hỏi lại câu trên, agent tiếp tục đúng chỗ đã dừng.</p>
+
+        <h3 class="sub" id="loi-lavaan">R báo thiếu <code>lavaan</code> (track SEM)</h3>
+        <div class="code-panel">
+          <div class="code-caption"><span>Console trong RStudio</span><span class="lang">r</span></div>
+          <pre><code><span class="tok-fn">install.packages</span>(<span class="tok-str">"lavaan"</span>)   <span class="tok-com"># một lần duy nhất, không cần lặp lại</span></code></pre>
+        </div>
+        <p>Nếu dự án của bạn dùng phân tích sống còn (Kaplan-Meier/Cox), làm tương tự với <code>install.packages("survival")</code>.</p>
+
+        <h3 class="sub" id="loi-font">File CSV tiếng Việt bị lỗi font (hiện chữ &ldquo;???&rdquo; hoặc ký tự lạ)</h3>
+        <p>Các script của pack luôn đọc/ghi UTF-8. Nếu bạn tự viết thêm code, luôn thêm <code>fileEncoding = "UTF-8"</code> vào <code>read.csv()</code>/<code>write.csv()</code>:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>Console trong RStudio</span><span class="lang">r</span></div>
+          <pre><code>dat &lt;- <span class="tok-fn">read.csv</span>(<span class="tok-str">"file.csv"</span>, fileEncoding = <span class="tok-str">"UTF-8"</span>)</code></pre>
+        </div>
+
+        <h3 class="sub" id="loi-rscript-path">(Tuỳ chọn) Cho agent tự chạy <code>Rscript</code> &mdash; không bắt buộc</h3>
+        <p>
+          Ở giai đoạn D, agent có thể <strong>tự chạy thử</strong> code bằng lệnh <code>Rscript</code> để
+          kiểm tra code chạy sạch trên dữ liệu giả. Muốn vậy, <code>Rscript</code> phải nằm trong PATH
+          của hệ thống.
+        </p>
+        <div class="callout tip">
+          <span class="callout-label">Việc này hoàn toàn tuỳ chọn</span>
+          <p>Nếu gõ <code>Rscript</code> mà máy báo lỗi &ldquo;not recognized&rdquo; (Windows) hoặc &ldquo;command not found&rdquo; (macOS), bạn <strong>không cần sửa gì cả</strong>. Cách đơn giản và luôn hoạt động: để agent viết code xong, bạn copy file <code>.R</code> mở trong RStudio và bấm <strong>Source</strong> (hoặc chọn hết code rồi Ctrl/Cmd&nbsp;+&nbsp;Enter). RStudio luôn tự biết R nằm đâu, không cần PATH. Chạy xong, báo kết quả (hoặc lỗi) cho agent &mdash; bước kiểm tra vẫn hoàn tất, chỉ là bạn chạy thay agent. Giá trị cốt lõi của pack là <strong>AI viết code, bạn chạy trong RStudio</strong> &mdash; việc agent tự chạy <code>Rscript</code> chỉ là tiện ích tăng tốc.</p>
+        </div>
+        <p>Nếu bạn <em>muốn</em> bật tiện ích này:</p>
+        <h4 class="subsub">Windows</h4>
+        <p>R không tự thêm mình vào PATH khi cài. Thêm thủ công:</p>
+        <ol class="steps">
+          <li><h4>Tìm thư mục <code>bin</code> của R</h4><p>Thường là <code>C:\Program Files\R\R-4.x.x\bin</code> (thay <code>4.x.x</code> bằng phiên bản của bạn).</p></li>
+          <li><h4>Mở Environment Variables</h4><p>Nhấn phím Windows, gõ &ldquo;environment variables&rdquo; &rarr; mở <strong>Edit the system environment variables</strong>.</p></li>
+          <li><h4>Thêm vào Path</h4><p>Bấm <strong>Environment Variables</strong> &rarr; ở <strong>User variables</strong>, chọn <strong>Path</strong> &rarr; <strong>Edit</strong> &rarr; <strong>New</strong> &rarr; dán đường dẫn <code>bin</code> ở trên &rarr; OK hết các cửa sổ.</p></li>
+          <li><h4>Khởi động lại agent/terminal</h4><p>Đóng hẳn agent/terminal rồi mở lại (agent đọc PATH lúc khởi động, không khởi động lại sẽ không thấy thay đổi).</p></li>
+        </ol>
+        <p>Kiểm tra: mở terminal mới, gõ <code>Rscript --version</code> &mdash; hiện số phiên bản là được.</p>
+
+        <h4 class="subsub">macOS</h4>
+        <p>Khi cài R từ bộ cài chính thức của CRAN (file <code>.pkg</code>), macOS <strong>thường đã tự tạo sẵn</strong> liên kết để <code>Rscript</code> chạy được trong Terminal &mdash; nên phần lớn máy Mac không cần làm gì. Nếu vẫn báo &ldquo;command not found&rdquo;:</p>
+        <ol class="steps">
+          <li><h4>Kiểm tra R đã có sẵn chưa</h4><p>R thường nằm ở <code>/Library/Frameworks/R.framework/Resources/bin</code>. Gõ trong Terminal: <code>ls /usr/local/bin/Rscript</code> &mdash; nếu có kết quả là đã ổn.</p></li>
+          <li><h4>Thêm vào PATH nếu chưa có</h4><p>Thêm dòng này vào file <code>~/.zshrc</code> (macOS mới dùng shell zsh): <code>export PATH="/Library/Frameworks/R.framework/Resources/bin:$PATH"</code></p></li>
+          <li><h4>Nạp lại &amp; khởi động lại agent</h4><p>Chạy <code>source ~/.zshrc</code> (hoặc mở Terminal mới), rồi khởi động lại agent.</p></li>
+        </ol>
+        <p>Kiểm tra: <code>Rscript --version</code>.</p>
+      </section>
+
+      <section class="part" id="phan-8">
+        <div class="part-head"><span class="part-num">VIII</span><h2>Câu Hỏi Thường Gặp</h2></div>
+        <p class="part-intro">Những câu hỏi hay gặp nhất từ người dùng lần đầu.</p>
+
+        <div class="faq-item">
+          <p class="faq-q">Tôi lỡ dán vài dòng dữ liệu thật vào khung chat với AI rồi &mdash; giờ sao?</p>
+          <p class="faq-a">Dừng ngay, đừng gửi thêm gì nữa. Xoá tin nhắn đó nếu công cụ chat cho phép. Với phiên làm việc đó, coi như dữ liệu đã lộ ra ngoài AirGap Stats &mdash; không có cách &ldquo;thu hồi&rdquo; một khi đã gửi. Với các phiên sau, quay lại đúng quy trình <code>file.choose()</code> ở Phần III &mdash; không bao giờ gõ hay dán giá trị dữ liệu thật trực tiếp vào chat, dù chỉ một dòng.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">AirGap Stats có gửi dữ liệu của tôi lên Internet không?</p>
+          <p class="faq-a">Bản thân AirGap Stats (các script R/Python trong pack) không gửi gì lên Internet cả &mdash; chạy hoàn toàn local trong RStudio. AI coding agent (Claude Code/Codex/OpenCode) có kết nối Internet để hoạt động, nhưng theo kiến trúc 5 giai đoạn ở Phần I, nó chỉ đọc pattern đã duyệt, dữ liệu giả, và output tổng hợp bạn chủ động dán &mdash; không bao giờ đọc trực tiếp file dữ liệu thật, nên không có gì để gửi đi.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Tôi không biết lập trình R chút nào &mdash; có dùng được không?</p>
+          <p class="faq-a">Được. Việc của bạn chỉ là: mở RStudio, copy-dán khối lệnh agent đưa, bấm chọn file khi được hỏi, và dán kết quả quay lại. Bạn không cần hiểu code bên trong, chỉ cần làm đúng 5 bước ở Phần III mỗi khi chạy trên dữ liệu thật.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Một project có thể vừa dùng track Medical vừa track SEM không?</p>
+          <p class="faq-a">Không trong cùng một project &mdash; mỗi project chỉ có một track, được xác nhận ở bước D1. Nếu câu hỏi nghiên cứu của bạn thực sự cần cả hai cách tiếp cận (ví dụ vừa có outcome lâm sàng vừa có construct đo bằng thang đo), tạo hai project riêng, mỗi project trả lời một phần câu hỏi.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Kết quả trên dữ liệu giả trông rất vô lý (p-value ngẫu nhiên, mô hình không hội tụ) &mdash; có phải lỗi không?</p>
+          <p class="faq-a">Không phải lỗi &mdash; đó là <em>đúng như thiết kế</em>. Mọi cột trong dữ liệu giả được sinh <strong>độc lập</strong> với nhau (Phần I), nên không có quan hệ thật nào giữa các biến để mô hình &ldquo;tìm thấy&rdquo;. Dữ liệu giả chỉ chứng minh <em>code chạy đúng cú pháp và đúng logic</em>, không phải để đọc kết quả. Nếu bạn cần kiểm tra mô hình có thực sự hội tụ ổn định dưới tương quan thực tế trước khi chạm vào dữ liệu thật, dùng thêm giai đoạn B2 (dữ liệu giả có tương quan, tuỳ chọn, Phần I).</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Tôi có thể dùng Excel thay vì đọc CSV bằng R không?</p>
+          <p class="faq-a">File dữ liệu của bạn có thể là <code>.xlsx</code>, nhưng bước đọc dữ liệu thật (giai đoạn A, B, E) luôn thực hiện trong RStudio qua <code>file.choose()</code>, không phải qua Excel trực tiếp &mdash; RStudio đọc được file Excel (gói <code>readxl</code>) nếu cần, cứ nói với agent định dạng file thật của bạn để nó viết đúng lệnh đọc file.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Làm sao biết một con số trong bảng kết quả cuối cùng là thật, không phải AI bịa ra?</p>
+          <p class="faq-a">Mọi con số trong <code>results_real/</code> đều phải truy ngược được về đúng dòng bạn đã dán từ Console RStudio ở giai đoạn E (Phần IV, Phần V). Đây là quy tắc cứng của skill <code>dr-05-present-results</code>: không được suy diễn, không được &ldquo;làm tròn cho đẹp&rdquo;, không được điền số còn thiếu. Nếu nghi ngờ, so sánh trực tiếp bảng kết quả với output gốc bạn đã dán.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phu-luc">
+        <div class="part-head"><span class="part-num">&middot;</span><h2>Phụ Lục: Bảng Lệnh Nhanh</h2></div>
+        <p class="part-intro">Mọi câu lệnh gõ cho agent xuất hiện trong tài liệu này, gom lại một chỗ để tra cứu nhanh. Dùng <kbd>Ctrl/Cmd+F</kbd> để tìm.</p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Khi nào dùng</th><th>Gõ cho agent</th></tr></thead>
+            <tbody>
+              <tr><td class="name">Bắt đầu / hỏi bước tiếp theo</td><td><code>Use dr-workflow-orchestrator.</code></td></tr>
+              <tr><td class="name">Kiểm tra đang ở giai đoạn nào</td><td><code>Tôi đang ở bước nào của project [tên]? Đọc dr_workflow_state.yaml.</code></td></tr>
+              <tr><td class="name">Bắt đầu cổng bảo mật (A&ndash;C)</td><td><code>Use dr-workflow-orchestrator. Project: [tên]. Câu hỏi nghiên cứu: [...]. Bắt đầu từ privacy gate.</code></td></tr>
+              <tr><td class="name">Kế hoạch phân tích (D1)</td><td><code>Use dr-01-understand-dataset. Create the analysis plan and confirm the track.</code></td></tr>
+              <tr><td class="name">SAP + chọn chế độ (D1b, bắt buộc)</td><td><code>Use dr-01b-analysis-sap. Draft the SAP and ask me to confirm.</code></td></tr>
+              <tr><td class="name">Mô tả / Table 1 (D2)</td><td><code>Use dr-02-descriptive-analysis. Propose Table 1 variables and grouping first.</code></td></tr>
+              <tr><td class="name">Biểu đồ, tuỳ chọn (D2b)</td><td><code>Use dr-02b-visual-exploration.</code></td></tr>
+              <tr><td class="name">Phân tích thô &mdash; track Medical (D3)</td><td><code>Use dr-03-inferential-analysis. Confirm the crude plan before writing code.</code></td></tr>
+              <tr><td class="name">Hiệu chỉnh nhiễu &mdash; track Medical (D4)</td><td><code>Use dr-04-confounding-adjustment. Keep the D3 model. Proposed covariates: [...]</code></td></tr>
+              <tr><td class="name">Mô hình đo lường &mdash; track SEM (D3)</td><td><code>Use dr-sem-01-measurement-model. Constructs: [...]</code></td></tr>
+              <tr><td class="name">Mô hình cấu trúc &mdash; track SEM (D4)</td><td><code>Use dr-sem-02-structural-model. Proposed paths: [...]</code></td></tr>
+              <tr><td class="name">Kiểm tra QA trước khi sang giai đoạn tiếp</td><td><code>Use dr-output-qa-gate to check the current stage.</code></td></tr>
+              <tr><td class="name">Trình bày kết quả thật (E)</td><td><code>Use dr-05-present-results. Đây là output thật từ RStudio: [dán output]</code></td></tr>
+              <tr><td class="name">Agent không thấy skill</td><td><code>Đọc skills/dr-workflow-orchestrator/SKILL.md và làm theo</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="page-foot">
+    AirGap Stats &mdash; tài liệu này mô tả bản 2026&#8209;08&#8209;16.
+    Xem thêm <code>INSTALL.md</code> trong repo (bản rút gọn) và <code>docs/dr-demo-runbook.md</code> (kịch bản demo giảng dạy).
+  </footer>
+
+</div>

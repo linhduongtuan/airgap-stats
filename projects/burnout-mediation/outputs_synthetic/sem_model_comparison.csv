@@ -1,0 +1,2 @@
+lr_stat,delta_df,p_value,aic_partial_mediation,aic_full_mediation,preferred
+0.0519,1,0.8197,427.0830423294543,425.13497657620246,restricted (more parsimonious) -- the dropped term(s) don't earn their keep

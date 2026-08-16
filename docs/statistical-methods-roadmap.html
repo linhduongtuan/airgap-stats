@@ -1,0 +1,983 @@
+<title>AirGap Stats Roadmap</title>
+<style>
+  :root {
+    color-scheme: light;
+    --paper:        #f9f9f7;
+    --surface:      #fcfcfb;
+    --surface-2:    #f2f2ee;
+    --ink:          #0b0b0b;
+    --ink-2:        #52514e;
+    --muted:        #898781;
+    --line:         #e1e0d9;
+    --line-strong:  #c3c2b7;
+    --accent:       #2a78d6;
+    --accent-ink:   #ffffff;
+    --track-medical:#2a78d6;
+    --track-sem:    #eb6834;
+    --track-cross:  #1baf7a;
+    --pri-high:     #d03b3b;
+    --pri-med:      #c98500;
+    --pri-low:      #0ca30c;
+    --status-done:  #0ca30c;
+    --status-partial:#c98500;
+    --status-done-bg: #eaf7ea;
+    --status-partial-bg: #fbf1de;
+    --focus:        #2a78d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper:        #0d0d0d;
+      --surface:      #1a1a19;
+      --surface-2:    #212120;
+      --ink:          #ffffff;
+      --ink-2:        #c3c2b7;
+      --muted:        #93918a;
+      --line:         #2c2c2a;
+      --line-strong:  #383835;
+      --accent:       #3987e5;
+      --accent-ink:   #06131f;
+      --track-medical:#3987e5;
+      --track-sem:    #d95926;
+      --track-cross:  #199e70;
+      --pri-high:     #e66767;
+      --pri-med:      #eda100;
+      --pri-low:      #2fbf2f;
+      --status-done:  #2fbf2f;
+      --status-partial:#eda100;
+      --status-done-bg: #16241a;
+      --status-partial-bg: #2a2013;
+      --focus:        #3987e5;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper:        #0d0d0d;
+    --surface:      #1a1a19;
+    --surface-2:    #212120;
+    --ink:          #ffffff;
+    --ink-2:        #c3c2b7;
+    --muted:        #93918a;
+    --line:         #2c2c2a;
+    --line-strong:  #383835;
+    --accent:       #3987e5;
+    --accent-ink:   #06131f;
+    --track-medical:#3987e5;
+    --track-sem:    #d95926;
+    --track-cross:  #199e70;
+    --pri-high:     #e66767;
+    --pri-med:      #eda100;
+    --pri-low:      #2fbf2f;
+    --status-done:  #2fbf2f;
+    --status-partial:#eda100;
+    --status-done-bg: #16241a;
+    --status-partial-bg: #2a2013;
+    --focus:        #3987e5;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 1rem/1.6 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+
+  a { color: var(--accent); text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px;
+  }
+
+  h1, h2, h3 {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    font-weight: 600;
+    color: var(--ink);
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .eyebrow {
+    font: 700 .72rem/1.4 -apple-system, "Segoe UI", Roboto, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--muted);
+  }
+
+  code, .mono {
+    font-family: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 3.2rem 1.5rem 5rem;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding-bottom: 2.4rem;
+    margin-bottom: 2.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .masthead .eyebrow { display:flex; align-items:center; gap:.6em; }
+  .masthead .eyebrow .rule { flex:0 0 2.4rem; height:1px; background:var(--line-strong); }
+  .masthead h1 { font-size: clamp(2rem, 4vw, 2.7rem); letter-spacing: -0.01em; }
+  .dek {
+    max-width: 62ch;
+    font-size: 1.1rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1.6rem;
+    margin-top: .4rem;
+    font-size: .82rem;
+    color: var(--muted);
+  }
+  .meta-row strong { color: var(--ink-2); font-weight: 600; }
+  .meta-row .status-shipped { color: var(--status-done); font-weight: 700; }
+
+  .usage-box {
+    margin-top: .6rem;
+    padding: 1rem 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    font-size: .92rem;
+    color: var(--ink-2);
+    max-width: 68ch;
+  }
+  .usage-box strong { color: var(--ink); }
+  .usage-box.done { border-left-color: var(--status-done); }
+
+  /* ---------- Legend ---------- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6rem;
+    margin-top: 1.4rem;
+    font-size: .82rem;
+  }
+  .legend-group { display: flex; align-items: center; gap: .6rem; }
+  .legend-label { color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 200px minmax(0,1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  nav.toc {
+    position: sticky;
+    top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    font-size: .84rem;
+  }
+  nav.toc a {
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: .3rem 0 .3rem .8rem;
+    border-left: 2px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: .4em;
+  }
+  nav.toc a:hover { color: var(--ink); border-left-color: var(--line-strong); }
+  nav.toc .num { color: var(--muted); font-family: ui-monospace, monospace; margin-right:.5em; }
+  nav.toc .toc-check { color: var(--status-done); font-size: .8em; margin-left: auto; }
+  @media (max-width: 880px) {
+    nav.toc {
+      position: sticky; top: 0; z-index: 5;
+      flex-direction: row; overflow-x: auto;
+      background: var(--paper);
+      padding: .7rem 0; margin: 0 -1.5rem; padding-inline: 1.5rem;
+      border-bottom: 1px solid var(--line);
+      gap: 1rem;
+    }
+    nav.toc a { border-left: none; padding: .2rem 0; white-space: nowrap; border-bottom: 2px solid transparent; }
+    nav.toc a:hover { border-bottom-color: var(--line-strong); }
+  }
+
+  main { min-width: 0; }
+
+  section.block { margin-bottom: 3.4rem; }
+  section.block > h2 { font-size: 1.3rem; margin-bottom: .8rem; }
+  section.block > p { max-width: 68ch; color: var(--ink-2); }
+
+  /* ---------- Dependency diagram ---------- */
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.2rem 1rem .6rem;
+    overflow-x: auto;
+  }
+  .diagram-wrap svg { display:block; min-width: 640px; width: 100%; height: auto; }
+  .diagram-caption { font-size: .78rem; color: var(--muted); padding: .7rem .2rem 0; }
+
+  /* ---------- Track pill / priority / status chip ---------- */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .4em;
+    padding: .18em .65em .2em;
+    border-radius: 999px;
+    font: 600 .7rem/1.5 -apple-system, "Segoe UI", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-2);
+  }
+  .pill .dot { width: .5em; height: .5em; border-radius: 50%; flex: none; background: currentColor; }
+  .pill.track-medical { color: var(--track-medical); border-color: color-mix(in srgb, var(--track-medical) 35%, var(--line)); }
+  .pill.track-sem     { color: var(--track-sem);     border-color: color-mix(in srgb, var(--track-sem) 35%, var(--line)); }
+  .pill.track-cross   { color: var(--track-cross);   border-color: color-mix(in srgb, var(--track-cross) 35%, var(--line)); }
+  .pill.status-shipped { color: var(--status-done); border-color: color-mix(in srgb, var(--status-done) 40%, var(--line)); background: var(--status-done-bg); }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35em;
+    padding: .1em .5em;
+    border-radius: 4px;
+    font: 700 .72rem/1.6 -apple-system, sans-serif;
+    white-space: nowrap;
+  }
+  .chip.pri-high { color: var(--pri-high); }
+  .chip.pri-med  { color: var(--pri-med); }
+  .chip.pri-low  { color: var(--pri-low); }
+  .chip .mark { font-size: .8em; }
+
+  .chip.status-done {
+    color: var(--status-done);
+    background: var(--status-done-bg);
+    padding: .2em .55em;
+    border-radius: 999px;
+  }
+  .chip.status-partial {
+    color: var(--status-partial);
+    background: var(--status-partial-bg);
+    padding: .2em .55em;
+    border-radius: 999px;
+  }
+  .status-note { display: block; font-weight: 400; font-size: .92em; color: var(--muted); margin-top: .3em; text-transform: none; letter-spacing: 0; }
+
+  /* ---------- Phase sections ---------- */
+  .phase { margin-bottom: 3.2rem; scroll-margin-top: 1rem; }
+  .phase-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 1rem;
+  }
+  .phase-num {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    font-variant-numeric: tabular-nums;
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .phase-head h2 { font-size: 1.4rem; margin-bottom: .3rem; display: flex; align-items: center; gap: .5em; flex-wrap: wrap; }
+  .phase-goal { color: var(--ink-2); font-size: .96rem; max-width: 58ch; }
+  .phase-tags { display: flex; flex-direction: column; align-items: flex-end; gap: .4rem; text-align: right; }
+  .depends { font-size: .74rem; color: var(--muted); }
+  .depends strong { color: var(--ink-2); }
+
+  .phase-rationale { max-width: 70ch; color: var(--ink-2); margin-bottom: 1.1rem; }
+  .phase-shipped-note {
+    max-width: 70ch; margin-bottom: 1.1rem; padding: .7rem 1rem;
+    background: var(--status-done-bg); border: 1px solid color-mix(in srgb, var(--status-done) 35%, var(--line));
+    border-radius: 6px; font-size: .88rem; color: var(--ink-2);
+  }
+  .phase-shipped-note strong { color: var(--status-done); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  table.items { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 760px; }
+  table.items caption { text-align: left; padding: .6rem .9rem; font-size: .78rem; color: var(--muted); }
+  table.items thead th {
+    text-align: left;
+    font: 700 .7rem/1.4 -apple-system, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    background: var(--surface-2);
+    padding: .6rem .9rem;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  table.items td {
+    padding: .75rem .9rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--ink-2);
+  }
+  table.items tbody tr:last-child td { border-bottom: none; }
+  table.items tbody tr:hover td { background: var(--surface); }
+  table.items td.name { color: var(--ink); font-weight: 600; }
+  table.items td.why { max-width: 32ch; }
+  table.items td.touches { font-family: ui-monospace, monospace; font-size: .78rem; color: var(--muted); max-width: 24ch; }
+  table.items td.pri, table.items td.effort, table.items td.status { white-space: nowrap; }
+  table.items td.effort { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  table.items td.status { max-width: 16ch; white-space: normal; }
+
+  /* ---------- Appendix ---------- */
+  .appendix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .appendix-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+  }
+  .appendix-card h3 { font-size: .95rem; margin-bottom: .5rem; }
+  .appendix-card p { margin: 0; font-size: .84rem; color: var(--ink-2); }
+  .appendix-card ul { margin: .5rem 0 0; padding-left: 1.1rem; font-size: .82rem; color: var(--ink-2); }
+  .appendix-card li { margin-bottom: .25rem; font-family: ui-monospace, monospace; font-size: .78rem; }
+
+  footer.page-foot {
+    margin-top: 3rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    font-size: .8rem;
+    color: var(--muted);
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow"><span class="rule"></span> AirGap Stats &middot; methods roadmap</div>
+    <h1>AirGap Stats Roadmap</h1>
+    <p class="dek">
+      A phased plan for upgrading the analysis methods behind the medical and SEM tracks &mdash;
+      from complete-case logistic regression and ML-estimated Likert CFAs to a pipeline with
+      pre-registered decisions, standard diagnostics, and bootstrap-validated effects.
+    </p>
+    <div class="meta-row">
+      <span><strong>Scope</strong> &mdash; 4 example projects: example&#8209;clinical, crp&#8209;mortality, example&#8209;survey&#8209;sem, burnout&#8209;mediation</span>
+      <span><strong>Drafted</strong> &mdash; 2026&#8209;08&#8209;15</span>
+      <span><strong>Updated</strong> &mdash; 2026&#8209;08&#8209;16</span>
+      <span><strong>Status</strong> &mdash; <span class="status-shipped">&#10003; Phases 0&ndash;6 implemented, Python + R</span> (4 items partial &mdash; see notes below)</span>
+    </div>
+    <div class="usage-box done">
+      <strong>This file lives at <code>docs/statistical-methods-roadmap.html</code>.</strong>
+      It's no longer a proposal &mdash; every phase below shipped in both the Python and R mirrors unless a row's
+      Status column says otherwise. Keep it that way: when you touch a script this roadmap describes, update the
+      matching row instead of letting this drift back into aspirational documentation. Four items are genuinely
+      partial (not bugs, just narrower than originally scoped) &mdash; each says why in its own row.
+    </div>
+    <div class="legend">
+      <div class="legend-group">
+        <span class="legend-label">Track</span>
+        <span class="pill track-medical"><span class="dot"></span>Medical</span>
+        <span class="pill track-sem"><span class="dot"></span>SEM</span>
+        <span class="pill track-cross"><span class="dot"></span>Cross&#8209;cutting</span>
+      </div>
+      <div class="legend-group">
+        <span class="legend-label">Priority</span>
+        <span class="chip pri-high"><span class="mark">&#9650;</span>High</span>
+        <span class="chip pri-med"><span class="mark">&#9670;</span>Med</span>
+        <span class="chip pri-low"><span class="mark">&#9679;</span>Low</span>
+      </div>
+      <div class="legend-group">
+        <span class="legend-label">Status</span>
+        <span class="chip status-done">&#10003; Shipped</span>
+        <span class="chip status-partial">&#9679; Partial</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc">
+      <a href="#map"><span class="num">&middot;</span>Dependency map</a>
+      <a href="#phase-0"><span class="num">0</span>SAP extensions <span class="toc-check">&#10003;</span></a>
+      <a href="#phase-1"><span class="num">1</span>Diagnostics <span class="toc-check">&#10003;</span></a>
+      <a href="#phase-2"><span class="num">2</span>Medical track <span class="toc-check">&#10003;</span></a>
+      <a href="#phase-3"><span class="num">3</span>SEM track <span class="toc-check">&#10003;</span></a>
+      <a href="#phase-4"><span class="num">4</span>Synthetic data <span class="toc-check">&#10003;</span></a>
+      <a href="#phase-5"><span class="num">5</span>Reporting <span class="toc-check">&#10003;</span></a>
+      <a href="#phase-6"><span class="num">6</span>Tooling <span class="toc-check">&#10003;</span></a>
+      <a href="#appendix"><span class="num">&middot;</span>File index</a>
+    </nav>
+
+    <main>
+
+      <section class="block" id="map">
+        <h2>How the phases connect</h2>
+        <p>Phase 0 was the only true bottleneck: it decided how missing data, confounder
+          selection, and the SEM item estimator would be handled, and those decisions had to be
+          on paper before Phase 2/3 code was written, or every later result would be post-hoc.
+          Phase 4 only needed Phase 0 and ran in parallel with 1&ndash;3; it fed a more
+          realistic test bed into both tracks once ready (dashed). All of it has now landed, in
+          that order.</p>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 900 260" role="img" aria-label="Phase dependency diagram: Phase 0 leads to Phase 1 and Phase 4; Phase 1 leads to Phase 2 and Phase 3; Phase 4 optionally feeds Phase 2 and Phase 3; Phase 2 and Phase 3 lead to Phase 5; Phase 5 leads to Phase 6. All phases are marked shipped.">
+            <defs>
+              <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L8,4 L0,8 z" fill="var(--line-strong)"></path>
+              </marker>
+              <marker id="arrowDash" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"></path>
+              </marker>
+            </defs>
+
+            <!-- edges -->
+            <path d="M120,90 H190" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"></path>
+            <path d="M75,120 Q75,215 190,232" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"></path>
+            <path d="M330,80 Q365,55 400,55" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"></path>
+            <path d="M330,100 Q365,140 400,150" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"></path>
+            <path d="M330,232 Q365,150 398,63" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-dasharray="3 4" marker-end="url(#arrowDash)"></path>
+            <path d="M330,232 Q365,190 398,158" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-dasharray="3 4" marker-end="url(#arrowDash)"></path>
+            <path d="M540,58 Q580,90 610,95" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"></path>
+            <path d="M540,150 Q580,110 610,105" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"></path>
+            <path d="M750,100 H790" fill="none" stroke="var(--line-strong)" stroke-width="1.5" marker-end="url(#arrow)"></path>
+
+            <!-- node 0 -->
+            <rect x="10" y="65" width="110" height="50" rx="7" fill="var(--status-done-bg)" stroke="var(--status-done)"></rect>
+            <text x="65" y="85" text-anchor="middle" font-size="11" fill="var(--status-done)" font-family="ui-monospace,monospace">PHASE 0 &#10003;</text>
+            <text x="65" y="102" text-anchor="middle" font-size="12.5" fill="var(--ink)" font-weight="600">SAP extensions</text>
+
+            <!-- node 1 -->
+            <rect x="190" y="65" width="140" height="50" rx="7" fill="var(--status-done-bg)" stroke="var(--status-done)"></rect>
+            <text x="260" y="85" text-anchor="middle" font-size="11" fill="var(--status-done)" font-family="ui-monospace,monospace">PHASE 1 &#10003;</text>
+            <text x="260" y="102" text-anchor="middle" font-size="12.5" fill="var(--ink)" font-weight="600">Diagnostics</text>
+
+            <!-- node 4 -->
+            <rect x="190" y="207" width="140" height="50" rx="7" fill="var(--status-done-bg)" stroke="var(--status-done)" stroke-width="1.4"></rect>
+            <text x="260" y="227" text-anchor="middle" font-size="11" fill="var(--status-done)" font-family="ui-monospace,monospace">PHASE 4 &#10003;</text>
+            <text x="260" y="244" text-anchor="middle" font-size="12.5" fill="var(--ink)" font-weight="600">Synthetic data</text>
+
+            <!-- node 2 -->
+            <rect x="400" y="30" width="140" height="50" rx="7" fill="var(--status-done-bg)" stroke="var(--status-done)" stroke-width="1.4"></rect>
+            <text x="470" y="50" text-anchor="middle" font-size="11" fill="var(--status-done)" font-family="ui-monospace,monospace">PHASE 2 &#10003;</text>
+            <text x="470" y="67" text-anchor="middle" font-size="12.5" fill="var(--ink)" font-weight="600">Medical track</text>
+
+            <!-- node 3 -->
+            <rect x="400" y="125" width="140" height="50" rx="7" fill="var(--status-done-bg)" stroke="var(--status-done)" stroke-width="1.4"></rect>
+            <text x="470" y="145" text-anchor="middle" font-size="11" fill="var(--status-done)" font-family="ui-monospace,monospace">PHASE 3 &#10003;</text>
+            <text x="470" y="162" text-anchor="middle" font-size="12.5" fill="var(--ink)" font-weight="600">SEM track</text>
+
+            <!-- node 5 -->
+            <rect x="610" y="80" width="140" height="50" rx="7" fill="var(--status-done-bg)" stroke="var(--status-done)"></rect>
+            <text x="680" y="100" text-anchor="middle" font-size="11" fill="var(--status-done)" font-family="ui-monospace,monospace">PHASE 5 &#10003;</text>
+            <text x="680" y="117" text-anchor="middle" font-size="12.5" fill="var(--ink)" font-weight="600">Reporting</text>
+
+            <!-- node 6 -->
+            <rect x="790" y="80" width="100" height="50" rx="7" fill="var(--status-done-bg)" stroke="var(--status-done)"></rect>
+            <text x="840" y="100" text-anchor="middle" font-size="11" fill="var(--status-done)" font-family="ui-monospace,monospace">PHASE 6 &#10003;</text>
+            <text x="840" y="117" text-anchor="middle" font-size="12.5" fill="var(--ink)" font-weight="600">Tooling</text>
+          </svg>
+        </div>
+        <p class="diagram-caption">Solid arrows: hard dependency. Dashed arrows: Phase 4 improves Phase 2/3's test coverage but wasn't required to start them. All seven phases shipped, in this dependency order.</p>
+      </section>
+
+      <!-- ================= PHASE 0 ================= -->
+      <section class="phase" id="phase-0">
+        <div class="phase-head">
+          <span class="phase-num">0</span>
+          <div>
+            <h2>Pre-registration &amp; SAP extensions <span class="pill status-shipped">&#10003; Shipped</span></h2>
+            <p class="phase-goal">Lock in the modeling decisions that later phases depend on, before any result has been seen &mdash; so upgrades are pre-specified, not post-hoc.</p>
+          </div>
+          <div class="phase-tags">
+            <span class="pill track-cross"><span class="dot"></span>Cross&#8209;cutting</span>
+            <span class="depends">Blocked: <strong>Phase 2, 3</strong></span>
+          </div>
+        </div>
+        <p class="phase-rationale">Everything downstream is only as credible as the decisions made before results exist. The missing-data approach, the adjusted-model covariate list, and the SEM estimator choice were all implicit in the code rather than recorded as a decision. Phase 0 moved them into the SAP, which the workflow already treats as the pre-registration artifact.</p>
+        <div class="table-wrap">
+          <table class="items">
+            <thead><tr><th>Improvement</th><th>Why it matters</th><th>Touches</th><th>Priority</th><th>Effort</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="name">Missing-data strategy</td>
+                <td class="why">Complete-case analysis is unbiased only under MCAR, rarely true for clinical or survey non-response &mdash; and <code>missing_pct</code> is already captured at Stage&nbsp;A and was unused downstream.</td>
+                <td class="touches">dr-01b-analysis-sap/<br>sap-template.md</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Confounder-selection rule</td>
+                <td class="why">Adjusted models used a fixed, ad hoc covariate list. Pre-specifying DAG-driven or change-in-estimate selection prevents choosing "the adjustment that looks best" after the fact.</td>
+                <td class="touches">dr-04-confounding-adjustment/<br>adjusted-plan-template.md</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Ordinal estimator decision</td>
+                <td class="why">WLSMV/DWLS vs. ML-on-continuous changes loadings, fit indices, and standard errors for Likert CFA &mdash; not just their precision. Fixed before fit indices are seen.</td>
+                <td class="touches">dr-sem-01-measurement-model/<br>sem-measurement-plan-template.md</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Multiplicity plan</td>
+                <td class="why">Guards against an inflated false-positive rate once the SAP tests more than one predictor or outcome.</td>
+                <td class="touches">dr-01b-analysis-sap/<br>sap-template.md</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PHASE 1 ================= -->
+      <section class="phase" id="phase-1">
+        <div class="phase-head">
+          <span class="phase-num">1</span>
+          <div>
+            <h2>Diagnostics &amp; validation infrastructure <span class="pill status-shipped">&#10003; Shipped</span></h2>
+            <p class="phase-goal">Give every fitted model a standard "is this trustworthy" check, instead of shipping a point estimate on faith.</p>
+          </div>
+          <div class="phase-tags">
+            <span class="pill track-cross"><span class="dot"></span>Cross&#8209;cutting</span>
+            <span class="depends">Depended on: <strong>Phase 0</strong></span>
+          </div>
+        </div>
+        <p class="phase-rationale">Neither track checked its own assumptions before. This phase added the shared diagnostic layer both tracks' models call &mdash; formal comparisons in the descriptive table, multicollinearity and influence checks before an adjusted coefficient is trusted, and internal validation via bootstrap. Reference implementation: <code>tools/diagnostics/</code> (Python), mirrored in base R inside each project's own script.</p>
+        <div class="table-wrap">
+          <table class="items">
+            <thead><tr><th>Improvement</th><th>Why it matters</th><th>Touches</th><th>Priority</th><th>Effort</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="name">Group-comparison tests in Table 1</td>
+                <td class="why">Table 1 reported mean(SD)/median(IQR)/n(%) per group with no test statistic. Now auto-selects t-test/Mann-Whitney via a Shapiro-Wilk check, &chi;&sup2;/Fisher's exact by expected cell count.</td>
+                <td class="touches">dr-02-descriptive-analysis/<br>desc-script-template.md<br>+ every scripts/desc.{R,py}</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Multicollinearity check (VIF)</td>
+                <td class="why">No adjusted-model coefficient was checked against its covariates for collinearity before being reported.</td>
+                <td class="touches">dr-04-confounding-adjustment/<br>+ medical scripts/infer.{R,py}</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Influence diagnostics</td>
+                <td class="why">Cook's distance / DFBETAs to catch individual observations that are silently driving the adjusted odds ratio.</td>
+                <td class="touches">same as above</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">DFBETAs differ a few % between R/Py (one-step Newton approximation rounds differently) &mdash; documented, coefficients match to 6dp</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">Linearity-in-the-logit check</td>
+                <td class="why">CRP, age, and similar biomarkers are usually non-linear on the log-odds scale; models assumed linearity without testing it (Box-Tidwell).</td>
+                <td class="touches">dr-04 template<br>+ scripts/infer.{R,py}</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Bootstrap internal validation</td>
+                <td class="why">Optimism-corrected calibration/discrimination for the adjusted logistic model; feeds directly into Phase 3's mediation bootstrap CIs.</td>
+                <td class="touches">dr-04, dr-sem-02 templates</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PHASE 2 ================= -->
+      <section class="phase" id="phase-2">
+        <div class="phase-head">
+          <span class="phase-num">2</span>
+          <div>
+            <h2>Medical / epidemiological track <span class="pill status-shipped">&#10003; Shipped</span></h2>
+            <p class="phase-goal">Move the crude&rarr;adjusted logistic-regression pipeline from a textbook default to methods that hold up under real clinical-data quirks.</p>
+          </div>
+          <div class="phase-tags">
+            <span class="pill track-medical"><span class="dot"></span>Medical</span>
+            <span class="depends">Depended on: <strong>Phase 1</strong></span>
+          </div>
+        </div>
+        <p class="phase-rationale">example-clinical and crp-mortality both fit a single crude and a single adjusted logistic regression via plain MLE on complete cases &mdash; fragile at this sample size in specific, well-known ways. Reference implementation: <code>tools/medical_track/</code> (Python); Firth's IRLS is hand-implemented in base R too, cross-validated against R's own <code>logistf</code> package to ~1e-7 agreement.</p>
+        <div class="table-wrap">
+          <table class="items">
+            <thead><tr><th>Improvement</th><th>Why it matters</th><th>Touches</th><th>Priority</th><th>Effort</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="name">Firth penalized logistic regression</td>
+                <td class="why">~200-row samples with several covariates risk quasi-separation, which plain MLE handles badly (huge, unstable odds ratios). Firth's likelihood is the standard fix.</td>
+                <td class="touches">example-clinical, crp-mortality<br>scripts/infer.{R,py}</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Non-linear biomarker handling</td>
+                <td class="why">Log-transform or restricted cubic splines for CRP/age instead of assuming a straight-line dose-response on the logit scale.</td>
+                <td class="touches">same files + dr-04 default guidance</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">Log-transform path wired + verified; the spline fallback is implemented in tools/medical_track but never exercised (no example variable stayed flagged nonlinear on either dataset)</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">Time-to-event modeling</td>
+                <td class="why"><code>length_of_stay</code> sat unused; dichotomizing at a fixed 30-day window threw away information a Kaplan&ndash;Meier/Cox model would use.</td>
+                <td class="touches">new scripts/survival.{R,py}<br>+ dr-03 template extension</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">High</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">Cox coefficients differ slightly R vs. Py by design &mdash; Efron (R default, kept) vs. Breslow (statsmodels default) tie-handling; confirmed exact match when forced to the same method</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">Propensity-score sensitivity analysis</td>
+                <td class="why">PSM/IPTW plus an E-value for unmeasured confounding, run alongside the regression-adjusted estimate &mdash; standard when the underlying question is causal ("does treatment reduce mortality").</td>
+                <td class="touches">new scripts/psm.{R,py}<br>+ dr-04 template</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">High</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">FDR control (Benjamini&ndash;Hochberg)</td>
+                <td class="why">Only relevant once the SAP (Phase 0) tests more than one predictor &mdash; keeps the multiplicity plan enforced in code.</td>
+                <td class="touches">scripts/infer.{R,py}</td>
+                <td class="pri"><span class="chip pri-low"><span class="mark">&#9679;</span>Low</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-partial">&#9679; Partial
+                  <span class="status-note">Built and tested (tools/medical_track/multiplicity.py) but not wired into any script &mdash; every project's SAP correctly declares exactly 1 planned comparison, so there's no live multi-comparison case to correct yet</span>
+                </span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PHASE 3 ================= -->
+      <section class="phase" id="phase-3">
+        <div class="phase-head">
+          <span class="phase-num">3</span>
+          <div>
+            <h2>SEM / survey track <span class="pill status-shipped">&#10003; Shipped</span></h2>
+            <p class="phase-goal">Bring the measurement and mediation models up to current reporting standards for structural equation modeling.</p>
+          </div>
+          <div class="phase-tags">
+            <span class="pill track-sem"><span class="dot"></span>SEM</span>
+            <span class="depends">Depended on: <strong>Phase 1</strong></span>
+          </div>
+        </div>
+        <p class="phase-rationale">burnout-mediation and example-survey-sem both fit CFA and mediation models with ML estimation on Likert items and reported point estimates without bootstrap CIs. The ordinal estimator and bootstrapped indirect effects change the numbers a reviewer would actually see, not just their precision.</p>
+        <div class="phase-shipped-note">
+          <strong>R turned out more capable than Python here.</strong> semopy (the Python SEM library) has no genuine multi-group SEM and its WLS solver stalls on a joint measurement+structural fit at this model size &mdash; both are semopy limitations, not fundamental to the method. Python works around them (per-group fits + bootstrap for invariance; two-step factor-score regression for mediation). lavaan (R) does both natively: real multi-group SEM with a chi-square difference test, and a one-step joint fit with native bootstrap SE in under two minutes. The R scripts use lavaan's native approach directly rather than porting Python's workarounds.
+        </div>
+        <div class="table-wrap">
+          <table class="items">
+            <thead><tr><th>Improvement</th><th>Why it matters</th><th>Touches</th><th>Priority</th><th>Effort</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="name">Ordinal (WLSMV/DWLS) estimator</td>
+                <td class="why">5-point Likert items are ordinal, not continuous. Polychoric correlations with WLSMV/DWLS change loadings, fit indices (CFI/TLI/RMSEA/SRMR), and standard errors versus ML-on-continuous.</td>
+                <td class="touches">burnout-mediation, example-survey-sem<br>scripts/sem_measurement.{R,py}</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Bootstrap CIs for mediation effects</td>
+                <td class="why">The indirect effect a&times;b is a product of two coefficients and is not normally distributed. Previously reported only a point estimate for indirect/direct/total effects.</td>
+                <td class="touches">scripts/sem_structural.{R,py}<br>+ dr-sem-02 template</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">Py: two-step factor-score regression, n_boot=50. R: one-step joint DWLS fit, native se="bootstrap", n_boot=50, ~85s</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">McDonald's omega</td>
+                <td class="why">Cronbach's alpha assumes tau-equivalence (equal loadings) &mdash; an assumption the CFA step usually contradicts. Omega doesn't require it.</td>
+                <td class="touches">scripts/sem_measurement.{R,py}</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Convergent / discriminant validity</td>
+                <td class="why">AVE, composite reliability, and an HTMT ratio between Job Satisfaction and Burnout &mdash; two negatively-correlated affective constructs need an explicit check that they're statistically distinct.</td>
+                <td class="touches">scripts/sem_measurement.{R,py}<br>+ dr-sem-01 template</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Measurement invariance testing</td>
+                <td class="why">Configural&rarr;metric invariance across gender should hold before any group comparison of latent means is claimed.</td>
+                <td class="touches">new scripts/sem_invariance.{R,py}<br>+ dr-sem-01 template</td>
+                <td class="pri"><span class="chip pri-low"><span class="mark">&#9679;</span>Low</span></td>
+                <td class="effort">High</td>
+                <td class="status"><span class="chip status-partial">&#9679; Partial
+                  <span class="status-note">Configural + metric shipped in both languages (R: native multi-group + LRT; Py: per-group fits + bootstrap, since semopy has no multi-group SEM). Scalar/threshold invariance not implemented in either language.</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">Nested model comparison</td>
+                <td class="why">Full vs. partial mediation via &Delta;&chi;&sup2;/AIC/BIC, rather than asserting the specified model without a competing alternative.</td>
+                <td class="touches">scripts/sem_structural.{R,py}</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">R's lavTestLRT() has no AIC for (D)WLS fits (no defined log-likelihood) &mdash; the chi-square diff test is the decision criterion there; Py reports AIC from its statsmodels refit</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">Flag single-item constructs</td>
+                <td class="why"><code>turnover_intent</code> is a single item, so its reliability can't be assessed at all &mdash; worth stating explicitly rather than silently.</td>
+                <td class="touches">dr-01b SAP template<br>results-paragraph-template.md</td>
+                <td class="pri"><span class="chip pri-low"><span class="mark">&#9679;</span>Low</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">Landed as part of Phase 5's auto-populated limitations stub &mdash; tools/reporting scans every SEM plan's constructs for a 1-item list automatically</span>
+                </span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PHASE 4 ================= -->
+      <section class="phase" id="phase-4">
+        <div class="phase-head">
+          <span class="phase-num">4</span>
+          <div>
+            <h2>Synthetic data fidelity <span class="pill status-shipped">&#10003; Shipped</span></h2>
+            <p class="phase-goal">Let Stage D catch convergence and separation problems, not just syntax errors &mdash; without ever exposing a real value.</p>
+          </div>
+          <div class="phase-tags">
+            <span class="pill track-cross"><span class="dot"></span>Cross&#8209;cutting</span>
+            <span class="depends">Depended on: <strong>Phase 0</strong></span>
+          </div>
+        </div>
+        <p class="phase-rationale">The default synthesizer generates every column independently, by design, so the SEM scripts are written to expect non-convergence on synthetic data &mdash; Stage D could only prove "the code runs," never "the model behaves reasonably." An opt-in, still-local, still-reviewed correlated synthesizer (Stage B2) closed that gap, in both languages.</p>
+        <div class="table-wrap">
+          <table class="items">
+            <thead><tr><th>Improvement</th><th>Why it matters</th><th>Touches</th><th>Priority</th><th>Effort</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="name">Opt-in correlated synthesizer</td>
+                <td class="why">A Gaussian-copula-style "Stage B2," reviewed locally exactly like <code>dataset_pattern.csv</code>, approximates real pairwise correlation without ever touching real values &mdash; enough for the logistic/SEM models to actually converge during testing.</td>
+                <td class="touches">r-scripts/synthesize_correlated.R<br>+ py-scripts equivalent<br>dr-00-privacy-gate skill</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">High</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">R is one extra file vs. Python's one, since R has no package/import system &mdash; a library file plus a per-project wrapper that source()s it, not a naming mismatch bug</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">Dual-mode validation header</td>
+                <td class="why">Every analysis script should state which synthesis mode (independent vs. correlated) it was last verified against.</td>
+                <td class="touches">every desc/infer/plots/sem_* script header</td>
+                <td class="pri"><span class="chip pri-low"><span class="mark">&#9679;</span>Low</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-partial">&#9679; Partial
+                  <span class="status-note">Done for all 15 Python Stage D scripts, actually re-run against a Stage B2 stand-in to verify (not just claimed). R scripts don't have this header note yet.</span>
+                </span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PHASE 5 ================= -->
+      <section class="phase" id="phase-5">
+        <div class="phase-head">
+          <span class="phase-num">5</span>
+          <div>
+            <h2>Reporting &amp; documentation <span class="pill status-shipped">&#10003; Shipped</span></h2>
+            <p class="phase-goal">Give every new diagnostic and validation output a place in the manuscript-facing templates, not just the console.</p>
+          </div>
+          <div class="phase-tags">
+            <span class="pill track-cross"><span class="dot"></span>Cross&#8209;cutting</span>
+            <span class="depends">Depended on: <strong>Phase 2, 3</strong></span>
+          </div>
+        </div>
+        <p class="phase-rationale">Stage E's templates were written for a simpler set of outputs. Once diagnostics, validation, and bootstrap CIs existed, the results and traceability templates needed matching sections, or the new output wouldn't make it into the manuscript. Both items also got real extraction code (<code>tools/reporting/</code>), not just prose instructions for an agent to follow by hand.</p>
+        <div class="table-wrap">
+          <table class="items">
+            <thead><tr><th>Improvement</th><th>Why it matters</th><th>Touches</th><th>Priority</th><th>Effort</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="name">Extend results templates</td>
+                <td class="why">Add slots for the VIF table, calibration reference, and a standard sentence pattern for reporting bootstrap CIs on indirect effects.</td>
+                <td class="touches">dr-05-present-results/<br>manuscript-table-template.md<br>results-paragraph-template.md</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped</span></td>
+              </tr>
+              <tr>
+                <td class="name">Auto-populated limitations stub</td>
+                <td class="why">Pulls forward SAP flags automatically: complete-case vs. MI comparison, single-item constructs, non-convergence explanation for the synthetic run.</td>
+                <td class="touches">results-paragraph-template.md<br>traceability-check-template.md</td>
+                <td class="pri"><span class="chip pri-low"><span class="mark">&#9679;</span>Low</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">tools/reporting/limitations_extraction.py + diagnostics_extraction.py, reusing tools/sap_gate's own SAP parser rather than re-deriving it</span>
+                </span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PHASE 6 ================= -->
+      <section class="phase" id="phase-6">
+        <div class="phase-head">
+          <span class="phase-num">6</span>
+          <div>
+            <h2>Tooling &amp; verification <span class="pill status-shipped">&#10003; Shipped</span></h2>
+            <p class="phase-goal">Keep the R and Python mirrors honest as new methods land, with the same discipline used to verify the original R&rarr;Python translation.</p>
+          </div>
+          <div class="phase-tags">
+            <span class="pill track-cross"><span class="dot"></span>Cross&#8209;cutting</span>
+            <span class="depends">Depended on: <strong>Phase 5</strong></span>
+          </div>
+        </div>
+        <p class="phase-rationale">Every phase above touches both an <code>.R</code> and a <code>.py</code> file per project. That parity is easy to lose quietly once more than one session is editing the pipeline &mdash; this phase made drift visible instead of silent. A related, originally out-of-scope gap (the four skill-doc mirror directories drifting from <code>skills/</code>) got its own tool too once discovered.</p>
+        <div class="table-wrap">
+          <table class="items">
+            <thead><tr><th>Improvement</th><th>Why it matters</th><th>Touches</th><th>Priority</th><th>Effort</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="name">Smoke-test every new script</td>
+                <td class="why">Same pass already run for the R&rarr;Python translation: execute each new diagnostic/validation script against all four projects' synthetic datasets and confirm a clean exit.</td>
+                <td class="touches">every projects/*/scripts/*.{R,py}</td>
+                <td class="pri"><span class="chip pri-high"><span class="mark">&#9650;</span>High</span></td>
+                <td class="effort">Low</td>
+                <td class="status"><span class="chip status-partial">&#9679; Partial
+                  <span class="status-note"><code>tools/smoke_test.py</code> covers all Python scripts (contract-aware: Stage D must exit 0, privacy-gate scripts must refuse cleanly). Every R script was verified manually via Rscript this session, but there's no permanent automated R smoke-test tool yet.</span>
+                </span></td>
+              </tr>
+              <tr>
+                <td class="name">R/Python parity check</td>
+                <td class="why">Flags a script that exists in <code>.R</code> but not <code>.py</code> (or vice versa) before it merges, so the two-language mirror can't drift silently as Phases 2&ndash;4 land.</td>
+                <td class="touches"><code>tools/parity_check.py</code><br>.pre-commit-config.yaml<br>.github/workflows/ci.yml</td>
+                <td class="pri"><span class="chip pri-med"><span class="mark">&#9670;</span>Med</span></td>
+                <td class="effort">Med</td>
+                <td class="status"><span class="chip status-done">&#10003; Shipped
+                  <span class="status-note">Plus tools/skills_sync_check.py for the skill-mirror-drift gap found along the way. CI/pre-commit are prepared but inert until this repo gets a .git/ directory.</span>
+                </span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="block" id="appendix">
+        <h2>File index by area</h2>
+        <p>Where each phase's changes landed, grouped by what they touch.</p>
+        <div class="appendix-grid">
+          <div class="appendix-card">
+            <h3>SAP &amp; plan templates</h3>
+            <p>Pre-registration surface &mdash; Phase 0.</p>
+            <ul>
+              <li>dr-01b-analysis-sap/sap-template.md</li>
+              <li>dr-04-confounding-adjustment/adjusted-plan-template.md</li>
+              <li>dr-sem-01-measurement-model/sem-measurement-plan-template.md</li>
+              <li>dr-sem-02-structural-model/sem-structural-plan-template.md</li>
+            </ul>
+          </div>
+          <div class="appendix-card">
+            <h3>Diagnostics &amp; medical-track tooling</h3>
+            <p>Phase 1 shared layer + Phase 2's medical methods.</p>
+            <ul>
+              <li>tools/diagnostics/</li>
+              <li>tools/medical_track/</li>
+              <li>example-clinical, crp-mortality<br>scripts/infer.{R,py}, survival.{R,py}, psm.{R,py}</li>
+            </ul>
+          </div>
+          <div class="appendix-card">
+            <h3>SEM-track tooling</h3>
+            <p>Phase 3's estimator, validity, mediation, invariance.</p>
+            <ul>
+              <li>tools/sem_track/</li>
+              <li>burnout-mediation, example-survey-sem<br>scripts/sem_measurement.{R,py}, sem_structural.{R,py}</li>
+              <li>burnout-mediation/scripts/sem_invariance.{R,py}</li>
+            </ul>
+          </div>
+          <div class="appendix-card">
+            <h3>Privacy-gate &amp; synthesis</h3>
+            <p>Phase 4's opt-in correlated synthesizer.</p>
+            <ul>
+              <li>r-scripts/synthesize_correlated.R</li>
+              <li>py-scripts/synthesize_data_correlated.py</li>
+              <li>every project's scripts/synthesize_data_correlated.{R,py}</li>
+              <li>dr-00-privacy-gate skill (Stage B2 section)</li>
+            </ul>
+          </div>
+          <div class="appendix-card">
+            <h3>Reporting</h3>
+            <p>Phase 5's manuscript-facing additions.</p>
+            <ul>
+              <li>tools/reporting/</li>
+              <li>dr-05-present-results/manuscript-table-template.md</li>
+              <li>dr-05-present-results/results-paragraph-template.md</li>
+              <li>dr-05-present-results/traceability-check-template.md</li>
+            </ul>
+          </div>
+          <div class="appendix-card">
+            <h3>Tooling</h3>
+            <p>Phase 6's parity + mirror-sync guards.</p>
+            <ul>
+              <li>tools/smoke_test.py</li>
+              <li>tools/parity_check.py</li>
+              <li>tools/skills_sync_check.py</li>
+              <li>.pre-commit-config.yaml</li>
+              <li>.github/workflows/ci.yml</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="page-foot">
+    Drafted 2026-08-15 from a review of the medical and SEM analysis scripts across example-clinical,
+    crp-mortality, example-survey-sem, and burnout-mediation. Updated 2026-08-16 after Phases 0&ndash;6
+    shipped in both Python and R. Priority reflected methodological risk if skipped; effort was rough
+    (Low/Med/High), not a time estimate. Four rows above are marked Partial, each with a one-line reason &mdash;
+    everything else in this document is implemented and verified, not aspirational.
+  </footer>
+
+</div>

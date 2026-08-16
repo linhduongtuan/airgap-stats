@@ -1,0 +1,259 @@
+dr_step: D1
+plan_version: 2
+
+inputs:
+  dataset_pattern: "pattern/dataset_pattern.csv"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  research_question_user_input: "Burnout có làm trung gian mối quan hệ giữa job satisfaction và ý định nghỉ việc không?"
+
+workflow_track:
+  value: "sem"
+  source: "user_question"
+  confidence: "high"
+
+dataset:
+  unit_of_analysis:
+    value: "individual respondent"
+    source: "pattern_file"
+    confidence: "high"
+  synthetic_n_rows: 300
+
+research_question:
+  plain_language: "Kiểm tra hiệu ứng trung gian của burnout trong mối quan hệ giữa job satisfaction và turnover intention, có kiểm soát các yếu tố nhân khẩu học."
+  question_type:
+    value: "associative"
+    options_considered:
+      - "descriptive"
+      - "comparative"
+      - "associative"
+      - "predictive"
+    source: "user_question"
+    confidence: "high"
+
+variables:
+  outcome:
+    name: "turnover_intent"
+    type: "binary"
+    source: "user_question"
+    confidence: "high"
+    notes: "0 = không có ý định nghỉ việc, 1 = có ý định nghỉ việc"
+  main_predictor:
+    name: "job_satisfaction"
+    type: "latent"
+    source: "user_question"
+    confidence: "high"
+    notes: "Latent construct đo bằng js_q1–js_q5 (Likert 1-5)"
+  covariates:
+    - name: "age"
+      type: "integer"
+      source: "user_confirmation"
+      confidence: "high"
+      notes: ""
+    - name: "gender"
+      type: "binary"
+      source: "user_confirmation"
+      confidence: "high"
+      notes: "Nữ|Nam"
+    - name: "education"
+      type: "categorical"
+      source: "user_confirmation"
+      confidence: "high"
+      notes: "THPT|Đại học|Thạc sĩ|Tiến sĩ"
+    - name: "tenure_years"
+      type: "numeric"
+      source: "user_confirmation"
+      confidence: "high"
+      notes: ""
+  group_variable:
+    name: null
+    source: "not_available"
+    confidence: "low"
+  excluded_variables:
+    - "respondent_id"
+
+constructs:
+  - construct_name: "Job Satisfaction"
+    items:
+      - "js_q1"
+      - "js_q2"
+      - "js_q3"
+      - "js_q4"
+      - "js_q5"
+    response_values: "1|2|3|4|5"
+    item_source: "heuristic"
+    reverse_coded_items: []
+  - construct_name: "Burnout"
+    items:
+      - "bo_q1"
+      - "bo_q2"
+      - "bo_q3"
+      - "bo_q4"
+      - "bo_q5"
+    response_values: "1|2|3|4|5"
+    item_source: "heuristic"
+    reverse_coded_items: []
+
+variable_inventory:
+  - name: "respondent_id"
+    type: "id_like"
+    roles: ["identifier"]
+    missing_pct: 0
+    action: "exclude"
+    notes: ""
+  - name: "age"
+    type: "integer"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "gender"
+    type: "binary"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Nữ|Nam"
+  - name: "education"
+    type: "categorical"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: "THPT|Đại học|Thạc sĩ|Tiến sĩ"
+  - name: "income"
+    type: "integer"
+    roles: ["unspecified"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Không được chỉ định trong câu hỏi; có thể dùng làm control bổ sung nếu cần"
+  - name: "work_hours"
+    type: "numeric"
+    roles: ["unspecified"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Không được chỉ định trong câu hỏi"
+  - name: "work_mode"
+    type: "categorical"
+    roles: ["unspecified"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Văn phòng|Hybrid|Remote"
+  - name: "tenure_years"
+    type: "numeric"
+    roles: ["covariate"]
+    missing_pct: 0
+    action: "keep"
+    notes: ""
+  - name: "js_q1"
+    type: "integer_scale"
+    roles: ["item_job_satisfaction"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "js_q2"
+    type: "integer_scale"
+    roles: ["item_job_satisfaction"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "js_q3"
+    type: "integer_scale"
+    roles: ["item_job_satisfaction"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "js_q4"
+    type: "integer_scale"
+    roles: ["item_job_satisfaction"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "js_q5"
+    type: "integer_scale"
+    roles: ["item_job_satisfaction"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "job_satisfaction"
+    type: "numeric"
+    roles: ["composite_score"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Composite score; không dùng trong SEM latent, có thể dùng cho desc table"
+  - name: "bo_q1"
+    type: "integer_scale"
+    roles: ["item_burnout"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "bo_q2"
+    type: "integer_scale"
+    roles: ["item_burnout"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "bo_q3"
+    type: "integer_scale"
+    roles: ["item_burnout"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "bo_q4"
+    type: "integer_scale"
+    roles: ["item_burnout"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "bo_q5"
+    type: "integer_scale"
+    roles: ["item_burnout"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Likert 1-5"
+  - name: "burnout_score"
+    type: "numeric"
+    roles: ["composite_score"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Composite score; không dùng trong SEM latent, có thể dùng cho desc table"
+  - name: "wlb"
+    type: "integer_scale"
+    roles: ["unspecified"]
+    missing_pct: 0
+    action: "keep"
+    notes: "Work-life balance, Likert 1-5; có thể dùng làm control bổ sung"
+  - name: "turnover_intent"
+    type: "binary"
+    roles: ["outcome"]
+    missing_pct: 0
+    action: "keep"
+    notes: "0 = không, 1 = có"
+
+recommended_analysis:
+  descriptive_grouping:
+    variable: "turnover_intent"
+    reason: "So sánh đặc điểm mẫu theo nhóm có/không ý định nghỉ việc"
+  primary_model:
+    value: "sem_mediation"
+    reason: "Mô hình cấu trúc trung gian với biến outcome binary, JS latent → Burnout latent → turnover_intent. Dùng lavaan với DWLS estimator do outcome binary."
+  effect_measure:
+    value: "standardized_coefficients"
+    reason: "SEM báo standardized beta (STDYX) cho indirect/direct/total effect"
+
+readiness:
+  status: "needs_review"
+  blocking_issues: []
+  review_issues:
+    - "turnover_intent là binary; cần xác nhận dùng estimator DWLS trong lavaan"
+    - "Chưa rõ JS và BO items có cần reverse coding không (cần user check bảng hỏi gốc)"
+    - "income, work_hours, work_mode, wlb chưa được gán vai trò — có thể dùng làm control bổ sung hoặc bỏ qua"
+  assumptions:
+    - "Các item Likert 1-5 được xử lý như biến thứ tự (ordered) trong CFA"
+    - "Mô hình mediation: JS → Burnout → turnover_intent, với direct path JS → turnover_intent"
+    - "Controls (age, gender, education, tenure_years) ảnh hưởng lên cả Burnout và turnover_intent"
+
+next_step:
+  skill: "dr-sem-01-measurement-model"
+  needs_user_confirmation:
+    - "confirm workflow track: SEM"
+    - "confirm outcome: turnover_intent"
+    - "confirm constructs: JS (js_q1-js_q5), Burnout (bo_q1-bo_q5)"
+    - "confirm controls: age, gender, education, tenure_years"

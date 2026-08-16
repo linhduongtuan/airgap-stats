@@ -1,0 +1,67 @@
+workflow: dr
+state_version: 2
+project_name: "example-clinical"
+workflow_track: "medical"
+research_question: "Does treatment arm affect 30-day mortality, adjusted for baseline clinical risk factors? (assumed -- see plans/sap.md Section A)"
+
+# This state file was stuck at its fresh-project template (everything
+# not_started, research_question blank) even though scripts/desc.R,
+# scripts/infer.R, and outputs_synthetic/ already existed and were complete.
+# Corrected here to match reality as part of backfilling the Phase 0
+# pre-registration gate (tools/sap_gate). plans/analysis_plan.yaml and
+# plans/sap.md are themselves backfilled from script content, not from a
+# recorded user-confirmation trail -- weaker provenance than crp-mortality or
+# burnout-mediation. See plans/sap.md's top-of-document note.
+analysis_mode: "all_steps"
+sap_approved: false
+
+# Stage map:
+#   A: pattern_extract.R written and run locally -> pattern/dataset_pattern.csv (user-reviewed)
+#   B: scripts/synthesize_data.R written by the agent
+#   C: user runs it locally -> data_synthetic/synthetic_dataset.csv
+#   D1: analysis_plan.yaml            (dr-01)
+#   D1b: plans/sap.md                 (dr-01b)
+#   D2: scripts/desc.R                (dr-02)
+#   D3: scripts/infer.R crude         (dr-03)  | sem track: scripts/sem_measurement.R (dr-sem-01)
+#   D4: scripts/infer.R adjusted      (dr-04)  | sem track: scripts/sem_structural.R  (dr-sem-02)
+#   E: user runs scripts on real data in RStudio, pastes output -> dr-05 writes final results
+current_stage: "D4"
+
+stage_status:
+  A_pattern_extracted: "complete"
+  B_synthesis_code_written: "complete"
+  C_synthetic_created: "complete"
+  D1_analysis_plan: "needs_review"            # backfilled; several roles inferred, not confirmed
+  D1b_sap: "backfilled_pending_user_review"   # plans/sap.md exists; awaits user approval
+  D2_descriptive_code: "complete"
+  D2b_visual_exploration: "not_started"       # scripts/plots.R was never written for this project
+  D3_main_analysis_code: "complete"
+  D4_full_model_code: "complete"
+  E_real_results: "not_started"
+
+artifacts:
+  dataset_pattern: "pattern/dataset_pattern.csv"
+  pattern_reviewed_by_user: null               # never recorded either way
+  sap: "plans/sap.md"
+  synthesize_script: "scripts/synthesize_data.R"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  analysis_plan: "plans/analysis_plan.yaml"
+  desc_script: "scripts/desc.R"
+  plots_script: null
+  infer_script: "scripts/infer.R"
+  sem_measurement_script: null
+  sem_structural_script: null
+  rstudio_output_received: false
+  present_results: null
+
+verified_by:
+  desc_script: "agent"   # scripts/desc.py run directly, exit 0, synthetic (R version's provenance was never recorded)
+  plots_script: null
+  infer_script: "agent"  # scripts/infer.py run directly, exit 0, synthetic (R version's provenance was never recorded)
+  sem_measurement_script: null
+  sem_structural_script: null
+
+next_action:
+  skill: "dr-01b-analysis-sap"
+  reason: "plans/analysis_plan.yaml and plans/sap.md were both backfilled from existing code, not confirmed by a user. Run `python -m tools.sap_gate projects/example-clinical` first, then have the user review and confirm the flagged assumed/needs_review items before treating this project as more than a worked demo."
+  user_prompt: "Please review plans/sap.md (especially Section C's variable roles and Section K), confirm or correct them, then confirm to set sap_approved: true."

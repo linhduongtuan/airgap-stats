@@ -1,0 +1,2 @@
+lr_stat,delta_df,p_value,preferred
+0.7946,1,0.3727,restricted (more parsimonious) -- the dropped term(s) don't earn their keep

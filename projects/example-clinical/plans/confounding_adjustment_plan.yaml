@@ -1,0 +1,92 @@
+dr_step: D4
+plan_version: 2
+
+# NOTE: backfilled from scripts/infer.R (see plans/sap.md provenance note).
+
+inputs:
+  analysis_plan: "plans/analysis_plan.yaml"
+  inferential_analysis_plan: "plans/inferential_analysis_plan.yaml"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+
+link_to_d3:
+  same_outcome_as_d3: true
+  same_predictor_as_d3: true
+  same_model_family_as_d3: true
+  same_effect_measure_as_d3: true
+  crude_model:
+    formula: "mortality_30day ~ treatment"
+    model_family: "binomial (logistic regression)"
+    effect_measure: "odds ratio (OR)"
+
+variables:
+  outcome:
+    name: "mortality_30day"
+    type: "binary"
+  main_predictor:
+    name: "treatment"
+    type: "binary"
+  covariates:
+    included:
+      - "age"
+      - "sex"
+      - "bmi"
+      - "diabetes"
+      - "hypertension"
+      - "smoking"
+      - "egfr"
+      - "hba1c"
+      - "crp"
+    excluded:
+      - "sbp"
+      - "dbp"
+      - "length_of_stay"
+      - "complication"
+      - "patient_id"
+    source: "inferred_from_script"
+    rationale: "Covariate list matches scripts/infer.R's `covariates` vector exactly; clinically plausible but never explicitly confirmed by a user (see plans/sap.md provenance note)."
+    confounder_selection:
+      method: "literature_fixed_list"
+      criteria: "Clinically plausible risk factors for mortality, matching the same schema as the crp-mortality project. Reverse-engineered from scripts/infer.R, not from a recorded DAG or change-in-estimate analysis."
+      change_in_estimate_threshold_pct: null
+      basis: "needs_review"
+
+adjusted_model:
+  formula: "mortality_30day ~ treatment + age + sex + bmi + diabetes + hypertension + smoking + egfr + hba1c + crp"
+  model_family: "binomial (logistic regression)"
+  effect_measure: "odds ratio (OR)"
+  reason: "Same model family as crude; added the covariates already present in scripts/infer.R's adjusted section"
+
+comparison:
+  compare_crude_vs_adjusted: true
+  main_question: "Does the OR for treatment change materially after adjusting for baseline risk factors?"
+  compare:
+    - "estimate magnitude"
+    - "estimate direction"
+    - "95% CI"
+    - "p-value as secondary information"
+
+script:
+  file: "scripts/infer.R"
+  section: "adjusted"
+  verified_on_synthetic: true
+
+user_confirmation:
+  status: "needs_review"
+  notes: "Backfilled from existing code; the covariate list itself was never presented to a user for confirmation."
+
+readiness:
+  status: "needs_review"
+  blocking_issues: []
+  review_issues:
+    - "confounder_selection.basis is needs_review -- ask the user to confirm the covariate list before treating this as pre-registered"
+  assumptions:
+    - "Covariates are measured at baseline/admission"
+    - "No strong multicollinearity"
+
+reporting:
+  table_title: "Crude and adjusted association between treatment arm and 30-day mortality"
+  footnote: "Adjusted for age, sex, bmi, diabetes, hypertension, smoking, egfr, hba1c, crp."
+  causal_language_allowed: false
+
+next_step:
+  skill: "dr-05-present-results"

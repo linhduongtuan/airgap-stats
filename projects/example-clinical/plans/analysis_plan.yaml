@@ -1,0 +1,118 @@
+dr_step: D1
+plan_version: 2
+
+# NOTE: backfilled. This project's scripts (desc.R/py, infer.R/py) existed with no
+# plans/ directory at all -- research_question was never recorded
+# (dr_workflow_state.yaml had it blank) and dr_workflow_state.yaml itself was stuck
+# at its fresh-project template despite the scripts and outputs_synthetic/ already
+# being complete. Every role below is reverse-engineered from what the scripts
+# actually reference, not from a recorded user-confirmation trail -- mark
+# `source: inferred_from_script` throughout, one notch weaker than
+# `user_confirmation`, and treat this whole file as `needs_review`.
+
+inputs:
+  dataset_pattern: "pattern/dataset_pattern.csv"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  research_question_user_input: ""   # never recorded; see research_question.plain_language below
+
+workflow_track:
+  value: "medical"
+  source: "dr_workflow_state.yaml"
+  confidence: "high"
+
+dataset:
+  unit_of_analysis:
+    value: "patient"
+    source: "inferred_from_script"
+    confidence: "high"
+  synthetic_n_rows: 200
+
+research_question:
+  plain_language: "Does treatment arm affect 30-day mortality, adjusted for baseline clinical risk factors?"
+  question_type:
+    value: "associative"
+    options_considered: ["descriptive", "comparative", "associative", "predictive"]
+    source: "inferred_from_script"
+    confidence: "medium"
+
+variables:
+  outcome:
+    name: "mortality_30day"
+    type: "binary"
+    source: "inferred_from_script"
+    confidence: "high"
+    notes: "30-day mortality (0 = alive, 1 = deceased); outcome_var in scripts/infer.R"
+  main_predictor:
+    name: "treatment"
+    type: "binary"
+    source: "inferred_from_script"
+    confidence: "high"
+    notes: "predictor_var in scripts/infer.R, and group_var in scripts/desc.R -- consistent across both scripts"
+  covariates:
+    - {name: "age",          type: "integer", role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "sex",           type: "binary",  role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "bmi",           type: "numeric", role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "diabetes",      type: "binary",  role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "hypertension",  type: "binary",  role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "smoking",       type: "binary",  role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "egfr",          type: "numeric", role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "hba1c",         type: "numeric", role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+    - {name: "crp",           type: "numeric", role: "potential_confounder", source: "inferred_from_script", confidence: "high"}
+  group_variable:
+    name: null
+    source: "not_available"
+    confidence: "low"
+  excluded_variables:
+    - "patient_id"
+    - "sbp"
+    - "dbp"
+    - "length_of_stay"
+    - "complication"
+
+constructs: []
+
+variable_inventory:
+  - {name: "patient_id",       type: "id_like",  roles: ["excluded"],   missing_pct: 0, action: "exclude", notes: "identifier"}
+  - {name: "age",               type: "integer",  roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: ""}
+  - {name: "sex",                type: "binary",   roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: "Nam|Nữ (note: reference order differs from crp-mortality)"}
+  - {name: "bmi",                type: "numeric",  roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: ""}
+  - {name: "treatment",          type: "binary",   roles: ["main_predictor"], missing_pct: 0, action: "keep", notes: "Phác đồ A|Phác đồ B"}
+  - {name: "sbp",                type: "integer",  roles: ["not_used"],  missing_pct: 0, action: "keep",    notes: "not referenced by desc.R or infer.R; no documented reason"}
+  - {name: "dbp",                type: "integer",  roles: ["not_used"],  missing_pct: 0, action: "keep",    notes: "not referenced by desc.R or infer.R; no documented reason"}
+  - {name: "diabetes",           type: "binary",   roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: ""}
+  - {name: "hypertension",       type: "binary",   roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: ""}
+  - {name: "smoking",            type: "binary",   roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: ""}
+  - {name: "egfr",               type: "numeric",  roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: "estimated GFR"}
+  - {name: "hba1c",              type: "numeric",  roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: ""}
+  - {name: "crp",                type: "numeric",  roles: ["covariate"],  missing_pct: 0, action: "keep",    notes: "C-reactive protein; a covariate here, not the main predictor -- differs from crp-mortality"}
+  - {name: "length_of_stay",     type: "integer",  roles: ["not_used"],  missing_pct: 0, action: "keep",    notes: "not referenced by desc.R or infer.R"}
+  - {name: "mortality_30day",    type: "binary",   roles: ["outcome"],   missing_pct: 0, action: "keep",    notes: "0 = alive, 1 = deceased within 30 days"}
+  - {name: "complication",       type: "binary",   roles: ["not_used"],  missing_pct: 0, action: "keep",    notes: "not referenced by desc.R or infer.R"}
+
+recommended_analysis:
+  descriptive_grouping:
+    variable: "treatment"
+    reason: "Compare baseline characteristics by treatment arm (matches scripts/desc.R group_var)"
+  primary_model:
+    value: "logistic_regression"
+    reason: "Binary outcome (mortality_30day) with binary predictor (treatment) and multiple covariates"
+  effect_measure:
+    value: "odds_ratio"
+    reason: "Standard effect measure for logistic regression"
+
+readiness:
+  status: "needs_review"
+  blocking_issues: []
+  review_issues:
+    - "research_question was never recorded by the user; the plain_language line above is inferred from script logic, not confirmed"
+    - "sbp, dbp, length_of_stay, complication are excluded from both desc.R and infer.R with no documented rationale -- may be an oversight, not a decision"
+  assumptions:
+    - "Covariates are measured at baseline/admission"
+    - "No significant multicollinearity among covariates"
+
+next_step:
+  skill: "dr-01b-analysis-sap"
+  needs_user_confirmation:
+    - "confirm the restated research question"
+    - "confirm covariates (currently inferred from infer.R, not user-confirmed)"
+    - "confirm sbp/dbp/length_of_stay/complication should stay excluded"

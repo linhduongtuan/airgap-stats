@@ -1,0 +1,123 @@
+dr_step: D1
+plan_version: 2
+
+# NOTE: backfilled. Same situation as example-clinical/plans/analysis_plan.yaml --
+# dr_workflow_state.yaml was stuck at its fresh-project template despite
+# scripts/desc.R, scripts/sem_measurement.R, scripts/sem_structural.R, and their
+# Python mirrors already existing and complete. Every role below is
+# reverse-engineered from what the scripts reference (`source: inferred_from_script`),
+# not from a recorded user-confirmation trail.
+
+inputs:
+  dataset_pattern: "pattern/dataset_pattern.csv"
+  synthetic_dataset: "data_synthetic/synthetic_dataset.csv"
+  research_question_user_input: ""   # never recorded; see research_question.plain_language below
+
+workflow_track:
+  value: "sem"
+  source: "dr_workflow_state.yaml"
+  confidence: "high"
+
+dataset:
+  unit_of_analysis:
+    value: "individual respondent"
+    source: "inferred_from_script"
+    confidence: "high"
+  synthetic_n_rows: 300
+
+research_question:
+  plain_language: "Do job satisfaction and burnout, together with remote-work arrangement, predict turnover intention?"
+  question_type:
+    value: "associative"
+    options_considered: ["descriptive", "comparative", "associative", "predictive"]
+    source: "inferred_from_script"
+    confidence: "medium"
+
+variables:
+  outcome:
+    name: "turnover_intent"
+    type: "binary"
+    source: "inferred_from_script"
+    confidence: "high"
+    notes: "regression target in scripts/sem_structural.R: `turnover_intent ~ burnout + jobsat + remote`"
+  main_predictor:
+    name: "jobsat"
+    type: "latent"
+    source: "inferred_from_script"
+    confidence: "high"
+    notes: "Latent construct measured by js_q1-js_q5 (Likert 1-5)"
+  covariates:
+    - {name: "burnout", type: "latent",  role: "predictor_not_mediator", source: "inferred_from_script", confidence: "high", notes: "Unlike burnout-mediation, this project has NO jobsat -> burnout structural path -- burnout is a parallel predictor of turnover_intent, not a mediator"}
+    - {name: "remote",  type: "derived", role: "confounder", source: "inferred_from_script", confidence: "high", notes: "dat$remote <- as.numeric(work_mode == 'Remote'); the only observed covariate actually used in the structural model"}
+  group_variable:
+    name: "work_mode"
+    source: "inferred_from_script"
+    confidence: "high"
+  excluded_variables:
+    - "respondent_id"
+
+constructs:
+  - construct_name: "jobsat"
+    items: ["js_q1", "js_q2", "js_q3", "js_q4", "js_q5"]
+    response_values: "1|2|3|4|5"
+    item_source: "inferred_from_script"
+    reverse_coded_items: []
+  - construct_name: "burnout"
+    items: ["bo_q1", "bo_q2", "bo_q3", "bo_q4", "bo_q5"]
+    response_values: "1|2|3|4|5"
+    item_source: "inferred_from_script"
+    reverse_coded_items: []
+
+variable_inventory:
+  - {name: "respondent_id",     type: "id_like",       roles: ["excluded"],           missing_pct: 0, action: "exclude", notes: ""}
+  - {name: "age",                 type: "integer",       roles: ["not_used_in_sem"],    missing_pct: 0, action: "keep",    notes: "profiled in Table 1 (desc.R) only; never entered as a structural-model covariate -- no documented reason"}
+  - {name: "gender",               type: "binary",        roles: ["not_used_in_sem"],    missing_pct: 0, action: "keep",    notes: "profiled in Table 1 only"}
+  - {name: "education",            type: "categorical",   roles: ["not_used_in_sem"],    missing_pct: 0, action: "keep",    notes: "profiled in Table 1 only"}
+  - {name: "income",               type: "integer",       roles: ["not_used"],           missing_pct: 0, action: "keep",    notes: "profiled in Table 1 only; not in any model"}
+  - {name: "work_hours",           type: "numeric",       roles: ["not_used"],           missing_pct: 0, action: "keep",    notes: "profiled in Table 1 only; not in any model"}
+  - {name: "work_mode",            type: "categorical",   roles: ["group_variable, source_of_covariate"], missing_pct: 0, action: "keep", notes: "Table 1 stratification variable AND source of the `remote` dummy used in the structural model"}
+  - {name: "tenure_years",         type: "numeric",       roles: ["not_used_in_sem"],    missing_pct: 0, action: "keep",    notes: "profiled in Table 1 only; contrast with burnout-mediation, which DOES use tenure_years as a structural covariate"}
+  - {name: "js_q1",                type: "integer_scale", roles: ["item_jobsat"],        missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "js_q2",                type: "integer_scale", roles: ["item_jobsat"],        missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "js_q3",                type: "integer_scale", roles: ["item_jobsat"],        missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "js_q4",                type: "integer_scale", roles: ["item_jobsat"],        missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "js_q5",                type: "integer_scale", roles: ["item_jobsat"],        missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "job_satisfaction",     type: "numeric",       roles: ["composite_score"],    missing_pct: 0, action: "keep",    notes: "row-mean composite; not used by the SEM scripts, which use the raw items via the latent construct"}
+  - {name: "bo_q1",                type: "integer_scale", roles: ["item_burnout"],       missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "bo_q2",                type: "integer_scale", roles: ["item_burnout"],       missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "bo_q3",                type: "integer_scale", roles: ["item_burnout"],       missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "bo_q4",                type: "integer_scale", roles: ["item_burnout"],       missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "bo_q5",                type: "integer_scale", roles: ["item_burnout"],       missing_pct: 0, action: "keep",    notes: "Likert 1-5"}
+  - {name: "burnout_score",        type: "numeric",       roles: ["composite_score"],    missing_pct: 0, action: "keep",    notes: "row-mean composite; not used by the SEM scripts"}
+  - {name: "wlb",                  type: "integer_scale", roles: ["not_used"],           missing_pct: 0, action: "keep",    notes: "not referenced anywhere -- Table 1 doesn't include it either, unlike burnout-mediation"}
+  - {name: "turnover_intent",      type: "binary",        roles: ["outcome"],            missing_pct: 0, action: "keep",    notes: "0 = no, 1 = yes"}
+
+recommended_analysis:
+  descriptive_grouping:
+    variable: "work_mode"
+    reason: "Matches scripts/desc.R's group_var -- note this stratifies Table 1 by work arrangement, not by the outcome turnover_intent (see plans/sap.md Section K)"
+  primary_model:
+    value: "sem_direct_effects"
+    reason: "Latent jobsat and burnout as parallel predictors of a binary outcome (turnover_intent), plus the observed remote covariate. No mediation path between jobsat and burnout in this project (contrast with burnout-mediation)."
+  effect_measure:
+    value: "standardized_coefficients"
+    reason: "SEM reports standardized beta (STDYX) per structural path"
+
+readiness:
+  status: "needs_review"
+  blocking_issues: []
+  review_issues:
+    - "research_question was never recorded by the user; the plain_language line above is inferred from script logic"
+    - "age, gender, education, tenure_years, income, work_hours, wlb are profiled in Table 1 but never entered as structural-model covariates -- no documented reason; may be an oversight"
+    - "Table 1 is stratified by work_mode rather than by the outcome turnover_intent, which is unusual for this kind of model"
+    - "turnover_intent is binary and js/bo items are ordinal Likert, but scripts/sem_measurement.R and sem_structural.R use plain ML estimation (no `ordered=` argument) -- same category of issue as burnout-mediation"
+  assumptions:
+    - "Items are treated as continuous (ML estimator) in the existing scripts"
+    - "remote (work_mode == 'Remote') is the only observed covariate that belongs in the structural model"
+
+next_step:
+  skill: "dr-01b-analysis-sap"
+  needs_user_confirmation:
+    - "confirm the restated research question"
+    - "confirm burnout is a parallel predictor, not a hypothesized mediator, for this project"
+    - "confirm age/gender/education/tenure_years/income/work_hours/wlb should stay out of the structural model"

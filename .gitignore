@@ -1,0 +1,30 @@
+# Real data must NEVER live inside this repo. Keep it outside, anywhere on
+# your machine, and select it with file.choose() when a script asks for it.
+# The rules below are only a safety net in case someone copies data in anyway.
+projects/*/data_real/
+data_real/
+*.sav
+*.dta
+*.xlsx
+
+# Figures drawn from real data are row-level data: one point = one participant.
+# scripts/plots.R writes them next to the real dataset, outside this repo.
+# This is a safety net in case someone copies them in anyway.
+dr_figures/
+projects/*/results_real/figures/
+
+# R session artifacts
+.Rhistory
+.RData
+.Rproj.user/
+
+# Python session artifacts (py-scripts/, tools/, tests/)
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# OS / editor cruft
+.DS_Store
+.vscode/
+.idea/
