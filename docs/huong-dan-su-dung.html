@@ -334,6 +334,30 @@
   .faq-q { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin: 0 0 8px; }
   .faq-a { margin: 0; color: var(--ink-2); }
 
+  /* ---------- Method cards (statistical methods glossary) ---------- */
+  .method-card {
+    border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px;
+    padding: 18px 22px; margin: 18px 0; background: var(--surface);
+  }
+  .method-card.sem { border-left-color: var(--track-sem); }
+  .method-name {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.18rem; margin: 0 0 10px;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+  }
+  .method-name .en { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); font-weight: 400; }
+  .method-row { margin: 12px 0 0; }
+  .method-row:first-of-type { margin-top: 4px; }
+  .method-row p { margin: 0; color: var(--ink-2); }
+  .method-label {
+    display: block; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--accent-strong); font-weight: 700; margin-bottom: 3px;
+  }
+  .method-card.sem .method-label { color: var(--track-sem); }
+  .method-code { font-family: var(--font-mono); font-size: 0.82rem; }
+  .method-group-head { display: flex; align-items: center; gap: 10px; margin: 44px 0 4px; }
+  .method-group-head h4 { margin: 0; font-size: 1.02rem; font-family: var(--font-body); font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .method-group-head .rule2 { flex: 1; height: 1px; background: var(--border); }
+
   footer.page-foot {
     max-width: 880px; margin: 40px auto 0; padding: 24px 0; border-top: 1px solid var(--border);
     font-size: 0.85rem; color: var(--muted);
@@ -408,6 +432,8 @@
       <a class="toc-sub" href="#loi-rscript-path">Rscript / python PATH</a>
 
       <a class="toc-part" href="#phan-8"><span class="num">VIII</span>Câu Hỏi Thường Gặp</a>
+
+      <a class="toc-part" href="#phan-9"><span class="num">IX</span>Giải Thích Phương Pháp</a>
 
       <a class="toc-part" href="#phu-luc"><span class="num">&middot;</span>Bảng Lệnh Nhanh</a>
     </nav>
@@ -765,7 +791,7 @@ crp            -     50.9 (28.9)  ...          mann_whitney_u 0.1057</pre>
         </div>
         <div class="callout warn">
           <span class="callout-label">Điểm giảng</span>
-          <p>Descriptive analysis trả lời câu &ldquo;tôi đã nghiên cứu trên ai?&rdquo;. Số trong bảng này là số <strong>GIẢ</strong> &mdash; chỉ để chứng minh code chạy đúng, không phản ánh gì về dữ liệu thật của bạn.</p>
+          <p>Descriptive analysis trả lời câu &ldquo;tôi đã nghiên cứu trên ai?&rdquo;. Số trong bảng này là số <strong>GIẢ</strong> &mdash; chỉ để chứng minh code chạy đúng, không phản ánh gì về dữ liệu thật của bạn. <code>welch_t_test</code>/<code>mann_whitney_u</code> ở cột <code>test</code> là tên kiểm định được chọn tự động &mdash; xem <a href="#phan-9">Phần IX</a> để hiểu vì sao mỗi biến có thể dùng kiểm định khác nhau.</p>
         </div>
 
         <h3 class="sub" id="vd-giai-doan-d2b"><span class="stage-badge">D2b</span>Biểu đồ khám phá <em>(tuỳ chọn)</em></h3>
@@ -791,7 +817,7 @@ age, sex, bmi, diabetes, hypertension, smoking, egfr, hba1c, crp.
 Ask me to confirm before coding.</pre>
         </div>
         <span class="who who-ai">🤖 AI tự làm</span>
-        <p>Cả hai bước ghi vào cùng một file <code>scripts/infer.R</code> (phần thô + phần hiệu chỉnh), agent tự verify bằng <code>Rscript</code>. Nếu dự án của bạn cần thêm chẩn đoán mô hình (VIF, Cook&rsquo;s distance, kiểm tra tuyến tính) hoặc phân tích độ nhạy (hồi quy Firth khi các nhóm quá lệch), agent sẽ thêm các phần này vào cùng file, cũng tự verify trước khi báo xong. Bản Python (<code>scripts/infer.py</code>, tự verify bằng <code>.venv/bin/python scripts/infer.py</code>) có đúng những phần này &mdash; cùng nội dung, cùng cấu trúc bốn phần, chỉ khác cú pháp ngôn ngữ.</p>
+        <p>Cả hai bước ghi vào cùng một file <code>scripts/infer.R</code> (phần thô + phần hiệu chỉnh), agent tự verify bằng <code>Rscript</code>. Nếu dự án của bạn cần thêm chẩn đoán mô hình (VIF, Cook&rsquo;s distance, kiểm tra tuyến tính) hoặc phân tích độ nhạy (hồi quy Firth khi các nhóm quá lệch) &mdash; ý nghĩa của từng chẩn đoán này giải thích ở <a href="#phan-9">Phần IX</a> &mdash; agent sẽ thêm các phần này vào cùng file, cũng tự verify trước khi báo xong. Bản Python (<code>scripts/infer.py</code>, tự verify bằng <code>.venv/bin/python scripts/infer.py</code>) có đúng những phần này &mdash; cùng nội dung, cùng cấu trúc bốn phần, chỉ khác cú pháp ngôn ngữ.</p>
         <div class="callout warn">
           <span class="callout-label">Điểm giảng</span>
           <p>Phân tích (analyze) là để trả lời câu hỏi nghiên cứu, không phải để &ldquo;săn&rdquo; p-value đẹp. Hiệu chỉnh (adjust) là để so sánh công bằng hơn giữa hai nhóm điều trị (loại trừ ảnh hưởng của các yếu tố nhiễu), không phải để làm p nhỏ hơn.</p>
@@ -882,6 +908,7 @@ Constructs: Job satisfaction: js_q1..js_q5; Burnout: bo_q1..bo_q5. Response rang
           thêm một tầng mà track Medical không có: <strong>mô hình đo lường</strong> (measurement model),
           kiểm tra xem các câu hỏi khảo sát có thực sự đo đúng khái niệm trừu tượng bạn định đo hay không
           (qua chỉ số fit như CFI, RMSEA, và độ tin cậy alpha/omega), <em>trước khi</em> đi vào mô hình cấu trúc.
+          Ý nghĩa của từng chỉ số &mdash; alpha, omega, CFI/TLI/RMSEA/SRMR, AVE, HTMT &mdash; giải thích đầy đủ ở <a href="#phan-9">Phần IX</a>.
         </p>
         <div class="callout warn">
           <span class="callout-label">Điểm giảng quan trọng nhất của track SEM</span>
@@ -899,7 +926,9 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
           Agent viết <code>scripts/sem_structural.R</code>, và &mdash; khác với track Medical &mdash;
           <strong>luôn cho bạn xem trước cú pháp <code>lavaan</code> đầy đủ để xác nhận từng đường dẫn
           (path)</strong> trước khi viết file. Mỗi path là một giả thuyết có hướng bạn đang đặt ra, nên
-          cần được xác nhận rõ ràng, không phải điều agent tự quyết.
+          cần được xác nhận rõ ràng, không phải điều agent tự quyết. Nếu câu hỏi nghiên cứu của bạn có
+          biến trung gian (mediator, như <code>burnout</code> ở ví dụ này), xem cách đọc hiệu ứng gián
+          tiếp/trực tiếp/tổng ở <a href="#phan-9">Phần IX</a>.
         </p>
         <div class="callout info">
           <span class="callout-label">Nếu bạn dùng Python: một bước tính toán nhiều hơn, không phải thiếu tính năng</span>
@@ -1062,6 +1091,206 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
         <div class="faq-item">
           <p class="faq-q">Làm sao biết một con số trong bảng kết quả cuối cùng là thật, không phải AI bịa ra?</p>
           <p class="faq-a">Mọi con số trong <code>results_real/</code> đều phải truy ngược được về đúng dòng bạn đã dán từ Console RStudio (hoặc terminal, nếu dùng Python) ở giai đoạn E (Phần IV, Phần V). Đây là quy tắc cứng của skill <code>dr-05-present-results</code>: không được suy diễn, không được &ldquo;làm tròn cho đẹp&rdquo;, không được điền số còn thiếu. Nếu nghi ngờ, so sánh trực tiếp bảng kết quả với output gốc bạn đã dán.</p>
+        </div>
+      </section>
+
+      <section class="part" id="phan-9">
+        <div class="part-head"><span class="part-num">IX</span><h2>Giải Thích Các Phương Pháp Thống Kê</h2></div>
+        <p class="part-intro">
+          Phần I&ndash;VIII trả lời &ldquo;làm sao để chạy&rdquo;. Phần này trả lời <strong>&ldquo;con số
+          này nghĩa là gì&rdquo;</strong> &mdash; mọi phương pháp/thuật toán thống kê thực sự có trong
+          AirGap Stats, theo đúng thứ tự bạn sẽ gặp trong quy trình A&ndash;E, giải thích bằng ngôn ngữ
+          thường, không cần biết công thức toán để hiểu. Mỗi mục có 4 phần: <strong>trả lời câu hỏi
+          gì</strong>, <strong>vì sao không dùng cách đơn giản hơn</strong>, <strong>cách đọc kết
+          quả</strong>, và <strong>nằm ở đâu trong code</strong> &mdash; để bạn nối được giữa con số
+          agent đưa ra và chỗ nó thực sự được tính.
+        </p>
+
+        <div class="method-group-head"><h4>Bảng 1 &mdash; kiểm định so sánh nhóm (dùng cho cả hai track)</h4><span class="rule2"></span></div>
+        <p>Ở giai đoạn D2, mỗi biến trong Table 1 được so sánh giữa các nhóm bằng <strong>một trong bốn kiểm định</strong> &mdash; kiểm định nào được chọn phụ thuộc vào phân phối dữ liệu, quyết định tự động lúc chạy, không cố định trước (vì chưa ai từng thấy phân phối thật của dữ liệu khi script được viết).</p>
+
+        <div class="method-card">
+          <p class="method-name">Shapiro-Wilk <span class="en">shapiro.test / scipy.stats.shapiro</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Biến liên tục này (ví dụ tuổi, CRP) có phân phối gần với phân phối chuẩn (hình chuông) hay không? Đây là bước quyết định dùng kiểm định nào ở bốn mục tiếp theo.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>p &ge; 0.05 &rarr; xem như &ldquo;đủ chuẩn&rdquo;, dùng kiểm định tham số (Welch). p &lt; 0.05 &rarr; dùng kiểm định phi tham số (Mann-Whitney/Kruskal-Wallis). Mẫu quá nhỏ (&lt; 3 điểm) hoặc toàn giá trị giống nhau thì xem như &ldquo;không chuẩn&rdquo; &mdash; lựa chọn an toàn hơn khi không đủ thông tin để kết luận.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/group_tests.py (Python) &middot; desc.R (R)</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Welch&rsquo;s t-test / Welch&rsquo;s ANOVA <span class="en">t.test / oneway.test(var.equal=FALSE)</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Trung bình của một biến liên tục (ví dụ tuổi) có khác nhau giữa 2 nhóm (t-test) hay từ 3 nhóm trở lên (ANOVA) hay không, khi biến đó đủ chuẩn ở mọi nhóm.</p></div>
+          <div class="method-row"><span class="method-label">Vì sao không dùng t-test/ANOVA &ldquo;cổ điển&rdquo;</span><p>T-test/ANOVA cổ điển giả định phương sai bằng nhau giữa các nhóm &mdash; giả định này thường sai trong dữ liệu thật (một nhóm biến thiên nhiều hơn nhóm kia). Bản Welch không cần giả định đó, luôn an toàn hơn để dùng mặc định.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>p &lt; 0.05 &rarr; trung bình khác nhau có ý nghĩa thống kê giữa các nhóm (ở mức 5%). Không nói lên <em>mức độ</em> khác nhau lớn hay nhỏ &mdash; nhìn thêm cột trung bình (SD) trong Table 1 cho việc đó.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/group_tests.py &mdash; Welch&rsquo;s ANOVA tự viết công thức tay (scipy không có sẵn), đối chiếu khớp với R&rsquo;s oneway.test() tới 6 chữ số thập phân (F&nbsp;=&nbsp;7.353164, p&nbsp;=&nbsp;0.001550, cả hai ngôn ngữ)</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Mann-Whitney U / Kruskal-Wallis <span class="en">wilcox.test / kruskal.test</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Giống Welch&rsquo;s t-test/ANOVA (biến liên tục khác nhau giữa các nhóm hay không), nhưng dùng khi ít nhất một nhóm không đủ chuẩn theo Shapiro-Wilk.</p></div>
+          <div class="method-row"><span class="method-label">Vì sao không dùng Welch luôn cho tiện</span><p>Welch dựa trên trung bình &mdash; nếu dữ liệu lệch mạnh hoặc có ngoại lai, trung bình bị kéo lệch và kết luận có thể sai. Hai kiểm định này so sánh <em>thứ hạng</em> của giá trị thay vì giá trị thô, nên bền hơn với dữ liệu lệch.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>p &lt; 0.05 &rarr; phân phối của biến khác nhau có ý nghĩa giữa các nhóm. Đọc cùng median hoặc mean (SD) trong Table 1 để biết chiều khác nhau.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/group_tests.py &middot; desc.R</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Chi-squared / Fisher&rsquo;s exact <span class="en">chisq.test / fisher.test</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Một biến phân loại (ví dụ giới tính, có/không biến chứng) có phân bố khác nhau giữa các nhóm hay không.</p></div>
+          <div class="method-row"><span class="method-label">Vì sao không dùng chi-squared luôn</span><p>Chi-squared chỉ chính xác khi mọi ô trong bảng chéo có <strong>số kỳ vọng &ge; 5</strong>. Với nhóm nhỏ hoặc biến hiếm gặp, một vài ô có thể có kỳ vọng &lt; 5 &mdash; khi đó dùng Fisher&rsquo;s exact (tính chính xác, không xấp xỉ), quyết định tự động theo số kỳ vọng nhỏ nhất trong bảng.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>p &lt; 0.05 &rarr; tỷ lệ các mức của biến phân loại khác nhau có ý nghĩa giữa các nhóm. Đọc cùng cột n (%) trong Table 1.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/group_tests.py (min_expected=5.0 mặc định) &middot; desc.R</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track Medical &mdash; phân tích chính (D3&ndash;D4)</h4><span class="rule2"></span></div>
+        <div class="method-card">
+          <p class="method-name">Hồi quy logistic thô &amp; hiệu chỉnh <span class="en">crude &amp; adjusted logistic regression</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Predictor chính (ví dụ CRP) có liên quan tới outcome nhị phân (ví dụ tử vong 30 ngày) hay không &mdash; mô hình <strong>thô</strong> chỉ có predictor chính; mô hình <strong>hiệu chỉnh</strong> thêm các yếu tố nhiễu (confounder) để so sánh công bằng hơn.</p></div>
+          <div class="method-row"><span class="method-label">Vì sao cần cả hai mô hình</span><p>Mô hình thô dễ bị &ldquo;confounding&rdquo;: một yếu tố thứ ba (ví dụ tuổi) ảnh hưởng cả predictor lẫn outcome, làm liên quan quan sát được không phản ánh đúng bản chất. Mô hình hiệu chỉnh cô lập phần đóng góp riêng của predictor chính sau khi đã tính tới các yếu tố đó &mdash; hai mô hình cùng báo cáo để người đọc thấy hiệu chỉnh thay đổi kết luận bao nhiêu.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p><strong>OR (odds ratio)</strong> &gt; 1: predictor tăng thì odds của outcome tăng. OR &lt; 1: ngược lại. <strong>Khoảng tin cậy 95%</strong> không chứa 1 &rarr; liên quan có ý nghĩa thống kê ở mức 5%. OR chỉ đúng nghĩa &ldquo;odds&rdquo;, không phải &ldquo;risk&rdquo; &mdash; với outcome hiếm gặp hai giá trị gần nhau, với outcome phổ biến thì khác biệt đáng kể.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">infer.py (statsmodels.formula.api.logit) &middot; infer.R (glm(family=binomial))</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track Medical &mdash; chẩn đoán mô hình (D3&ndash;D4, tự động)</h4><span class="rule2"></span></div>
+        <p>Bốn mục dưới đây agent luôn chạy kèm mô hình hiệu chỉnh, không cần bạn yêu cầu &mdash; câu hỏi chung: <em>mô hình hiệu chỉnh này có đáng tin không, hay có vấn đề gì cần biết trước khi diễn giải OR của nó?</em></p>
+
+        <div class="method-card">
+          <p class="method-name">VIF &mdash; Variance Inflation Factor <span class="en">đa cộng tuyến</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Các biến hiệu chỉnh (covariate) có &ldquo;trùng lặp thông tin&rdquo; với nhau quá nhiều không (ví dụ BMI và cân nặng gần như đo cùng một thứ)? Khi trùng lặp quá nhiều, hệ số hồi quy của từng biến trở nên không ổn định, dù mô hình vẫn dự đoán tốt.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>VIF &gt; 5 (ngưỡng quy ước &ldquo;đáng chú ý&rdquo;) &rarr; cân nhắc bỏ bớt một trong các biến trùng lặp, hoặc diễn giải hệ số của các biến đó thận trọng hơn. VIF cao không có nghĩa mô hình sai, chỉ có nghĩa hệ số riêng lẻ của biến đó kém chính xác.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/regression_diagnostics.py (ngưỡng 5.0) &middot; infer.R</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Cook&rsquo;s distance &amp; DFBETAs <span class="en">điểm dữ liệu ảnh hưởng bất thường</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Có bệnh nhân/quan sát nào đơn lẻ đang &ldquo;kéo&rdquo; kết quả mô hình đi lệch một mình không &mdash; nếu bỏ riêng người đó ra, kết luận có đổi khác nhiều không?</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>Cook&rsquo;s distance vượt ngưỡng 4/n &rarr; quan sát đó ảnh hưởng mạnh tới toàn bộ mô hình. DFBETAs vượt ngưỡng 2/&radic;n &rarr; quan sát đó ảnh hưởng mạnh tới một hệ số cụ thể. <strong>Bị gắn cờ không có nghĩa phải xoá</strong> &mdash; chỉ có nghĩa nên xem lại quan sát đó có phải nhập liệu sai không, hoặc báo cáo kết quả có/không có nó để minh bạch.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/regression_diagnostics.py &middot; infer.R (DFBETAs làm tròn lệch vài % giữa R/Python &mdash; khác biệt vô hại đã biết, xem Phần VI)</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Box-Tidwell <span class="en">kiểm tra tuyến tính trên thang logit</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Hồi quy logistic giả định mỗi biến liên tục có quan hệ <em>tuyến tính</em> với log-odds của outcome. Biến này có thực sự thoả giả định đó, hay quan hệ thực tế là đường cong (ví dụ nguy cơ tăng nhanh hơn ở giá trị rất cao)?</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>p &lt; 0.05 cho số hạng tương tác &rarr; nghi ngờ biến đó không tuyến tính trên thang logit. Khi bị gắn cờ, agent tự thử log-transform biến đó (mục tiếp theo) và báo cáo cả hai mô hình để so sánh.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/regression_diagnostics.py &middot; infer.R</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Bootstrap-optimism validation <span class="en">Harrell 2001</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Mô hình hiệu chỉnh dự đoán tốt trên chính dữ liệu nó được xây dựng &mdash; nhưng dự đoán đó có &ldquo;lạc quan giả&rdquo; (overfitting) không, hay thực sự tổng quát hoá tốt?</p></div>
+          <div class="method-row"><span class="method-label">Cách hoạt động</span><p>Lặp lại 200 lần: lấy mẫu lại (resample) từ dữ liệu, fit lại mô hình trên mẫu đó, đo hiệu năng trên chính mẫu đó (&ldquo;apparent&rdquo;, luôn lạc quan) và trên dữ liệu gốc (&ldquo;test&rdquo;, thực tế hơn). Khoảng cách trung bình giữa hai con số này là <strong>optimism</strong> &mdash; trừ đi để có ước lượng hiệu năng thực tế, đã điều chỉnh.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p><strong>AUC</strong> (0.5&ndash;1.0): khả năng phân biệt người có/không có outcome, càng gần 1 càng tốt. <strong>Calibration slope</strong> gần 1.0: xác suất dự đoán khớp với tần suất thực tế; lệch xa 1.0 nghĩa là mô hình dự đoán quá tự tin hoặc quá dè dặt.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/diagnostics/bootstrap_validation.py (n_boot=200 mặc định, AUC tính bằng công thức Mann-Whitney-U chính xác, không xấp xỉ) &middot; infer.R</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track Medical &mdash; phân tích độ nhạy (D3&ndash;D4, khi cần)</h4><span class="rule2"></span></div>
+        <div class="method-card">
+          <p class="method-name">Hồi quy logistic Firth <span class="en">Firth 1993; Heinze &amp; Schemper 2002</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Khi outcome hiếm gặp hoặc một nhóm gần như hoàn toàn tách biệt (ví dụ tất cả người tử vong đều có cùng một đặc điểm), hồi quy logistic thường bị OR &ldquo;nổ&rdquo; (rất lớn, rất bất ổn) &mdash; Firth cho một ước lượng ổn định hơn trong tình huống đó.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>So sánh OR của mô hình thường với OR của Firth cho cùng predictor chính: <strong>chênh lệch lớn</strong> là dấu hiệu mô hình gốc không ổn định (separation), nên ưu tiên đọc kết quả Firth. Chênh lệch nhỏ nghĩa là mô hình gốc vốn đã ổn định, Firth chỉ để xác nhận thêm.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/medical_track/firth_logistic.py &amp; infer.R Section 4 &mdash; tự viết thuật toán tay ở cả hai ngôn ngữ (không có package Python chính thức cho phương pháp này), đối chiếu khớp với R&rsquo;s logistf tới 4+ chữ số thập phân</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track Medical &mdash; mở rộng: sống còn &amp; propensity score (nếu dự án cần)</h4><span class="rule2"></span></div>
+        <div class="method-card">
+          <p class="method-name">Kaplan-Meier &amp; log-rank <span class="en">đường cong sống còn</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Thay vì chỉ hỏi &ldquo;có tử vong trong 30 ngày hay không&rdquo; (nhị phân), câu hỏi đầy đủ hơn: <em>khi nào</em> biến cố xảy ra? Kaplan-Meier vẽ xác suất &ldquo;còn sống&rdquo; theo thời gian; log-rank so sánh đường cong đó giữa các nhóm.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>Đường cong của nhóm nào thấp hơn &rarr; nhóm đó có biến cố sớm hơn/nhiều hơn. p (log-rank) &lt; 0.05 &rarr; khác biệt giữa các đường cong có ý nghĩa thống kê trong toàn bộ thời gian theo dõi, không chỉ tại một mốc.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/medical_track/survival.py (bọc statsmodels.duration) &middot; survival.R (gói survival, survfit())</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Cox proportional hazards <span class="en">mô hình nguy cơ tỷ lệ</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Predictor chính (và các covariate) ảnh hưởng thế nào tới <em>tốc độ</em> xảy ra biến cố theo thời gian, không chỉ tới việc có/không xảy ra?</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p><strong>HR (hazard ratio)</strong> &gt; 1: predictor tăng thì nguy cơ biến cố xảy ra sớm hơn tăng theo. HR &lt; 1: bảo vệ, biến cố xảy ra muộn hơn. Đọc cùng khoảng tin cậy 95%, giống cách đọc OR.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/medical_track/survival.py &middot; survival.R &mdash; R mặc định xử lý &ldquo;tie&rdquo; (nhiều biến cố cùng thời điểm) bằng phương pháp Efron, Python mặc định dùng Breslow: khác biệt hệ số nhỏ, đã biết và tài liệu hoá, không phải lỗi</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">Propensity score matching (PSM) &amp; IPTW</p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Kết luận từ hồi quy hiệu chỉnh (mục D3&ndash;D4) có đứng vững không nếu kiểm tra bằng một cách hoàn toàn khác? Hồi quy giả định đúng dạng công thức của mô hình; PSM/IPTW không cần giả định đó &mdash; nếu cả hai cách đều cho kết luận tương tự, đó là bằng chứng thật sự đáng tin hơn là chỉ một mô hình đơn lẻ.</p></div>
+          <div class="method-row"><span class="method-label">Cách hoạt động</span><p><strong>PSM</strong>: ghép mỗi người có điều trị/phơi nhiễm với một người tương tự nhất (dựa trên xác suất được điều trị, ước lượng từ các covariate) không điều trị, rồi so sánh outcome giữa hai nhóm đã ghép cặp. <strong>IPTW</strong>: thay vì ghép cặp, gán trọng số cho mỗi người theo nghịch đảo xác suất được điều trị của họ, tạo một &ldquo;quần thể giả&rdquo; cân bằng.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>So sánh chiều và độ lớn của kết quả PSM/IPTW với kết quả hồi quy hiệu chỉnh &mdash; tương tự nhau là dấu hiệu tốt. Khác nhau nhiều đáng để tìm hiểu vì sao (dạng công thức hồi quy có thể sai, hoặc hai nhóm quá khác biệt để ghép cặp tốt).</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/medical_track/propensity.py (caliper mặc định 0.2 SD của logit-PS, theo Austin 2011) &middot; psm.R</p></div>
+        </div>
+
+        <div class="method-card">
+          <p class="method-name">E-value <span class="en">VanderWeele &amp; Ding 2017</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Không có nghiên cứu quan sát nào đo được <em>mọi</em> yếu tố nhiễu. E-value trả lời: một yếu tố nhiễu <em>chưa đo được</em> phải mạnh tới mức nào (liên quan cả với predictor lẫn outcome) mới đủ sức xoá bỏ hoàn toàn kết quả quan sát được?</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>E-value càng lớn &rarr; kết quả càng khó bị &ldquo;lung lay&rdquo; bởi một yếu tố nhiễu chưa đo được &mdash; cần một yếu tố nhiễu rất mạnh mới giải thích được hết liên quan quan sát thấy. E-value gần 1 &rarr; chỉ cần một yếu tố nhiễu nhỏ cũng đủ xoá bỏ kết quả, nên diễn giải thận trọng hơn.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/medical_track/propensity.py &middot; psm.R &mdash; đối chiếu khớp với ví dụ gốc của VanderWeele &amp; Ding: RR&nbsp;=&nbsp;2 &rarr; E-value&nbsp;=&nbsp;3.4142 ở cả hai ngôn ngữ</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Kiểm soát sai số khi so sánh nhiều lần</h4><span class="rule2"></span></div>
+        <div class="method-card">
+          <p class="method-name">Benjamini-Hochberg (FDR) <span class="en">hiệu chỉnh so sánh bội</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Nếu một dự án kiểm định nhiều giả thuyết cùng lúc (nhiều predictor, nhiều outcome), xác suất có ít nhất một kết quả &ldquo;có ý nghĩa&rdquo; chỉ do ngẫu nhiên tăng lên theo số lần kiểm định. FDR kiểm soát tỷ lệ phát hiện sai (false discovery) trong tập kết quả &ldquo;có ý nghĩa&rdquo;.</p></div>
+          <div class="method-row"><span class="method-label">Trạng thái hiện tại</span><p>Đã xây dựng sẵn trong AirGap Stats nhưng <strong>chưa dự án mẫu nào cần dùng</strong> &mdash; cả bốn project mẫu đều khai báo đúng 1 so sánh chính trong SAP (<code>correction_method: none_single_comparison</code>). Nếu dự án của bạn có nhiều hơn 1 so sánh chính, khai báo điều đó ở bước D1b (Phần IV) và nói với agent bạn cần hiệu chỉnh FDR.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/medical_track/multiplicity.py (bọc statsmodels.stats.multitest.multipletests)</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track SEM &mdash; độ tin cậy thang đo (trước D3)</h4><span class="rule2"></span></div>
+        <p>Trước khi hỏi &ldquo;mô hình có fit không&rdquo;, cần hỏi câu cơ bản hơn: các câu hỏi khảo sát đo cùng một construct (khái niệm trừu tượng) có <em>nhất quán với nhau</em> không?</p>
+
+        <div class="method-card sem">
+          <p class="method-name">Cronbach&rsquo;s alpha</p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Các câu hỏi trong cùng một construct (ví dụ 5 câu đo &ldquo;hài lòng công việc&rdquo;) có xu hướng trả lời giống nhau (nhất quán nội bộ) hay không &mdash; nếu người trả lời điểm cao ở câu này thường cũng điểm cao ở câu khác trong cùng construct.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>Alpha càng gần 1 &rarr; càng nhất quán. Ngưỡng thường dùng: &ge; 0.70 chấp nhận được, &ge; 0.80 tốt. Alpha thấp không nhất thiết do construct kém &mdash; có thể do construct thực chất gồm nhiều &ldquo;tiểu chủ đề&rdquo; khác nhau, hoặc quá ít câu hỏi.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/reliability.py &middot; sem_measurement.R</p></div>
+        </div>
+
+        <div class="method-card sem">
+          <p class="method-name">McDonald&rsquo;s omega</p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Cùng câu hỏi với Cronbach&rsquo;s alpha (độ tin cậy nội bộ), nhưng tính chính xác hơn khi các câu hỏi trong construct không đóng góp <em>đều nhau</em> (một số câu &ldquo;đo tốt&rdquo; construct hơn câu khác).</p></div>
+          <div class="method-row"><span class="method-label">Vì sao không dùng alpha luôn cho tiện</span><p>Alpha giả định mọi câu hỏi đóng góp bằng nhau vào construct (tau-equivalence) &mdash; giả định này hiếm khi đúng thật sự, và mô hình CFA ngay bên dưới thường tự nó đã bác bỏ giả định đó (các hệ số tải factor loading khác nhau giữa các câu). Omega dùng đúng các hệ số tải đó, không giả định chúng bằng nhau.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>Cùng thang đọc với alpha (càng gần 1 càng tốt) &mdash; nếu omega và alpha chênh lệch nhiều, ưu tiên tin omega hơn vì ít giả định hơn.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/reliability.py (omega = (tổng hệ số tải chuẩn hoá)&sup2; / [(tổng hệ số tải)&sup2; + tổng phương sai sai số]) &middot; sem_measurement.R</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track SEM &mdash; mô hình đo lường (D3)</h4><span class="rule2"></span></div>
+        <div class="method-card sem">
+          <p class="method-name">CFA &mdash; Confirmatory Factor Analysis <span class="en">phân tích nhân tố khẳng định</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Các câu hỏi khảo sát bạn nhóm vào một construct có <em>thực sự</em> cùng đo một khái niệm trừu tượng duy nhất hay không &mdash; khác &ldquo;khẳng định&rdquo; (confirmatory) với phân tích nhân tố khám phá (exploratory) ở chỗ bạn đã xác định trước cấu trúc muốn kiểm tra, không để dữ liệu tự tìm cấu trúc.</p></div>
+          <div class="method-row"><span class="method-label">Vì sao dùng ước lượng DWLS/WLSMV thay vì ML (bình thường)</span><p>Câu hỏi thang Likert (1&ndash;5) là dữ liệu <strong>thứ bậc</strong> (ordinal), không phải liên tục thật sự &mdash; khoảng cách từ 1&rarr;2 chưa chắc bằng khoảng cách từ 4&rarr;5. Ước lượng maximum-likelihood (ML) mặc định giả định dữ liệu liên tục, không phù hợp. DWLS (Python, gói semopy) / WLSMV (R, gói lavaan) là hai tên cho cùng một họ phương pháp thiết kế riêng cho dữ liệu thứ bậc, dùng ma trận tương quan polychoric thay vì tương quan Pearson thông thường.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/estimator.py (estimator="DWLS") &middot; sem_measurement.R (estimator="WLSMV")</p></div>
+        </div>
+
+        <div class="method-card sem">
+          <p class="method-name">Chỉ số fit &mdash; CFI, TLI, RMSEA, SRMR</p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Mô hình đo lường (cấu trúc construct &rarr; item bạn giả định) có khớp với dữ liệu thực tế hay không &mdash; bốn chỉ số nhìn vào &ldquo;độ khớp&rdquo; từ bốn góc khác nhau, nên luôn đọc cùng nhau, không chỉ một chỉ số riêng lẻ.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p><strong>CFI, TLI</strong> (0&ndash;1, càng cao càng tốt): quy ước &gt; 0.90 chấp nhận được, &gt; 0.95 tốt. <strong>RMSEA</strong> (càng thấp càng tốt): quy ước &lt; 0.08 chấp nhận được, &lt; 0.05 tốt. <strong>SRMR</strong> (càng thấp càng tốt, thường &lt; 0.08 chấp nhận được). Đây là quy ước phổ biến trong tài liệu SEM, không phải quy tắc cứng &mdash; luôn diễn giải cùng với bối cảnh nghiên cứu.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/estimator.py &mdash; SRMR của semopy luôn trả về NaN bất kể mô hình có hội tụ hay không (đặc thù riêng của gói này, không phải lỗi) &middot; sem_measurement.R</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track SEM &mdash; giá trị hội tụ &amp; phân biệt (D3)</h4><span class="rule2"></span></div>
+        <div class="method-card sem">
+          <p class="method-name">AVE &amp; Composite Reliability <span class="en">Fornell &amp; Larcker 1981</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p><strong>AVE</strong> (Average Variance Extracted): trung bình bao nhiêu phần trăm biến thiên của các item thực sự do construct chung giải thích, thay vì do sai số đo lường. <strong>CR</strong> (Composite Reliability): độ tin cậy tổng thể của construct, tính từ chính các hệ số tải &mdash; cùng công thức họ với omega ở trên, báo cáo riêng theo quy ước ngành.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>AVE &ge; 0.50 &rarr; construct &ldquo;giá trị hội tụ&rdquo; tốt (item thực sự đo đúng construct nhiều hơn đo nhiễu). CR &ge; 0.70 &rarr; độ tin cậy tổng thể tốt. Đây là hai ngưỡng kinh điển nhất trong tài liệu SEM (Fornell &amp; Larcker 1981), gần như luôn được báo cáo cùng nhau.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/validity.py (AVE = trung bình bình phương hệ số tải chuẩn hoá) &middot; sem_measurement.R</p></div>
+        </div>
+
+        <div class="method-card sem">
+          <p class="method-name">HTMT <span class="en">Heterotrait-Monotrait ratio; Henseler, Ringle &amp; Sarstedt 2015</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Hai construct khác nhau (ví dụ &ldquo;hài lòng công việc&rdquo; và &ldquo;kiệt sức&rdquo;) có thực sự là hai khái niệm <em>tách biệt</em>, hay thực chất đang đo trùng lặp lẫn nhau (&ldquo;giá trị phân biệt&rdquo; &mdash; discriminant validity)?</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>HTMT &lt; 0.85 (ngưỡng chặt) hoặc &lt; 0.90 (ngưỡng lỏng hơn) &rarr; hai construct đủ tách biệt để coi là hai khái niệm khác nhau. HTMT cao &rarr; cân nhắc gộp hai construct lại, hoặc xem lại câu hỏi khảo sát có đang hỏi trùng ý không.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/validity.py (tính từ tương quan Pearson thô giữa các item, không phải ma trận polychoric của CFA) &middot; sem_measurement.R</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track SEM &mdash; mô hình cấu trúc (D4)</h4><span class="rule2"></span></div>
+        <div class="method-card sem">
+          <p class="method-name">Mediation bootstrap <span class="en">hiệu ứng gián tiếp/trực tiếp/tổng</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Predictor (ví dụ hài lòng công việc) ảnh hưởng tới outcome (ví dụ ý định nghỉ việc) <strong>trực tiếp</strong>, hay <strong>gián tiếp thông qua</strong> một biến trung gian (ví dụ kiệt sức), hay cả hai? Đây là câu hỏi &ldquo;bằng cách nào&rdquo; (mechanism), không chỉ &ldquo;có liên quan không&rdquo;.</p></div>
+          <div class="method-row"><span class="method-label">Vì sao cần bootstrap thay vì kiểm định thường</span><p>Hiệu ứng gián tiếp = tích của hai hệ số hồi quy (a&times;b) &mdash; tích của hai số không có phân phối chuẩn ngay cả khi từng số một có, nên kiểm định thống kê thông thường (dựa trên giả định chuẩn) không chính xác. Bootstrap tạo hàng trăm mẫu lại từ dữ liệu, tính a&times;b mỗi lần, rồi lấy khoảng phân vị 2.5%&ndash;97.5% của toàn bộ phân phối đó làm khoảng tin cậy &mdash; không cần giả định phân phối chuẩn.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>Khoảng tin cậy 95% (bootstrap) của hiệu ứng gián tiếp <strong>không chứa 0</strong> &rarr; có trung gian hoá có ý nghĩa thống kê. So sánh hiệu ứng trực tiếp (sau khi đã tính trung gian) với hiệu ứng thô: nếu trực tiếp không còn ý nghĩa &rarr; trung gian hoá &ldquo;toàn phần&rdquo;; nếu vẫn còn ý nghĩa nhưng nhỏ hơn &rarr; &ldquo;một phần&rdquo;.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/mediation.py (n_boot=200 mặc định, hồi quy hai bước qua điểm construct rồi bootstrap) &middot; sem_structural.R (lavaan ước lượng trực tiếp trong một bước, cú pháp <code>indirect := a * b</code>, cùng bootstrap 200 lần &mdash; hai đường tính khác nhau, cùng loại kết quả, xem Phần VI)</p></div>
+        </div>
+
+        <div class="method-group-head"><h4>Track SEM &mdash; đo lường bất biến (nếu dự án so sánh nhóm)</h4><span class="rule2"></span></div>
+        <div class="method-card sem">
+          <p class="method-name">Đo lường bất biến <span class="en">measurement invariance &mdash; configural &amp; metric</span></p>
+          <div class="method-row"><span class="method-label">Trả lời câu hỏi gì</span><p>Nếu bạn so sánh điểm construct giữa hai nhóm (ví dụ nam/nữ, remote/văn phòng), câu hỏi ẩn phía sau: thang đo có đo <em>cùng một thứ theo cùng một cách</em> ở cả hai nhóm không? Nếu không, so sánh điểm số giữa hai nhóm không có ý nghĩa &mdash; giống so sánh nhiệt độ đo bằng độ C với độ F mà không quy đổi.</p></div>
+          <div class="method-row"><span class="method-label">Cách hoạt động</span><p><strong>Configural</strong>: cùng cấu trúc construct &rarr; item được ước lượng riêng ở mỗi nhóm, không ràng buộc gì &mdash; chỉ kiểm tra mô hình có fit được ở cả hai nhóm hay không. <strong>Metric</strong>: ràng buộc hệ số tải (factor loading) phải bằng nhau giữa hai nhóm, rồi so sánh độ fit với mô hình configural bằng kiểm định chi-square khác biệt &mdash; fit tệ đi đáng kể nghĩa là hệ số tải thực sự khác nhau giữa hai nhóm.</p></div>
+          <div class="method-row"><span class="method-label">Cách đọc kết quả</span><p>p (kiểm định chi-square khác biệt) &ge; 0.05 &rarr; không đủ bằng chứng bác bỏ bất biến ở mức metric &mdash; an toàn để so sánh điểm construct giữa hai nhóm. p &lt; 0.05 &rarr; ít nhất một item có hệ số tải khác nhau giữa hai nhóm, cần thận trọng khi so sánh trực tiếp.</p></div>
+          <div class="method-row"><span class="method-label">Trong code</span><p class="method-code">tools/sem_track/invariance.py (Python: fit riêng từng nhóm rồi bootstrap so sánh hệ số tải &mdash; semopy không hỗ trợ multi-group thật) &middot; sem_invariance.R (R: lavaan hỗ trợ multi-group trực tiếp, group.equal=c("loadings") + lavTestLRT() cho kiểm định chi-square thật &mdash; đơn giản hơn, xem Phần VI)</p></div>
         </div>
       </section>
 
