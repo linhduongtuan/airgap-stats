@@ -383,7 +383,8 @@
       <a class="toc-sub" href="#kiem-tra-hoat-dong">Kiểm tra hoạt động</a>
 
       <a class="toc-part" href="#phan-3"><span class="num">III</span>Dữ liệu thật để ở đâu</a>
-      <a class="toc-sub" href="#tung-buoc-file-choose">5 bước file.choose()</a>
+      <a class="toc-sub" href="#tung-buoc-file-choose">R: 5 bước file.choose()</a>
+      <a class="toc-sub" href="#tung-buoc-python">Python: nhập đường dẫn</a>
       <a class="toc-sub" href="#vi-sao-an-toan">Vì sao an toàn tuyệt đối</a>
       <a class="toc-sub" href="#luu-y-paste">Lưu ý khi paste kết quả</a>
 
@@ -403,7 +404,8 @@
       <a class="toc-part" href="#phan-7"><span class="num">VII</span>Xử Lý Sự Cố</a>
       <a class="toc-sub" href="#loi-dang-o-dau">Không nhớ đang ở đâu</a>
       <a class="toc-sub" href="#loi-lavaan">Thiếu lavaan</a>
-      <a class="toc-sub" href="#loi-rscript-path">Rscript PATH</a>
+      <a class="toc-sub" href="#loi-python">Lỗi thường gặp với Python</a>
+      <a class="toc-sub" href="#loi-rscript-path">Rscript / python PATH</a>
 
       <a class="toc-part" href="#phan-8"><span class="num">VIII</span>Câu Hỏi Thường Gặp</a>
 
@@ -480,24 +482,51 @@
 
       <section class="part" id="phan-2">
         <div class="part-head"><span class="part-num">II</span><h2>Cài đặt</h2></div>
-        <p class="part-intro">Chuẩn bị môi trường mất khoảng 10&ndash;15 phút, phần lớn là cài R + RStudio nếu máy bạn chưa có. Không cần biết dòng lệnh, không cần biết Git.</p>
+        <p class="part-intro">Chuẩn bị môi trường mất khoảng 10&ndash;15 phút. Có <strong>hai đường chạy song song, chọn một</strong> &mdash; cả hai đều được hỗ trợ đầy đủ, không bên nào là &ldquo;bản rút gọn&rdquo; của bên kia.</p>
+
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th></th><th>R + RStudio</th><th>Python</th></tr></thead>
+            <tbody>
+              <tr><td class="name">Phù hợp nhất cho</td><td>Người không rành lập trình &mdash; RStudio có cửa sổ chọn file bằng chuột, không cần gõ lệnh</td><td>Người đã quen Python/dòng lệnh, hoặc máy không cài được RStudio</td></tr>
+              <tr><td class="name">Cách chọn file dữ liệu thật</td><td>Cửa sổ chọn file (<code>file.choose()</code>) &mdash; xem Phần III</td><td>Gõ đường dẫn vào dòng lệnh terminal, hoặc dán khi được hỏi &mdash; xem Phần III</td></tr>
+              <tr><td class="name">Package cần cài thêm</td><td>0 cho Medical, 1 (<code>lavaan</code>) cho SEM</td><td>0 cho Medical, 1 (<code>semopy</code>) cho SEM &mdash; cả hai cài một lần bằng <code>uv</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Hai đường cho <strong>cùng một quy trình, cùng một cấu trúc file kết quả</strong> &mdash; khác nhau ở cách bạn gõ lệnh và cách bạn trỏ tới file dữ liệu thật. Tài liệu này trình bày R trước (mặc định), Python ngay sau mỗi bước &mdash; bạn chỉ cần đọc phần khớp với lựa chọn của mình.</p>
 
         <h3 class="sub" id="yeu-cau-moi-truong">Yêu cầu môi trường</h3>
+        <p><strong>Nếu chọn R + RStudio:</strong></p>
         <ul>
           <li><strong>R + RStudio</strong> (bản R 4.x bất kỳ, tải miễn phí tại <a href="https://posit.co/download/rstudio-desktop/">posit.co/download/rstudio-desktop</a>). Track Medical chạy 100% base R &mdash; không cần cài thêm package nào.</li>
           <li>Track SEM cần đúng <strong>1 package</strong>: chạy <code>install.packages("lavaan")</code> một lần trong RStudio. Nếu dự án của bạn dùng phân tích sống còn (survival analysis), cần thêm package <code>survival</code> &mdash; cũng chỉ một lệnh <code>install.packages("survival")</code>.</li>
+        </ul>
+        <p><strong>Nếu chọn Python:</strong></p>
+        <ul>
+          <li><strong>Python 3.9 trở lên</strong> (kiểm tra bằng cách gõ <code>python3 --version</code> trong terminal/Command Prompt).</li>
+          <li><strong><a href="https://github.com/astral-sh/uv"><code>uv</code></a></strong> &mdash; công cụ quản lý môi trường Python, cài một lần theo hướng dẫn ở trang <code>uv</code> (một dòng lệnh, cho cả Windows/macOS).</li>
+          <li>Không cần cài package nào bằng tay từng cái &mdash; bước cài đặt bên dưới cài trọn gói một lần, bao gồm cả <code>semopy</code> (bản Python tương đương <code>lavaan</code>) cho track SEM.</li>
+        </ul>
+        <p>Cả hai đường đều cần:</p>
+        <ul>
           <li>Một <strong>AI coding agent</strong> chạy tại máy, trỏ vào folder này: <strong>Claude Code</strong> (khuyến nghị), <strong>Codex</strong>, hoặc <strong>OpenCode</strong>.</li>
         </ul>
-        <div class="callout info">
-          <span class="callout-label">Không dùng RStudio? Có bản mirror bằng Python</span>
-          <p>Mọi script trong AirGap Stats đều có bản song song viết bằng Python thuần (<code>pandas</code>/<code>numpy</code>/<code>scipy</code>/<code>statsmodels</code>, cộng <code>semopy</code> cho track SEM) &mdash; cùng hợp đồng bảo mật, cùng tên hàm. Tài liệu này đi theo nhánh R vì đó là trải nghiệm được thiết kế cho người không rành lập trình (RStudio có cửa sổ chọn file sẵn có); nếu bạn quen Python hơn, cứ nói với agent &ldquo;dùng bản Python mirror&rdquo; và mọi bước dưới đây vẫn áp dụng, chỉ đổi <code>Rscript</code> thành <code>python</code> và <code>file.choose()</code> thành đường dẫn bạn tự nhập (không có cửa sổ chọn file kiểu RStudio trong Python thuần).</p>
-        </div>
 
         <h3 class="sub" id="cac-buoc-cai-dat">Các bước cài đặt</h3>
         <ol class="steps">
           <li><h4>Giải nén vào một folder cố định</h4><p>Ví dụ <code>D:\projects\airgap-stats\</code> (Windows) hoặc <code>~/airgap-stats/</code> (macOS). Đây sẽ là &ldquo;nhà&rdquo; của AI agent &mdash; nó chỉ hoạt động bên trong folder này.</p></li>
           <li><h4>Khởi động agent, trỏ vào folder trên</h4><p>Mở Claude Code (hoặc Codex/OpenCode), chọn folder AirGap Stats làm project folder của agent.</p></li>
           <li><h4>Không cần làm gì thêm &mdash; skills đã nằm sẵn trong repo</h4><p>Claude Code tự nhận <code>.claude/skills/</code> và đọc <code>CLAUDE.md</code>. Codex đọc <code>AGENTS.md</code> (trỏ đến <code>skills/</code>). OpenCode tự nhận <code>.opencode/skill/</code>. Không cần cấu hình gì thủ công.</p></li>
+          <li><h4>Chỉ với Python: cài môi trường một lần</h4><p>Bỏ qua bước này nếu bạn chọn R. Nếu chọn Python, mở terminal, trỏ vào đúng folder AirGap Stats, rồi chạy:</p>
+            <div class="code-panel">
+              <div class="code-caption"><span>terminal, từ folder AirGap Stats</span><span class="lang">bash</span></div>
+              <pre><code><span class="tok-com"># một lần duy nhất -- tạo môi trường Python riêng cho AirGap Stats và cài mọi package cần thiết</span>
+uv venv
+uv pip install -e .</code></pre>
+            </div>
+            <p>Xong bước này, mọi lệnh Python trong tài liệu chạy bằng <code>.venv/bin/python</code> (macOS) hoặc <code>.venv\Scripts\python</code> (Windows) thay vì <code>python</code> thường &mdash; để chắc chắn dùng đúng môi trường vừa cài, không lẫn với Python khác trên máy.</p>
+          </li>
         </ol>
 
         <h3 class="sub" id="kiem-tra-hoat-dong">Kiểm tra cài đặt đã đúng chưa</h3>
@@ -507,6 +536,12 @@
           <pre>Use dr-workflow-orchestrator. Tôi muốn bắt đầu một dự án phân tích mới. Quy trình gồm những bước nào?</pre>
         </div>
         <p>Nếu agent trả lời mô tả đúng 5 giai đoạn A&ndash;E ở Phần I &mdash; cài đặt đã hoàn tất, bạn có thể bắt đầu dự án thật của mình (Phần IV có ví dụ đầy đủ để làm theo trước khi dùng dữ liệu của chính bạn).</p>
+        <p>Riêng với Python, kiểm tra thêm môi trường vừa cài chạy đúng bằng lệnh sau (không bắt buộc, nhưng hữu ích nếu bước cài đặt có gì trục trặc):</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal, từ folder AirGap Stats</span><span class="lang">bash</span></div>
+          <pre><code>.venv/bin/python -m tools.smoke_test</code></pre>
+        </div>
+        <p>Lệnh này tự chạy thử toàn bộ script mẫu trên dữ liệu giả và báo &ldquo;pass&rdquo;/&ldquo;fail&rdquo; cho từng cái &mdash; nếu mọi thứ hiện <code>pass</code>, môi trường Python của bạn đã sẵn sàng.</p>
         <div class="callout warn">
           <span class="callout-label">Nếu agent &ldquo;không thấy skill&rdquo;</span>
           <p>Hỏi thẳng: <code>Đọc skills/dr-workflow-orchestrator/SKILL.md và làm theo</code> &mdash; mọi agent đều đọc được file văn bản thường, kể cả khi cơ chế tự nhận skill của nó không hoạt động vì lý do gì đó.</p>
@@ -523,13 +558,14 @@
         </div>
 
         <p>
-          Vậy khi script cần đọc dữ liệu thật thì sao? Mỗi khi cần, script sẽ dùng lệnh
-          <code>file.choose()</code> &mdash; R sẽ <strong>mở một cửa sổ chọn file giống hệt khi bạn mở
-          file Word/Excel</strong>. Bạn chỉ việc trỏ tới file dữ liệu của mình và bấm Open. Không cần
-          gõ đường dẫn, không cần biết lập trình.
+          Vậy khi script cần đọc dữ liệu thật thì sao? Cách nhập đường dẫn khác nhau tuỳ bạn chọn R
+          hay Python ở Phần II &mdash; phần này trình bày R trước (dùng lệnh <code>file.choose()</code>,
+          R sẽ <strong>mở một cửa sổ chọn file giống hệt khi bạn mở file Word/Excel</strong>, không cần
+          gõ đường dẫn, không cần biết lập trình); mục &ldquo;Nếu bạn dùng Python&rdquo; ngay sau đó
+          trình bày cách tương đương cho Python.
         </p>
 
-        <h3 class="sub" id="tung-buoc-file-choose">Từng bước cụ thể (làm đúng 5 bước này mỗi lần chạy trên dữ liệu thật)</h3>
+        <h3 class="sub" id="tung-buoc-file-choose">Nếu bạn dùng R: từng bước cụ thể (làm đúng 5 bước này mỗi lần chạy trên dữ liệu thật)</h3>
         <ol class="steps">
           <li><h4>Mở RStudio</h4><p>Không cần mở project AirGap Stats trong RStudio &mdash; chỉ cần RStudio đang chạy.</p></li>
           <li><h4>Trỏ working directory vào folder project của bạn</h4><p>Vào menu <strong>Session &rarr; Set Working Directory &rarr; Choose Directory...</strong> rồi chọn folder project của bạn (ví dụ <code>...\projects\diabetes</code>). Bước này để R biết &ldquo;nhà&rdquo; của project ở đâu &mdash; mọi đường dẫn tương đối trong script (như <code>"pattern/dataset_pattern.csv"</code>) đều tính từ đây.</p></li>
@@ -538,21 +574,57 @@
           <li><h4>Chờ chạy xong, đọc kết quả</h4><p>Chờ chữ chạy xong trong Console, rồi quay lại làm theo hướng dẫn tiếp theo của agent &mdash; thường là báo lại &ldquo;đã chạy xong, không có lỗi&rdquo; hoặc dán phần output nếu agent yêu cầu.</p></li>
         </ol>
 
+        <h3 class="sub" id="tung-buoc-python">Nếu bạn dùng Python: không có cửa sổ chọn file, nhưng cùng nguyên tắc</h3>
+        <p>
+          Python thuần không có cửa sổ chọn file kiểu RStudio. Thay vào đó, AirGap Stats dùng
+          <strong>hai cách nhập đường dẫn khác nhau tuỳ giai đoạn</strong> &mdash; cả hai đều giữ
+          nguyên tắc như <code>file.choose()</code>: đường dẫn thật <strong>chỉ gõ tại chỗ, không
+          bao giờ được lưu vào file nào trong repo</strong>.
+        </p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Giai đoạn</th><th>Cách nhập đường dẫn</th></tr></thead>
+            <tbody>
+              <tr><td class="name">A, B, B2 (pattern, sinh dữ liệu giả)</td><td>Đường dẫn là <strong>tham số dòng lệnh</strong> &mdash; gõ trực tiếp sau tên script khi chạy, không lưu vào đâu cả ngoài lịch sử terminal trên máy bạn.</td></tr>
+              <tr><td class="name">D2&ndash;D4, E (mô tả, suy luận, kết quả thật)</td><td>Script <strong>dừng lại và hỏi</strong> &mdash; bạn gõ hoặc dán đường dẫn ngay tại dòng lệnh đang chạy, giống hệt việc gõ mật khẩu vào terminal.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Ví dụ cụ thể cho giai đoạn A (trích xuất pattern), chạy từ terminal, trong folder project của bạn:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal, trong folder project</span><span class="lang">bash</span></div>
+          <pre><code>../../.venv/bin/python scripts/pattern_extract.py <span class="tok-str">/duong/dan/toi/du_lieu_that.csv</span> pattern/dataset_pattern.csv</code></pre>
+        </div>
+        <p>Và cho một script giai đoạn D khi chạy trên dữ liệu thật (giai đoạn E) &mdash; trước đó agent đã đổi 2 dòng settings đầu file <code>desc.py</code>/<code>infer.py</code> sang chế độ hỏi đường dẫn (Phần IV mục E có ví dụ đầy đủ):</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal, trong folder project</span><span class="lang">bash</span></div>
+          <pre><code>../../.venv/bin/python scripts/desc.py
+<span class="tok-com"># script dừng lại, hiện dòng chữ:</span>
+<span class="tok-com">#   Path to real dataset CSV:</span>
+<span class="tok-com"># gõ hoặc dán đường dẫn file thật của bạn tại đây, rồi nhấn Enter</span></code></pre>
+        </div>
+        <div class="callout safe">
+          <span class="callout-label">Vì sao vẫn an toàn</span>
+          <p>Cả hai cách đều giữ đúng nguyên tắc của Phần I: đường dẫn thật không bao giờ được agent nhìn thấy, không bao giờ được script ghi vào bất kỳ file <code>.py</code>, <code>.csv</code>, hay file cấu hình nào trong repo. Nó chỉ tồn tại trong phiên terminal của bạn &mdash; tắt terminal là mất, giống hệt việc đóng RStudio.</p>
+        </div>
+
         <h3 class="sub" id="vi-sao-an-toan">Vì sao cách này an toàn tuyệt đối?</h3>
         <div class="callout safe">
           <span class="callout-label">An toàn theo thiết kế, không phải theo lời hứa</span>
           <ul>
-            <li>Đường dẫn tới file thật <strong>chỉ tồn tại trong phiên RStudio của bạn</strong> &mdash; không được ghi vào bất kỳ file nào trong folder pack. AI thậm chí không biết dữ liệu thật nằm ở đâu, tên là gì.</li>
+            <li>Đường dẫn tới file thật <strong>chỉ tồn tại trong phiên RStudio (hoặc phiên terminal, nếu bạn dùng Python) của bạn</strong> &mdash; không được ghi vào bất kỳ file nào trong folder pack. AI thậm chí không biết dữ liệu thật nằm ở đâu, tên là gì.</li>
             <li>Nhờ vậy, <strong>toàn bộ folder project của bạn an toàn để zip gửi cho người khác</strong> (nhờ giảng viên xem giúp, backup, sync cloud) &mdash; trong đó không hề có dữ liệu thật.</li>
           </ul>
         </div>
 
         <h3 class="sub" id="luu-y-paste">Một lưu ý khi paste kết quả cho AI (giai đoạn E)</h3>
         <p>
-          Nếu trong phần kết quả bạn copy từ Console có hiện <strong>đường dẫn hoặc tên file dữ liệu
-          thật</strong> (ví dụ <code>D:\benh-vien\HIV_2024.csv</code>), hãy <strong>xoá dòng đó trước
-          khi paste</strong> &mdash; vì đôi khi chính tên file cũng là thông tin nhạy cảm (ví dụ tên
-          file chứa tên bệnh viện, tên khoa, hoặc năm + mã bệnh).
+          Nếu trong phần kết quả bạn copy từ Console (R) hoặc terminal (Python) có hiện <strong>đường
+          dẫn hoặc tên file dữ liệu thật</strong> (ví dụ <code>D:\benh-vien\HIV_2024.csv</code>), hãy
+          <strong>xoá dòng đó trước khi paste</strong> &mdash; vì đôi khi chính tên file cũng là thông
+          tin nhạy cảm (ví dụ tên file chứa tên bệnh viện, tên khoa, hoặc năm + mã bệnh). Với Python,
+          dòng <code>Path to real dataset CSV: ...</code> bạn vừa gõ cũng nên xoá khỏi phần copy trước
+          khi dán cho agent, cùng lý do.
         </p>
         <div class="callout danger">
           <span class="callout-label">Không bao giờ dán hình ảnh từ dữ liệu thật</span>
@@ -598,6 +670,11 @@ Bắt đầu từ privacy gate.</pre>
 original &lt;- <span class="tok-fn">read.csv</span>(<span class="tok-fn">file.choose</span>())   <span class="tok-com"># cửa sổ chọn file mở ra: chọn file dữ liệu thật của bạn</span>
 <span class="tok-fn">extract_pattern</span>(original, output_csv = <span class="tok-str">"pattern/dataset_pattern.csv"</span>)</code></pre>
         </div>
+        <p><strong>Nếu bạn dùng Python</strong> thay vì R, agent copy <code>py-scripts/pattern_extract.py</code> vào <code>scripts/</code> thay vì bản R, và lệnh chạy là một dòng terminal &mdash; đường dẫn file thật đi kèm ngay trên dòng lệnh, không cần cửa sổ chọn file:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal, trong folder project</span><span class="lang">bash</span></div>
+          <pre><code>../../.venv/bin/python scripts/pattern_extract.py <span class="tok-str">/duong/dan/toi/du_lieu_that.csv</span> pattern/dataset_pattern.csv</code></pre>
+        </div>
         <p>
           <em>(Trong ví dụ này, file <code>clinical.csv</code> ở gốc pack đóng vai &ldquo;dữ liệu thật
           nằm ngoài project&rdquo; để bạn thực hành &mdash; với dữ liệu thật của chính bạn, file sẽ nằm
@@ -634,6 +711,11 @@ original &lt;- <span class="tok-fn">read.csv</span>(<span class="tok-fn">file.ch
   n = <span class="tok-num">200</span>,
   seed = <span class="tok-num">2026</span>
 )</code></pre>
+        </div>
+        <p><strong>Bản Python</strong> (<code>py-scripts/synthesize_data.py</code>), cùng một dòng terminal, không cần chọn lại file thật lần hai vì lệnh này không cần đọc dữ liệu thật &mdash; chỉ cần file pattern đã duyệt:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal, trong folder project</span><span class="lang">bash</span></div>
+          <pre><code>../../.venv/bin/python scripts/synthesize_data.py pattern/dataset_pattern.csv data_synthetic/synthetic_dataset.csv <span class="tok-num">200</span> <span class="tok-num">2026</span></code></pre>
         </div>
         <div class="callout tip">
           <span class="callout-label">Điểm giảng</span>
@@ -673,7 +755,7 @@ original &lt;- <span class="tok-fn">read.csv</span>(<span class="tok-fn">file.ch
 Default grouping: treatment. No p-values.</pre>
         </div>
         <span class="who who-ai">🤖 AI tự làm</span>
-        <p>Agent viết <code>scripts/desc.R</code> và <strong>tự chạy thử</strong> bằng <code>Rscript scripts/desc.R</code> trên dữ liệu giả cho đến khi chạy sạch &mdash; bạn không cần làm gì ở bước này trừ khi agent báo không có R để tự chạy, khi đó bạn chạy giúp (xem Phần VII).</p>
+        <p>Agent viết <code>scripts/desc.R</code> (hoặc, nếu bạn chọn Python, <code>scripts/desc.py</code>) và <strong>tự chạy thử</strong> &mdash; bằng <code>Rscript scripts/desc.R</code> hoặc <code>.venv/bin/python scripts/desc.py</code> tuỳ track ngôn ngữ &mdash; trên dữ liệu giả cho đến khi chạy sạch. Bạn không cần làm gì ở bước này trừ khi agent báo không có R/Python để tự chạy, khi đó bạn chạy giúp (xem Phần VII).</p>
         <div class="console-panel">
           <div class="console-caption">outputs_synthetic/table1.csv (trích đoạn, số liệu là GIẢ)</div>
           <pre>characteristic level Overall Group_0 Group_1  test         p_value
@@ -692,7 +774,7 @@ crp            -     50.9 (28.9)  ...          mann_whitney_u 0.1057</pre>
           <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent (nếu muốn dùng)</div>
           <pre>Use dr-02b-visual-exploration. Correlation heatmap and boxplots by treatment.</pre>
         </div>
-        <p>Kết quả là <code>scripts/plots.R</code>, ảnh xuất ra <code>outputs_synthetic/figures/</code> &mdash; toàn bộ vẽ từ dữ liệu giả nên mở xem thoải mái.</p>
+        <p>Kết quả là <code>scripts/plots.R</code> (hoặc <code>plots.py</code> nếu bạn dùng Python), ảnh xuất ra <code>outputs_synthetic/figures/</code> &mdash; toàn bộ vẽ từ dữ liệu giả nên mở xem thoải mái.</p>
 
         <h3 class="sub" id="vd-giai-doan-d3-d4"><span class="stage-badge">D3&ndash;D4</span>Phân tích suy luận &amp; hiệu chỉnh nhiễu</h3>
         <span class="who who-user">🧑‍🔬 Bạn gõ cho agent</span>
@@ -709,7 +791,7 @@ age, sex, bmi, diabetes, hypertension, smoking, egfr, hba1c, crp.
 Ask me to confirm before coding.</pre>
         </div>
         <span class="who who-ai">🤖 AI tự làm</span>
-        <p>Cả hai bước ghi vào cùng một file <code>scripts/infer.R</code> (phần thô + phần hiệu chỉnh), agent tự verify bằng <code>Rscript</code>. Nếu dự án của bạn cần thêm chẩn đoán mô hình (VIF, Cook&rsquo;s distance, kiểm tra tuyến tính) hoặc phân tích độ nhạy (hồi quy Firth khi các nhóm quá lệch), agent sẽ thêm các phần này vào cùng file, cũng tự verify trước khi báo xong.</p>
+        <p>Cả hai bước ghi vào cùng một file <code>scripts/infer.R</code> (phần thô + phần hiệu chỉnh), agent tự verify bằng <code>Rscript</code>. Nếu dự án của bạn cần thêm chẩn đoán mô hình (VIF, Cook&rsquo;s distance, kiểm tra tuyến tính) hoặc phân tích độ nhạy (hồi quy Firth khi các nhóm quá lệch), agent sẽ thêm các phần này vào cùng file, cũng tự verify trước khi báo xong. Bản Python (<code>scripts/infer.py</code>, tự verify bằng <code>.venv/bin/python scripts/infer.py</code>) có đúng những phần này &mdash; cùng nội dung, cùng cấu trúc bốn phần, chỉ khác cú pháp ngôn ngữ.</p>
         <div class="callout warn">
           <span class="callout-label">Điểm giảng</span>
           <p>Phân tích (analyze) là để trả lời câu hỏi nghiên cứu, không phải để &ldquo;săn&rdquo; p-value đẹp. Hiệu chỉnh (adjust) là để so sánh công bằng hơn giữa hai nhóm điều trị (loại trừ ảnh hưởng của các yếu tố nhiễu), không phải để làm p nhỏ hơn.</p>
@@ -724,16 +806,35 @@ Ask me to confirm before coding.</pre>
 output_dir &lt;- <span class="tok-str">"results_real"</span></code></pre>
         </div>
         <p>Chạy cả hai file (Source, hoặc bôi đen hết rồi Ctrl/Cmd+Enter), rồi copy phần output trong Console (hoặc mở <code>results_real/infer_crude_vs_adjusted.csv</code>) &mdash; nhớ kiểm tra không còn đường dẫn/tên file thật nào trong đó (Phần III).</p>
+
+        <span class="who who-user">🧑‍🔬 Nếu bạn dùng Python: chạy trong terminal</span>
+        <p>Mở <code>scripts/desc.py</code> và <code>scripts/infer.py</code> bằng một trình soạn thảo văn bản bất kỳ, đổi 2 dòng settings y hệt cách R làm &mdash; comment 2 dòng chế độ giả, bỏ comment 2 dòng chế độ thật:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>trong scripts/desc.py và scripts/infer.py</span><span class="lang">python</span></div>
+          <pre><code><span class="tok-com"># input_csv  = "data_synthetic/synthetic_dataset.csv"   # comment dòng này lại</span>
+<span class="tok-com"># output_dir = "outputs_synthetic"                       # comment dòng này lại</span>
+input_csv  = <span class="tok-fn">input</span>(<span class="tok-str">"Path to real dataset CSV: "</span>).strip()   <span class="tok-com"># bỏ comment dòng này</span>
+output_dir = <span class="tok-str">"results_real"</span>                                       <span class="tok-com"># và dòng này</span></code></pre>
+        </div>
+        <p>Lưu file, rồi chạy từng file trong terminal &mdash; mỗi lệnh sẽ dừng lại và hỏi đường dẫn, gõ hoặc dán rồi Enter:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>terminal, trong folder project</span><span class="lang">bash</span></div>
+          <pre><code>../../.venv/bin/python scripts/desc.py
+<span class="tok-com"># Path to real dataset CSV: _  &lt;- gõ/dán đường dẫn file thật tại đây</span>
+../../.venv/bin/python scripts/infer.py
+<span class="tok-com"># Path to real dataset CSV: _  &lt;- gõ/dán lại đường dẫn file thật</span></code></pre>
+        </div>
+        <p>Copy phần output hiện trong terminal (hoặc mở <code>results_real/infer_crude_vs_adjusted.csv</code>) &mdash; nhớ kiểm tra không còn đường dẫn/tên file thật nào trong đó, kể cả dòng <code>Path to real dataset CSV: ...</code> bạn vừa gõ (Phần III).</p>
         <span class="who who-user">🧑‍🔬 Bạn dán kết quả cho agent</span>
         <div class="prompt-box">
           <div class="prompt-caption">📋 Gõ/dán câu này cho AI agent</div>
-          <pre>Use dr-05-present-results. Đây là output thật từ RStudio:
+          <pre>Use dr-05-present-results. Đây là output thật từ RStudio (hoặc: từ terminal, nếu bạn dùng Python):
 [dán output ở đây]
 Create traceable manuscript-ready outputs. Do not invent numbers.</pre>
         </div>
         <div class="callout safe">
           <span class="callout-label">Điểm giảng cuối cùng</span>
-          <p>Cùng một file code &mdash; chỉ đổi 2 dòng &mdash; chạy trên dữ liệu thật. &ldquo;Sẵn sàng công bố&rdquo; (publication-ready) nghĩa là mọi con số trong bảng kết quả đều truy ngược được về đúng dòng output bạn đã dán, không có con số nào do AI tự suy diễn hay làm tròn kiểu &ldquo;ước chừng cho đẹp&rdquo;.</p>
+          <p>Cùng một file code &mdash; chỉ đổi 2 dòng &mdash; chạy trên dữ liệu thật, dù là R hay Python. &ldquo;Sẵn sàng công bố&rdquo; (publication-ready) nghĩa là mọi con số trong bảng kết quả đều truy ngược được về đúng dòng output bạn đã dán, không có con số nào do AI tự suy diễn hay làm tròn kiểu &ldquo;ước chừng cho đẹp&rdquo;.</p>
         </div>
       </section>
 
@@ -757,8 +858,13 @@ Observed covariates: work_mode, age, gender, income, work_hours, tenure_years, w
         <p>
           Trình tự giống hệt Phần IV cho giai đoạn A&ndash;C và D1&ndash;D2 (đổi project thành
           <code>example-survey-sem</code>). Một khác biệt nhỏ: khi sinh dữ liệu giả ở giai đoạn B, dùng
-          <code>n&nbsp;=&nbsp;300</code> thay vì 200 &mdash; để gói <code>lavaan</code> có đủ dữ liệu ước
-          lượng mô hình thoải mái hơn.
+          <code>n&nbsp;=&nbsp;300</code> thay vì 200 &mdash; để gói <code>lavaan</code> (R) hoặc
+          <code>semopy</code> (Python) có đủ dữ liệu ước lượng mô hình thoải mái hơn.
+        </p>
+        <p>
+          <strong>Nếu bạn dùng Python:</strong> không cần lệnh cài đặt riêng nào cho track SEM &mdash;
+          <code>semopy</code> đã nằm trong danh sách package của bước <code>uv pip install -e .</code>
+          ở Phần II, khác với R (phải tự chạy <code>install.packages("lavaan")</code> một lần).
         </p>
 
         <h3 class="sub" id="sem-d3"><span class="stage-badge">D3</span>Mô hình đo lường (measurement model)</h3>
@@ -771,7 +877,8 @@ Constructs: Job satisfaction: js_q1..js_q5; Burnout: bo_q1..bo_q5. Response rang
         <span class="who who-ai">🤖 AI tự làm</span>
         <p>
           Agent viết <code>scripts/sem_measurement.R</code> &mdash; Cronbach&rsquo;s alpha bằng base R,
-          CFA (phân tích nhân tố khẳng định) bằng <code>lavaan</code> &mdash; và tự verify. Track SEM có
+          CFA (phân tích nhân tố khẳng định) bằng <code>lavaan</code> &mdash; và tự verify (<code>Rscript scripts/sem_measurement.R</code>). Bản Python là <code>scripts/sem_measurement.py</code>, CFA bằng
+          <code>semopy</code> thay vì <code>lavaan</code>, tự verify bằng <code>.venv/bin/python scripts/sem_measurement.py</code> &mdash; cùng công thức alpha/omega/AVE/HTMT, chỉ khác package CFA đứng sau. Track SEM có
           thêm một tầng mà track Medical không có: <strong>mô hình đo lường</strong> (measurement model),
           kiểm tra xem các câu hỏi khảo sát có thực sự đo đúng khái niệm trừu tượng bạn định đo hay không
           (qua chỉ số fit như CFI, RMSEA, và độ tin cậy alpha/omega), <em>trước khi</em> đi vào mô hình cấu trúc.
@@ -794,11 +901,18 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
           (path)</strong> trước khi viết file. Mỗi path là một giả thuyết có hướng bạn đang đặt ra, nên
           cần được xác nhận rõ ràng, không phải điều agent tự quyết.
         </p>
+        <div class="callout info">
+          <span class="callout-label">Nếu bạn dùng Python: một bước tính toán nhiều hơn, không phải thiếu tính năng</span>
+          <p>Bản Python (<code>scripts/sem_structural.py</code>) trả lời đúng câu hỏi nghiên cứu như bản R, nhưng đi hai bước thay vì một: <code>semopy</code> không ước lượng trực tiếp mô hình cấu trúc lớn kèm nhiều item thang đo trong một lần như <code>lavaan</code> làm được, nên agent tính điểm construct trước rồi mới hồi quy (kèm bootstrap để có khoảng tin cậy đáng tin). Kết quả cuối cùng &mdash; hệ số path, khoảng tin cậy &mdash; tương đương giữa hai ngôn ngữ; chỉ là con đường tính toán khác nhau.</p>
+        </div>
 
         <h3 class="sub" id="sem-e"><span class="stage-badge">E</span>Kết quả thật</h3>
         <p>
           Chạy <code>sem_measurement.R</code> rồi <code>sem_structural.R</code> trên dữ liệu thật trong
           RStudio (đổi 2 dòng settings y hệt Phần IV), dán output, gọi <code>dr-05-present-results</code>.
+          Với Python: <code>sem_measurement.py</code> rồi <code>sem_structural.py</code>, đổi 2 dòng
+          settings sang chế độ <code>input("Path to real dataset CSV: ")</code> y hệt Phần IV, chạy
+          bằng <code>.venv/bin/python</code> trong terminal.
         </p>
         <div class="callout safe">
           <span class="callout-label">Điểm giảng</span>
@@ -816,7 +930,8 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
               <tr><td class="name">Outcome</td><td>Quan sát được trực tiếp: sống/chết, biến chứng có/không, tái nhập viện có/không</td><td>Không quan sát trực tiếp &mdash; đo gián tiếp qua nhiều câu hỏi thang Likert (construct trừu tượng: hài lòng, kiệt sức, ý định nghỉ việc...)</td></tr>
               <tr><td class="name">Phương pháp chính</td><td>Hồi quy logistic thô + hiệu chỉnh nhiễu (confounding adjustment)</td><td>CFA (mô hình đo lường) + mô hình cấu trúc (structural/mediation model)</td></tr>
               <tr><td class="name">Package R cần cài</td><td>0 &mdash; 100% base R</td><td>1 &mdash; <code>lavaan</code> (<code>install.packages("lavaan")</code> một lần)</td></tr>
-              <tr><td class="name">Giai đoạn D3&ndash;D4</td><td><code>dr-03-inferential-analysis</code>, <code>dr-04-confounding-adjustment</code> &rarr; cùng file <code>scripts/infer.R</code></td><td><code>dr-sem-01-measurement-model</code>, <code>dr-sem-02-structural-model</code> &rarr; hai file riêng <code>sem_measurement.R</code>, <code>sem_structural.R</code></td></tr>
+              <tr><td class="name">Package Python cần cài</td><td>0 &mdash; đã có sẵn sau <code>uv pip install -e .</code></td><td>0 thêm &mdash; <code>semopy</code> nằm sẵn trong <code>uv pip install -e .</code>, không cần lệnh riêng</td></tr>
+              <tr><td class="name">Giai đoạn D3&ndash;D4</td><td><code>dr-03-inferential-analysis</code>, <code>dr-04-confounding-adjustment</code> &rarr; cùng file <code>scripts/infer.R</code> (hoặc <code>infer.py</code>)</td><td><code>dr-sem-01-measurement-model</code>, <code>dr-sem-02-structural-model</code> &rarr; hai file riêng <code>sem_measurement.R</code>/<code>sem_measurement.py</code>, <code>sem_structural.R</code>/<code>sem_structural.py</code></td></tr>
               <tr><td class="name">Kết quả trên dữ liệu giả</td><td>OR/p-value chạy được nhưng vô nghĩa (không phản ánh quan hệ thật)</td><td>Chỉ số fit + path estimate chạy được nhưng <strong>vô nghĩa gấp đôi</strong> &mdash; items được sinh độc lập nên không có cấu trúc nhân tố nào để tìm</td></tr>
               <tr><td class="name">Ví dụ dùng thử</td><td><code>projects/example-clinical/</code> (Phần IV)</td><td><code>projects/example-survey-sem/</code> (Phần V)</td></tr>
               <tr><td class="name">Phù hợp cho</td><td>Nghiên cứu lâm sàng, y sinh, dịch tễ</td><td>Y tế công cộng, khoa học xã hội, khảo sát tổ chức</td></tr>
@@ -857,23 +972,41 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
         <p>Nếu dự án của bạn dùng phân tích sống còn (Kaplan-Meier/Cox), làm tương tự với <code>install.packages("survival")</code>.</p>
 
         <h3 class="sub" id="loi-font">File CSV tiếng Việt bị lỗi font (hiện chữ &ldquo;???&rdquo; hoặc ký tự lạ)</h3>
-        <p>Các script của pack luôn đọc/ghi UTF-8. Nếu bạn tự viết thêm code, luôn thêm <code>fileEncoding = "UTF-8"</code> vào <code>read.csv()</code>/<code>write.csv()</code>:</p>
+        <p>Các script của pack luôn đọc/ghi UTF-8. Nếu bạn tự viết thêm code bằng R, luôn thêm <code>fileEncoding = "UTF-8"</code> vào <code>read.csv()</code>/<code>write.csv()</code>:</p>
         <div class="code-panel">
           <div class="code-caption"><span>Console trong RStudio</span><span class="lang">r</span></div>
           <pre><code>dat &lt;- <span class="tok-fn">read.csv</span>(<span class="tok-str">"file.csv"</span>, fileEncoding = <span class="tok-str">"UTF-8"</span>)</code></pre>
         </div>
+        <p>Bằng Python, thêm <code>encoding="utf-8"</code> vào <code>pd.read_csv()</code>/<code>to_csv()</code> nếu tự viết thêm code &mdash; các script có sẵn trong pack đã làm việc này rồi:</p>
+        <div class="code-panel">
+          <div class="code-caption"><span>Python</span><span class="lang">python</span></div>
+          <pre><code>dat = pd.<span class="tok-fn">read_csv</span>(<span class="tok-str">"file.csv"</span>, encoding=<span class="tok-str">"utf-8"</span>)</code></pre>
+        </div>
 
-        <h3 class="sub" id="loi-rscript-path">(Tuỳ chọn) Cho agent tự chạy <code>Rscript</code> &mdash; không bắt buộc</h3>
+        <h3 class="sub" id="loi-python">Riêng Python: các lỗi thường gặp</h3>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Thông báo lỗi</th><th>Nguyên nhân &amp; cách sửa</th></tr></thead>
+            <tbody>
+              <tr><td class="name">&ldquo;python: command not found&rdquo; / &ldquo;'python' is not recognized&rdquo;</td><td>Máy bạn có thể chỉ có <code>python3</code>, không có <code>python</code> (thường gặp trên macOS). Thử <code>python3 --version</code>. Nếu vẫn không có, cài Python từ <a href="https://www.python.org/downloads/">python.org</a> hoặc dùng <code>uv</code> (Phần II) &mdash; <code>uv</code> tự tải Python nếu máy chưa có.</td></tr>
+              <tr><td class="name">&ldquo;uv: command not found&rdquo;</td><td><code>uv</code> chưa được cài, hoặc chưa mở lại terminal sau khi cài. Cài theo hướng dẫn tại <a href="https://github.com/astral-sh/uv">trang <code>uv</code></a>, rồi <strong>đóng và mở lại terminal</strong> (giống lý do phải khởi động lại agent sau khi sửa PATH ở mục <code>Rscript</code> bên dưới).</td></tr>
+              <tr><td class="name"><code>ModuleNotFoundError: No module named 'tools'</code></td><td>Script Python trong pack chỉ chạy đúng khi nằm <strong>đúng 3 cấp trong <code>projects/&lt;tên&gt;/scripts/</code></strong> &mdash; chạy trực tiếp một file lấy ra khỏi vị trí đó (ví dụ copy riêng <code>infer.py</code> ra desktop) sẽ luôn báo lỗi này. Luôn chạy từ trong <code>projects/&lt;tên-project&gt;/</code>, đúng như các ví dụ ở Phần IV/V.</td></tr>
+              <tr><td class="name"><code>ModuleNotFoundError: No module named 'pandas'</code> (hoặc tên package khác)</td><td>Chưa chạy bước cài đặt ở Phần II, hoặc đang dùng nhầm Python hệ thống thay vì môi trường vừa cài. Chạy lại <code>uv venv &amp;&amp; uv pip install -e .</code> từ folder AirGap Stats, và nhớ gọi bằng <code>.venv/bin/python</code> (không phải <code>python</code> trần) như trong mọi ví dụ ở tài liệu này.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub" id="loi-rscript-path">(Tuỳ chọn) Cho agent tự chạy <code>Rscript</code> (hoặc <code>python</code>) &mdash; không bắt buộc</h3>
         <p>
-          Ở giai đoạn D, agent có thể <strong>tự chạy thử</strong> code bằng lệnh <code>Rscript</code> để
-          kiểm tra code chạy sạch trên dữ liệu giả. Muốn vậy, <code>Rscript</code> phải nằm trong PATH
-          của hệ thống.
+          Ở giai đoạn D, agent có thể <strong>tự chạy thử</strong> code bằng lệnh <code>Rscript</code>
+          (hoặc <code>python</code>, nếu dự án dùng Python) để kiểm tra code chạy sạch trên dữ liệu
+          giả. Muốn vậy, lệnh tương ứng phải nằm trong PATH của hệ thống.
         </p>
         <div class="callout tip">
           <span class="callout-label">Việc này hoàn toàn tuỳ chọn</span>
-          <p>Nếu gõ <code>Rscript</code> mà máy báo lỗi &ldquo;not recognized&rdquo; (Windows) hoặc &ldquo;command not found&rdquo; (macOS), bạn <strong>không cần sửa gì cả</strong>. Cách đơn giản và luôn hoạt động: để agent viết code xong, bạn copy file <code>.R</code> mở trong RStudio và bấm <strong>Source</strong> (hoặc chọn hết code rồi Ctrl/Cmd&nbsp;+&nbsp;Enter). RStudio luôn tự biết R nằm đâu, không cần PATH. Chạy xong, báo kết quả (hoặc lỗi) cho agent &mdash; bước kiểm tra vẫn hoàn tất, chỉ là bạn chạy thay agent. Giá trị cốt lõi của pack là <strong>AI viết code, bạn chạy trong RStudio</strong> &mdash; việc agent tự chạy <code>Rscript</code> chỉ là tiện ích tăng tốc.</p>
+          <p>Nếu gõ <code>Rscript</code> mà máy báo lỗi &ldquo;not recognized&rdquo; (Windows) hoặc &ldquo;command not found&rdquo; (macOS), bạn <strong>không cần sửa gì cả</strong>. Cách đơn giản và luôn hoạt động: để agent viết code xong, bạn copy file <code>.R</code> mở trong RStudio và bấm <strong>Source</strong> (hoặc chọn hết code rồi Ctrl/Cmd&nbsp;+&nbsp;Enter). RStudio luôn tự biết R nằm đâu, không cần PATH. Chạy xong, báo kết quả (hoặc lỗi) cho agent &mdash; bước kiểm tra vẫn hoàn tất, chỉ là bạn chạy thay agent. Giá trị cốt lõi của pack là <strong>AI viết code, bạn chạy</strong> &mdash; việc agent tự chạy script chỉ là tiện ích tăng tốc. Với Python, tình huống này ít gặp hơn: nếu bạn đã làm đúng bước cài đặt ở Phần II (<code>uv venv</code>), agent chạy được ngay bằng <code>.venv/bin/python</code> mà không cần PATH hệ thống &mdash; PATH chỉ thật sự cần cho <code>Rscript</code>.</p>
         </div>
-        <p>Nếu bạn <em>muốn</em> bật tiện ích này:</p>
+        <p>Nếu bạn <em>muốn</em> bật tiện ích này cho R:</p>
         <h4 class="subsub">Windows</h4>
         <p>R không tự thêm mình vào PATH khi cài. Thêm thủ công:</p>
         <ol class="steps">
@@ -907,8 +1040,12 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
           <p class="faq-a">Bản thân AirGap Stats (các script R/Python trong pack) không gửi gì lên Internet cả &mdash; chạy hoàn toàn local trong RStudio. AI coding agent (Claude Code/Codex/OpenCode) có kết nối Internet để hoạt động, nhưng theo kiến trúc 5 giai đoạn ở Phần I, nó chỉ đọc pattern đã duyệt, dữ liệu giả, và output tổng hợp bạn chủ động dán &mdash; không bao giờ đọc trực tiếp file dữ liệu thật, nên không có gì để gửi đi.</p>
         </div>
         <div class="faq-item">
-          <p class="faq-q">Tôi không biết lập trình R chút nào &mdash; có dùng được không?</p>
-          <p class="faq-a">Được. Việc của bạn chỉ là: mở RStudio, copy-dán khối lệnh agent đưa, bấm chọn file khi được hỏi, và dán kết quả quay lại. Bạn không cần hiểu code bên trong, chỉ cần làm đúng 5 bước ở Phần III mỗi khi chạy trên dữ liệu thật.</p>
+          <p class="faq-q">Tôi không biết lập trình R (hay Python) chút nào &mdash; có dùng được không?</p>
+          <p class="faq-a">Được, với cả hai đường. Với R: mở RStudio, copy-dán khối lệnh agent đưa, bấm chọn file khi được hỏi, dán kết quả quay lại. Với Python: mở terminal, copy-dán dòng lệnh agent đưa, gõ/dán đường dẫn khi được hỏi, dán kết quả quay lại. Bạn không cần hiểu code bên trong ở cả hai trường hợp &mdash; chỉ cần làm đúng các bước ở Phần III mỗi khi chạy trên dữ liệu thật.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Tôi nên chọn R hay Python?</p>
+          <p class="faq-a">Nếu bạn chưa quen cả hai và không có lý do đặc biệt &mdash; chọn <strong>R + RStudio</strong>: đó là trải nghiệm được thiết kế cho người không rành lập trình, có cửa sổ chọn file bằng chuột, không phải gõ đường dẫn. Chọn <strong>Python</strong> nếu bạn đã quen Python/dòng lệnh, máy không cài được RStudio, hoặc nhóm nghiên cứu của bạn đã có sẵn quy trình Python. Cả hai cho cùng kết quả, cùng mức độ an toàn (Phần II so sánh chi tiết) &mdash; đổi ý giữa chừng cũng không sao, chỉ cần nói lại với agent bạn muốn dùng ngôn ngữ nào.</p>
         </div>
         <div class="faq-item">
           <p class="faq-q">Một project có thể vừa dùng track Medical vừa track SEM không?</p>
@@ -924,13 +1061,13 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
         </div>
         <div class="faq-item">
           <p class="faq-q">Làm sao biết một con số trong bảng kết quả cuối cùng là thật, không phải AI bịa ra?</p>
-          <p class="faq-a">Mọi con số trong <code>results_real/</code> đều phải truy ngược được về đúng dòng bạn đã dán từ Console RStudio ở giai đoạn E (Phần IV, Phần V). Đây là quy tắc cứng của skill <code>dr-05-present-results</code>: không được suy diễn, không được &ldquo;làm tròn cho đẹp&rdquo;, không được điền số còn thiếu. Nếu nghi ngờ, so sánh trực tiếp bảng kết quả với output gốc bạn đã dán.</p>
+          <p class="faq-a">Mọi con số trong <code>results_real/</code> đều phải truy ngược được về đúng dòng bạn đã dán từ Console RStudio (hoặc terminal, nếu dùng Python) ở giai đoạn E (Phần IV, Phần V). Đây là quy tắc cứng của skill <code>dr-05-present-results</code>: không được suy diễn, không được &ldquo;làm tròn cho đẹp&rdquo;, không được điền số còn thiếu. Nếu nghi ngờ, so sánh trực tiếp bảng kết quả với output gốc bạn đã dán.</p>
         </div>
       </section>
 
       <section class="part" id="phu-luc">
         <div class="part-head"><span class="part-num">&middot;</span><h2>Phụ Lục: Bảng Lệnh Nhanh</h2></div>
-        <p class="part-intro">Mọi câu lệnh gõ cho agent xuất hiện trong tài liệu này, gom lại một chỗ để tra cứu nhanh. Dùng <kbd>Ctrl/Cmd+F</kbd> để tìm.</p>
+        <p class="part-intro">Mọi câu lệnh gõ cho agent xuất hiện trong tài liệu này, gom lại một chỗ để tra cứu nhanh. Các prompt này dùng chung cho cả R lẫn Python &mdash; agent tự biết viết đúng ngôn ngữ bạn đã chọn. Dùng <kbd>Ctrl/Cmd+F</kbd> để tìm.</p>
         <div class="table-wrap">
           <table class="ref">
             <thead><tr><th>Khi nào dùng</th><th>Gõ cho agent</th></tr></thead>
@@ -947,11 +1084,25 @@ Show me the full lavaan syntax and ask me to confirm every path.</pre>
               <tr><td class="name">Mô hình đo lường &mdash; track SEM (D3)</td><td><code>Use dr-sem-01-measurement-model. Constructs: [...]</code></td></tr>
               <tr><td class="name">Mô hình cấu trúc &mdash; track SEM (D4)</td><td><code>Use dr-sem-02-structural-model. Proposed paths: [...]</code></td></tr>
               <tr><td class="name">Kiểm tra QA trước khi sang giai đoạn tiếp</td><td><code>Use dr-output-qa-gate to check the current stage.</code></td></tr>
-              <tr><td class="name">Trình bày kết quả thật (E)</td><td><code>Use dr-05-present-results. Đây là output thật từ RStudio: [dán output]</code></td></tr>
+              <tr><td class="name">Trình bày kết quả thật (E)</td><td><code>Use dr-05-present-results. Đây là output thật từ RStudio (hoặc terminal): [dán output]</code></td></tr>
               <tr><td class="name">Agent không thấy skill</td><td><code>Đọc skills/dr-workflow-orchestrator/SKILL.md và làm theo</code></td></tr>
             </tbody>
           </table>
         </div>
+        <p>Và các lệnh terminal/Console, gom lại theo ngôn ngữ:</p>
+        <div class="table-wrap">
+          <table class="ref">
+            <thead><tr><th>Khi nào dùng</th><th>R (Console RStudio)</th><th>Python (terminal)</th></tr></thead>
+            <tbody>
+              <tr><td class="name">Cài môi trường (một lần)</td><td>Không cần &mdash; RStudio đã sẵn sau khi cài</td><td><code>uv venv && uv pip install -e .</code></td></tr>
+              <tr><td class="name">Trích xuất pattern (A)</td><td><code>source("scripts/pattern_extract.R")</code> rồi <code>file.choose()</code></td><td><code>python scripts/pattern_extract.py &lt;đường_dẫn&gt; pattern/dataset_pattern.csv</code></td></tr>
+              <tr><td class="name">Sinh dữ liệu giả (B)</td><td><code>source("scripts/synthesize_data.R")</code></td><td><code>python scripts/synthesize_data.py pattern/dataset_pattern.csv data_synthetic/synthetic_dataset.csv 200 2026</code></td></tr>
+              <tr><td class="name">Chạy script giai đoạn D trên dữ liệu giả</td><td><code>Rscript scripts/desc.R</code></td><td><code>python scripts/desc.py</code></td></tr>
+              <tr><td class="name">Chạy script giai đoạn D trên dữ liệu thật (E)</td><td>Sửa 2 dòng settings &rarr; Source</td><td>Sửa 2 dòng settings &rarr; <code>python scripts/desc.py</code> &rarr; gõ đường dẫn khi được hỏi</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>(Lệnh Python trong bảng trên viết tắt <code>.venv/bin/python</code> thành <code>python</code> cho gọn &mdash; nhớ dùng đúng đường dẫn môi trường như trong các ví dụ ở Phần IV/V.)</p>
       </section>
 
     </main>
